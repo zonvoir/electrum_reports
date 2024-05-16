@@ -1,0 +1,318 @@
+[08-Apr-2024 07:46:17 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: '' for column 'layout_template_id' at row 1 in /home/electrum/public_html/uat/functions/layout.php:587
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(587): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewLayout(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 587
+[08-Apr-2024 16:26:26 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'One' for column 'levels' at row 1 in /home/electrum/public_html/uat/functions/layout.php:605
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(605): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 605
+[08-Apr-2024 16:26:33 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'One' for column 'levels' at row 1 in /home/electrum/public_html/uat/functions/layout.php:605
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(605): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 605
+[08-Apr-2024 16:27:33 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'One' for column 'levels' at row 1 in /home/electrum/public_html/uat/functions/layout.php:605
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(605): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 605
+[09-Apr-2024 04:57:17 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 07:46:15 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 07:46:19 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 07:47:03 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('4')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:47:06 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('5')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:47:09 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('6')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:47:25 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('4')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:47:54 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('4')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:47:57 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('5')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:47:59 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('6')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:49:25 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('4')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:49:27 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('5')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:49:30 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('6')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:49:33 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('3')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:49:38 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('4')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:56:31 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('21')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 07:56:38 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('19')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 08:00:29 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('26')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 08:00:31 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('28')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 08:00:34 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('27')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 09:37:03 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('41')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 09:37:07 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('40')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 09:37:22 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('41')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 09:37:32 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1861
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1861): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1877): Layout->deleteHeading('40')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1861
+[09-Apr-2024 09:38:05 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 09:39:15 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 09:39:15 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home/electrum/public_html/uat/functions/layout.php on line 1778
+[09-Apr-2024 09:39:24 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 09:39:24 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home/electrum/public_html/uat/functions/layout.php on line 1778
+[09-Apr-2024 09:39:28 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[09-Apr-2024 09:39:28 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in /home/electrum/public_html/uat/functions/layout.php on line 1778
+[10-Apr-2024 11:13:32 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[10-Apr-2024 11:13:58 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[10-Apr-2024 11:14:14 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[10-Apr-2024 11:14:56 UTC] PHP Warning:  Undefined array key "re_columns" in /home/electrum/public_html/uat/functions/layout.php on line 1738
+[10-Apr-2024 11:43:48 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1863
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1863): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1879): Layout->deleteHeading('65')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1863
+[10-Apr-2024 11:44:13 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1863
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1863): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1879): Layout->deleteHeading('56')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1863
+[10-Apr-2024 11:49:26 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1863
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1863): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1879): Layout->deleteHeading('65')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1863
+[10-Apr-2024 11:49:42 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`electrum_reports`.`column_functions`, CONSTRAINT `fk_column_function_headings1` FOREIGN KEY (`headings_id`) REFERENCES `headings` (`id`)) in /home/electrum/public_html/uat/functions/layout.php:1863
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(1863): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/layout.php(1879): Layout->deleteHeading('65')
+#2 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handledeleteValues(Array)
+#3 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 1863
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:31:07 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:32:19 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1566
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 20:33:05 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1556
+[10-Apr-2024 21:41:36 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:41:36 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:41:43 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:41:43 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:41:48 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:41:48 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:41:54 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:41:54 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:42:00 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:42:00 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:42:07 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:42:07 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:42:16 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:42:16 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:42:43 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:42:43 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:50:55 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:50:55 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:50:55 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'template_name' cannot be null in /home/electrum/public_html/uat/functions/layout.php:607
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(607): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 607
+[10-Apr-2024 21:51:05 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:51:05 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:51:05 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'template_name' cannot be null in /home/electrum/public_html/uat/functions/layout.php:607
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(607): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 607
+[10-Apr-2024 21:51:21 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:51:21 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:51:21 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'template_name' cannot be null in /home/electrum/public_html/uat/functions/layout.php:607
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(607): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 607
+[10-Apr-2024 21:52:18 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:52:18 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:52:18 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'template_name' cannot be null in /home/electrum/public_html/uat/functions/layout.php:607
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(607): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 607
+[10-Apr-2024 21:52:25 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:52:25 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:52:25 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'template_name' cannot be null in /home/electrum/public_html/uat/functions/layout.php:607
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(607): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 607
+[10-Apr-2024 21:52:32 UTC] PHP Warning:  Undefined array key "template_name" in /home/electrum/public_html/uat/functions/layout.php on line 599
+[10-Apr-2024 21:52:32 UTC] PHP Warning:  Undefined array key "levels" in /home/electrum/public_html/uat/functions/layout.php on line 600
+[10-Apr-2024 21:52:32 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'template_name' cannot be null in /home/electrum/public_html/uat/functions/layout.php:607
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/layout.php(607): PDOStatement->execute()
+#1 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleaddNewTemplate(Array)
+#2 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 607
+[11-Apr-2024 05:56:23 UTC] PHP Warning:  Array to string conversion in /home/electrum/public_html/uat/functions/layout.php on line 1435
+[12-Apr-2024 11:01:36 UTC] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string - string in /home/electrum/public_html/uat/functions/layout.php:693
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleCorrection(Array)
+#1 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 693
+[12-Apr-2024 11:02:31 UTC] PHP Fatal error:  Uncaught TypeError: Unsupported operand types: string - string in /home/electrum/public_html/uat/functions/layout.php:693
+Stack trace:
+#0 /home/electrum/public_html/uat/functions/provider.php(62): Layout->handleCorrection(Array)
+#1 {main}
+  thrown in /home/electrum/public_html/uat/functions/layout.php on line 693

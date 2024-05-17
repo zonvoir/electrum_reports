@@ -47,55 +47,45 @@ require 'header.php';
             }
 
             echo '<table id="template-table" class="table table-bordered">';
-            $levelIndex = 1;
-            foreach ($rows as $key => $row) {
-                echo '<tr>';
-                foreach ($row as $heading) {
-                    echo '<th 
-                                colspan="' . $heading['colspan'] . '"  
-                                type="' . $heading['column_type'] . '"
-                                column_function="' . $heading['column_function'] . '"   
-                            >
-                                ' . $heading['title'];
-                    if ($totalLevels == $heading['level']) {
-                        echo ' <input class="heading_check" data-data="' . htmlspecialchars(json_encode($heading)) . '" type="checkbox"/>';
-                    }
-                    echo '</th>';
-                }
-                echo '</tr>';
-
-                if ($key == count($rows)) {
+                $levelIndex = 1;
+                foreach ($rows as $key => $row) {
                     echo '<tr>';
-                    for ($i = 0; $i <= count($row) - 1; $i++) {
-                        if ($i == count($row) - 1) {
-                            echo '<td  
-                                        colspan="' . $row[$i]['colspan'] . '"  
-                                        type="' . $row[$i]['column_type'] . '"
-                                        column_function="' . $row[$i]['column_function'] . '"
-                                    >
-                                        <div class="d-flex">
-                                            <input type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />
-                                            <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
-                                        </div>
-                                    </td>';
-                        } else {
-                            echo '<td  
-                                        colspan="' . $row[$i]['colspan'] . '"  
-                                        type="' . $row[$i]['column_type'] . '"
-                                        column_function="' . $row[$i]['column_function'] . '"
-                                    >
-                                        <input type="number" class="form-control input_val_' . $row[$i]['id'] . '" />
-                                    </td>';
+                        foreach ($row as $heading) {
+                            echo '<th colspan="'.$heading['colspan'].'" type="'.$heading['column_type'].'" column_function="'.$heading['column_function'].'"   >
+                                    <label for="'.$heading['id'].'">' 
+                                        . $heading['title'];
+                                        if ($totalLevels == $heading['level']) {
+                                            echo '<input class="heading_check" data-data="'.htmlspecialchars(json_encode($heading)).'" id="'.$heading['id'].'" type="checkbox" />';
+                                        }
+                                    echo '</label>';
+                            echo '</th>';
                         }
-                    }
                     echo '</tr>';
+
+                    if ($key == count($rows)) {
+                        echo '<tr>';
+                            for ($i = 0; $i <= count($row) - 1; $i++) {
+                                if ($i == count($row) - 1) {
+                                    echo '<td colspan="'.$row[$i]['colspan'].'" type="'.$row[$i]['column_type'].'" column_function="'.$row[$i]['column_function'].'">
+                                            <div class="d-flex">
+                                                <input type="number" class="form-control me-1 input_val_'.$row[$i]['id'].'" readonly />
+                                                <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
+                                            </div>';
+                                    echo '</td>';
+                                } else {
+                                    echo '<td colspan="'.$row[$i]['colspan'].'" type="'.$row[$i]['column_type'].'" column_function="'.$row[$i]['column_function'].'">
+                                            <input type="number" class="form-control valueChange input_val_'.$row[$i]['id'].'" />
+                                        </td>';
+                                }
+                            }
+                        echo '</tr>';
+                    }
                 }
-            }
             echo '</table>';
             echo '<div style="border-left:0 !important; border-right:0 !important">
-                <button class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </div>';
+                    <button class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
+                    <!--button class="btn btn-primary" type="submit">Submit</button-->
+                </div>';
 
             ?>
         </div>
@@ -128,7 +118,91 @@ $(".btnDeleteRow").click(function() {
     }
 });
 
-/** Hasan */
+var multipleArr = [];
+
+$(".heading_check").on('click', function() {
+    var heading = JSON.parse($(this).attr('data-data'));
+    var heading_id = heading.id;
+    var column_type = heading.column_type;
+    var column_function = heading.column_function;
+    var singleInputHeadingWiseArray = [heading_id];
+    var valueToRemove = heading_id;
+
+    if ($(this).is(':checked')) {
+        multipleArr = removeRowByFirstValue(multipleArr, valueToRemove);
+        if (column_type == 'DATA') {
+            $(".input_val_" + heading_id + "").each(function() {
+                if ($(this).val()) {
+                    singleInputHeadingWiseArray.push($(this).val());
+                }
+            });
+            multipleArr.push(singleInputHeadingWiseArray);
+
+        } else {
+
+            var removeFirstColumnArr = removeFirstColumn(multipleArr);
+            var transposedArray = transposeArray(removeFirstColumnArr);
+
+            var table = document.getElementById("template-table");
+            var rows = table.getElementsByTagName("tr");
+
+            var i = 1;
+            
+            if (column_function == "CORRECTION") {
+                //put here CORRECTION formula
+
+            }
+            if (column_function == "TUC") {
+                //put here TEST UNIT CONVERTION formula
+
+            }
+            if (column_function == "TS") {
+                //put here TEST STDEV formula
+
+            }
+            if (column_function == "TC") {
+                //put here TEST COUNT formula
+
+            }
+            if (column_function == "RS") {
+                //put here REF STDEV formula
+
+            }
+            if (column_function == "RC") {
+                //put here REF COUNT formula
+                
+            }
+            if (column_function == "VC") {
+                //this is testing function for Voltage Calculate formula V = IR
+                console.log('transposedArray', transposedArray);
+                transposedArray.forEach(function(column) {
+                    console.log('column', column);
+                    var vc_cal_result = 1;
+                    column.forEach(function(val) {
+                        console.log('val', val);
+                        vc_cal_result = vc_cal_result * parseFloat(val);
+                    });
+                    getLastCell(rows, i, vc_cal_result)
+                    i++;
+                });
+            }
+        }
+    } else if (column_type == 'FUNCTION') {
+        $(".input_val_" + heading_id + "").each(function() {
+            $(this).val('');
+        });
+    }
+});
+
+function getLastCell(rows, i, result){
+    var cells = rows[i].getElementsByTagName("td");
+    var lastCell = cells[cells.length - 1];
+    var lastCellInput = cells[cells.length - 1].querySelector("input[type='number']");
+    if (lastCellInput) {
+        lastCellInput.value = result; // You can set any value here
+    }
+}
+
 function removeRowByFirstValue(array, valueToRemove) {
     return array.filter(function(row) {
         return row[0] !== valueToRemove;
@@ -139,83 +213,14 @@ function transposeArray(array) {
     return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
 }
 
-function transposeArrayExcludeFirstRow(array) {
-    return array[0].map((_, colIndex) => array.slice(1).map(row => row[colIndex]));
-}
-
 function removeFirstColumn(array) {
     return array.map(function(row) {
         return row.slice(1); // Remove the first element from each row
     });
 }
 
-var arr = [];
-
-$(".heading_check").on('click', function() {
-    var heading;
-    if ($(this).is(':checked')) {
-        heading = JSON.parse($(this).attr('data-data'));
-
-        var heading_id = heading.id;
-        var column_type = heading.column_type;
-        var column_function = heading.column_function;
-        var types = [heading_id];
-        var valueToRemove = heading_id;
-        arr = removeRowByFirstValue(arr, valueToRemove);
-
-        if (column_type == 'DATA') {
-            $(".input_val_" + heading_id + "").each(function() {
-                if ($(this).val()) {
-                    types.push($(this).val());
-                }
-            });
-            arr.push(types);
-            console.log(arr);
-        } else {
-            if (column_function == "CORRECTION") {
-
-            }
-            if (column_function == "TUC") {
-
-            }
-            if (column_function == "TS") {
-
-            }
-            if (column_function == "TC") {
-
-            }
-            if (column_function == "RS") {
-
-            }
-            if (column_function == "RC") {
-                
-            }
-            if (column_function == "VC") {
-                var arr1 = removeFirstColumn(arr);
-                var transposedArray = transposeArray(arr1);
-                // Iterate over the transposed array column-wise
-                var table = document.getElementById("template-table");
-                var rows = table.getElementsByTagName("tr");
-                var i = 1;
-                transposedArray.forEach(function(column) {
-                    var sum = 0;
-                    column.forEach(function(val) {
-                        console.log(val);
-                        sum = sum + parseFloat(val);
-                    });
-                    var cells = rows[i].getElementsByTagName("td");
-                    var lastCell = cells[cells.length - 1];
-                    var lastCellInput = cells[cells.length - 1].querySelector("input[type='number']");
-                    if (lastCellInput) {
-                        lastCellInput.value = sum; // You can set any value here
-                    }
-                    i++;
-                });
-            }
-        }
-    } else {
-        heading = '';
-    }
+$(".valueChange").on("keyup mouseup", function(){
+    $(".heading_check").prop('checked', false);
 });
 </script>
 <?php

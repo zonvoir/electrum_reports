@@ -176,7 +176,7 @@
                             <option value="TC">TEST COUNT</option>
                             <option value="RS">REF STDEV</option>
                             <option value="RC">REF COUNT</option>
-                            <option value="CV">Calculate Voltage</option>
+                            <option value="VC">Voltage Calculate</option>
                         </select>
                     </div>
                 </div>

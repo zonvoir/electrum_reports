@@ -48,19 +48,17 @@ require 'navigation.php';
         echo '<table id="template-table" class="table table-bordered">';
             $levelIndex = 1;
             foreach ($rows as $key => $row) {
-                echo '<tr class="11">';
+                echo '<tr>';
                     foreach ($row as $heading) {
                         echo '<th 
-                                class="first-level-'.$heading['column_type'].'" 
                                 colspan="'.$heading['colspan'].'"  
                                 type="'.$heading['column_type'].'"
-                                column_function="'.$heading['column_function'].'" 
-                                style=""  
+                                column_function="'.$heading['column_function'].'"   
                             >
                                 '.$heading['title'];
-                            if($totalLevels==$heading['level']) {
-                                echo ' <input type="checkbox"/>';
-                            }
+                                if($totalLevels==$heading['level']) {
+                                    echo ' <input class="heading_check" data-data="'.htmlspecialchars(json_encode($heading)).'" type="checkbox"/>';
+                                }
                         echo '</th>';
                     }
                 echo '</tr>';
@@ -75,7 +73,7 @@ require 'navigation.php';
                                         column_function="'.$row[$i]['column_function'].'"
                                     >
                                         <div class="d-flex">
-                                            <input type="number" class="form-control me-1" readonly />
+                                            <input type="number" class="form-control me-1 input_val_'.$row[$i]['id'].'" readonly />
                                             <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
                                         </div>
                                     </td>';
@@ -85,25 +83,16 @@ require 'navigation.php';
                                         type="'.$row[$i]['column_type'].'"
                                         column_function="'.$row[$i]['column_function'].'"
                                     >
-                                        <input type="number" class="form-control" />
+                                        <input type="number" class="form-control input_val_'.$row[$i]['id'].'" />
                                     </td>';
                             }
                         }
-                        // echo '<td class="text-end"><a class="btn btn-primary "><i class="fa fa-plus"></i></a></td>';
                     echo '</tr>';
                 }
             }
-            // echo '<tfoot>
-            //     <tr style="border:0 !important;">
-            //         <di style="border-left:0 !important; border-right:0 !important">
-            //             <button class="btn btn-primary btnAddRow" type="button"><i class="fa fa-plus"></i> Add Row</button>
-            //             <button class="btn btn-primary" type="submit">Submit</button>
-            //         </di>
-            //     </tr>
-            // </tfoot>';
         echo '</table>';
         echo '<div style="border-left:0 !important; border-right:0 !important">
-                <button class="btn btn-primary btnAddRow" type="button"><i class="fa fa-plus"></i> Add Row</button>
+                <button class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
                 <button class="btn btn-primary" type="submit">Submit</button>
             </div>';
         
@@ -138,54 +127,51 @@ $(".btnDeleteRow").click(function() {
     }
 });
 
+$(".heading_check").on('click', function(){
+    var heading;
+    if($(this).is(':checked')) {
+        heading = JSON.parse($(this).attr('data-data'));
 
-// var headerCells = document.querySelectorAll("#template-table th");
-// var selectedColumnValues = [];
-// var selectedColumnIndex = -1;
+        var heading_id = heading.id;
+        var column_type = heading.column_type;
+        var column_function = heading.column_function;
 
-// headerCells.forEach(th => {
-//     th.addEventListener("click", function() {
-//         if (selectedColumnIndex === -1) {
-//             // Primary click
-//             selectedColumnIndex = this.cellIndex;
-//             selectedColumnValues = [];
+        var types = [];
+        if(column_type=='DATA')
+        {
+            $(".input_val_"+heading_id+"").each(function() {
+                if($(this).val()){
+                    types.push($(this).val());
+                }
+            });
+            console.log(types);
+        }else{
+            if(column_function=="CORRECTION"){
 
-//             var rows = document.getElementById("template-table").getElementsByTagName("tr");
-//             for (var i = 1; i < rows.length; i++) {
-//                 var cells = rows[i].getElementsByTagName("td");
-//                 if (selectedColumnIndex < cells.length) {
-//                     var originalValue = parseFloat(cells[selectedColumnIndex].innerText.trim()) || 0;
-//                     selectedColumnValues.push(originalValue);
-//                 }
-//             }
+            }
+            if(column_function=="TUC"){
 
-//             console.log("Values under the clicked header:", selectedColumnValues);
-//         } else {
-//             // Secondary click
-//             if (selectedColumnValues.length > 0) {
-//                 var columnIndex = this.cellIndex;
-//                 var rows = document.getElementById("template-table").getElementsByTagName("tr");
+            }
+            if(column_function=="TS"){
 
-//                 console.log("rows.length: " + rows.length);
+            }
+            if(column_function=="TC"){
 
-//                 for (var i = 0; i < rows.length; i++) {
-//                     var cells = rows[i].getElementsByTagName("td");
-//                     if (columnIndex < cells.length && i - 2 < selectedColumnValues.length) {
-//                         cells[columnIndex].innerText = selectedColumnValues[i - 2];
-//                     }
-//                 }
+            }
+            if(column_function=="RS"){
 
-//                 console.log("Copied values to the secondary clicked header:", selectedColumnValues);
-//             } else {
-//                 console.log("No values found for the primary clicked header.");
-//             }
+            }
+            if(column_function=="RC"){
 
-//             // Reset values and state for the next click
-//             selectedColumnIndex = -1;
-//             selectedColumnValues = [];
-//         }
-//     });
-// });
+            }
+            if(column_function=="VC"){
+                var v = 2-2;
+            }
+        }
+    } else {
+        heading = '';
+    }
+});
 </script>
 <?php
 require 'footer.php';

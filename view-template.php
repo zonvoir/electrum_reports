@@ -109,7 +109,7 @@ $(".btnAddRow").click(function() {
     var table = $("#template-table").closest('table');
     var lastRow = table.find('tbody tr').last();
     var newRow = lastRow.clone(true, true); 
-    // newRow.find('input, textarea, select').val('');
+    newRow.find('input').val('');
     // newRow.find('.growTextarea').css('height','auto');
     newRow.insertAfter(lastRow);
     table.find('.btnDeleteRow').removeAttr("disabled");
@@ -127,6 +127,13 @@ $(".btnDeleteRow").click(function() {
     }
 });
 
+function removeRowByFirstValue(array, valueToRemove) {
+    return array.filter(function(row) {
+        return row[0] !== valueToRemove;
+    });
+}
+
+var multidimensionalArr = [];
 $(".heading_check").on('click', function(){
     var heading;
     if($(this).is(':checked')) {
@@ -136,16 +143,37 @@ $(".heading_check").on('click', function(){
         var column_type = heading.column_type;
         var column_function = heading.column_function;
 
-        var types = [];
+        var singleArr = [];
+        var functionArr = [];
+
+        var valueToRemove = heading_id;
+        multidimensionalArr = removeRowByFirstValue(multidimensionalArr, valueToRemove);
+
         if(column_type=='DATA')
         {
-            $(".input_val_"+heading_id+"").each(function() {
+            $(".input_val_"+heading_id+"").each(function(index, element) {
                 if($(this).val()){
-                    types.push($(this).val());
+                    singleArr.push($(this).val());
                 }
             });
-            console.log(types);
+            multidimensionalArr.push(singleArr);
+            console.log(multidimensionalArr);
         }else{
+            $(".input_val_"+heading_id+"").each(function(index, element) {
+                if($(this).val()){
+                    functionArr.push($(this).val());
+                }
+            });
+            console.log('functionArr', functionArr);
+            for (var i = 0; i < multidimensionalArr.length; i++) {
+                var innerArray = multidimensionalArr[i];
+                console.log('innerArray', innerArray);
+                for (var j = 0; j < innerArray.length; j++) {
+                    var element = innerArray[j];
+                    console.log('element', element);
+                    console.log('Index:', i, 'Element:', element);
+                }
+            }
             if(column_function=="CORRECTION"){
 
             }

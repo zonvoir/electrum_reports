@@ -118,6 +118,12 @@
                             <option value="TC">TEST COUNT</option>
                             <option value="RS">REF STDEV</option>
                             <option value="RC">REF COUNT</option>
+                            <option value="UC">UUC CONVERT</option>
+                            <option value="RM">REF MEAN</option>
+                            <option value="UCM">UUC CONVERT MEAN</option>
+                            <option value="UM">UUC MEAN</option>
+                            <option value="RUC">REF UNIT CON</option>
+                            <option value="CUS">COVERTD UUC STDEV</option>
                             <option value="VC">Voltage Calculate</option>
                         </select>
                     </div>
@@ -177,6 +183,12 @@
                             <option value="TC">TEST COUNT</option>
                             <option value="RS">REF STDEV</option>
                             <option value="RC">REF COUNT</option>
+                            <option value="UC">UUC CONVERT</option>
+                            <option value="RM">REF MEAN</option>
+                            <option value="UCM">UUC CONVERT MEAN</option>
+                            <option value="UM">UUC MEAN</option>
+                            <option value="RUC">REF UNIT CON</option>
+                            <option value="CUS">COVERTD UUC STDEV</option>
                             <option value="VC">Voltage Calculate</option>
                         </select>
                     </div>

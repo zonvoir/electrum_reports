@@ -12,6 +12,22 @@ require 'header.php';
     ?>
     <div class="container">
         <div class="row mt-4">
+            <div class="col-md-4">
+                <label for="unit_uuc">Unit UUC : </label>
+                <select class="form-control" id="unit_uuc">
+                    <option value="">Select</option>
+                    <option value="m">Meter</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="unit_ref">Unit ref : </label>
+                <select class="form-control" id="unit_ref">
+                    <option value="">Select</option>
+                    <option value="ft">Feet</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mt-4">
             <?php
             $layoutTemplateID = $_GET['id'];
 
@@ -55,7 +71,7 @@ require 'header.php';
                                     <label for="'.$heading['id'].'">' 
                                         . $heading['title'];
                                         if ($totalLevels == $heading['level']) {
-                                            echo '<input class="heading_check" data-data="'.htmlspecialchars(json_encode($heading)).'" id="'.$heading['id'].'" type="checkbox" />';
+                                            echo ' <input class="heading_check" data-data="'.htmlspecialchars(json_encode($heading)).'" id="'.$heading['id'].'" type="checkbox" />';
                                         }
                                     echo '</label>';
                             echo '</th>';
@@ -140,12 +156,6 @@ $(".heading_check").on('click', function() {
 
         } else {
 
-            var removeFirstColumnArr = removeFirstColumn(multipleArr);
-            var transposedArray = transposeArray(removeFirstColumnArr);
-
-            var table = document.getElementById("template-table");
-            var rows = table.getElementsByTagName("tr");
-
             var i = 1;
             
             if (column_function == "CORRECTION") {
@@ -172,17 +182,55 @@ $(".heading_check").on('click', function() {
                 //put here REF COUNT formula
                 
             }
+
+
+            if (column_function == "UC") {
+                //put here UUC CONVERT formula
+                
+            }
+            if (column_function == "RM") {
+                //put here REF MEAN formula
+                
+            }
+            if (column_function == "UCM") {
+                //put here UUC CONVERT MEAN formula
+                
+            }
+            if (column_function == "UM") {
+                //put here UUC MEAN formula
+                
+            }
+            if (column_function == "RUC") {
+                //put here REF UNIT CON formula
+                
+            }
+            if (column_function == "CUS") {
+                //put here COVERTD UUC STDEV formula
+                
+            }
             if (column_function == "VC") {
                 //this is testing function for Voltage Calculate formula V = IR
-                console.log('transposedArray', transposedArray);
+                var removeFirstColumnArr = removeFirstColumn(multipleArr);
+                var transposedArray = transposeArray(removeFirstColumnArr);
+
+                var table = document.getElementById("template-table");
+                var rows = table.getElementsByTagName("tr");
+
                 transposedArray.forEach(function(column) {
-                    console.log('column', column);
+
                     var vc_cal_result = 1;
                     column.forEach(function(val) {
                         console.log('val', val);
                         vc_cal_result = vc_cal_result * parseFloat(val);
                     });
-                    getLastCell(rows, i, vc_cal_result)
+                    
+                    var cells = rows[i].getElementsByTagName("td");
+                    var lastCell = cells[cells.length - 1];
+                    var lastCellInput = cells[cells.length - 1].querySelector("input[type='number']");
+                    if (lastCellInput) {
+                        lastCellInput.value = result; // You can set any value here
+                    }
+                    
                     i++;
                 });
             }

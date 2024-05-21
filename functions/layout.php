@@ -21,15 +21,15 @@ class Layout
             // Insert new template
             $query = "INSERT INTO layout_template (template_name) VALUES (:template_name)";
         }
-    
+
         $statement = $this->conn->prepare($query);
         $statement->bindParam(':template_name', $templateName);
-        
+
         // Bind template_id if it's for an update operation
         if ($template_id > 0) {
             $statement->bindParam(':template_id', $template_id);
         }
-    
+
         if ($statement->execute()) {
             if ($template_id > 0) {
                 return [
@@ -46,7 +46,7 @@ class Layout
             return ['status' => 'error', 'message' => 'Error inserting/updating Template Name.'];
         }
     }
-    
+
     public function addNewLayout($layoutName, $layout_template_id)
     {
         $query = "INSERT INTO layouts (layout_name, layout_template_id) VALUES (:layout_name, :layout_template_id)";
@@ -57,7 +57,7 @@ class Layout
 
         if ($statement->execute()) {
             return [
-                'status' => 'success' , 
+                'status' => 'success',
                 'message' => 'Layout has been added successfully.',
             ];
         } else {
@@ -105,7 +105,7 @@ class Layout
             $update->execute();
 
             $tableHTML = $this->getTableHTML($layout_id, $template_id);
-            
+
             return ['status' => 'success', 'message' => 'Record has been created successfully.', 'tableHTML' => $tableHTML];
         } else {
             return ['status' => 'error', 'message' => 'Record has been not created!'];
@@ -267,17 +267,17 @@ class Layout
         $statementTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
         $statementTemplate->execute();
         $template =  $statementTemplate->fetch(PDO::FETCH_ASSOC);
-        
+
         // check header column type is functions and restrict to add sub heading
         $funtionCol = $template ? $template['levels'] : 1;
-        
+
         $rows = [];
-        $i=1;
-        for ($i; $i <= $funtionCol; $i++) { 
+        $i = 1;
+        for ($i; $i <= $funtionCol; $i++) {
             $query1 = "SELECT h.*, c.column_function FROM headings h 
             LEFT JOIN column_functions c ON h.id = c.headings_id 
             WHERE h.level = $i AND h.layout_template_id = :layoutTemplateId 
-            ORDER BY h.parent_id";
+            ORDER BY h.id, h.parent_id";
 
             $statement1 = $this->conn->prepare($query1);
             $statement1->bindParam(':layoutTemplateId', $layoutTemplateID, PDO::PARAM_INT);
@@ -285,22 +285,22 @@ class Layout
             $rows[] = $statement1->fetchAll(PDO::FETCH_ASSOC);
         }
 
-        $hasFuntionCol = ($funtionCol == $i-1) ? 1 : 0;
+        $hasFuntionCol = ($funtionCol == $i - 1) ? 1 : 0;
         echo '<thead>';
         foreach ($rows as $row) {
             echo '<tr>';
             foreach ($row as $heading) {
                 // Display each heading
                 echo '<th tabindex="0" 
-                        title="'.($heading['column_type'] != "DATA" ? $heading['column_function'] : "").'" 
-                        colspan="'.$heading['colspan'].'"  
-                        column_function="'.($heading['column_function'] ? $heading['column_function'] : 'null').'"
-                        column_type="'.$heading['column_type'].'"
-                        style="border:1px solid #000; cursor:pointer; background-color:'.($heading['column_type'] != "DATA" ? "#ccc" : "").' data-toggle="tooltip" 
+                        title="' . ($heading['column_type'] != "DATA" ? $heading['column_function'] : "") . '" 
+                        colspan="' . $heading['colspan'] . '"  
+                        column_function="' . ($heading['column_function'] ? $heading['column_function'] : 'null') . '"
+                        column_type="' . $heading['column_type'] . '"
+                        style="border:1px solid #000; cursor:pointer; background-color:' . ($heading['column_type'] != "DATA" ? "#ccc" : "") . ' data-toggle="tooltip" 
                     >
-                        '.$heading['title'].'
-                        <i class="fa-solid fa-gear heading-edit" data-data="'.htmlspecialchars(json_encode($heading)).'"></i>
-                        <i class="fa-solid fa-caret-down addSubTitle" data-data="'.htmlspecialchars(json_encode($heading)).'" data-has-function="'.$hasFuntionCol.'" data-id="'.$heading['id'].'" data-text="'.$heading['title'].'"></i>
+                        ' . $heading['title'] . '
+                        <i class="fa-solid fa-gear heading-edit" data-data="' . htmlspecialchars(json_encode($heading)) . '"></i>
+                        <i class="fa-solid fa-caret-down addSubTitle" data-data="' . htmlspecialchars(json_encode($heading)) . '" data-has-function="' . $hasFuntionCol . '" data-id="' . $heading['id'] . '" data-text="' . $heading['title'] . '"></i>
                     </th>';
             }
             echo '</tr>';
@@ -1418,7 +1418,7 @@ class Layout
 
         if ($statement->execute()) {
             return [
-                'status' => 'success' , 
+                'status' => 'success',
                 'message' => 'Layout has been deleted successfully.',
             ];
         } else {
@@ -1429,7 +1429,7 @@ class Layout
 
     public function removeTemplate($template_id)
     {
-         
+
         // Step 1: Delete records from the `value` table by layout_template_id
         $deleteValueQuery = "DELETE FROM `value` WHERE layout_template_id = :template_id";
         $deleteValueStatement = $this->conn->prepare($deleteValueQuery);
@@ -1531,7 +1531,7 @@ class Layout
 
         if ($truncateTemplateStatement->execute()) {
             return [
-                'status' => 'success' , 
+                'status' => 'success',
                 'message' => 'Template has been deleted successfully.',
             ];
         } else {

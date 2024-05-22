@@ -16,7 +16,7 @@ require 'header.php';
                 <label for="unit_uuc">Unit UUC : </label>
                 <select class="form-control" id="unit_uuc">
                     <option value="">Select</option>
-                    <option value="m">Meter (m)</option>
+                    <option selected value="m">Meter (m)</option>
                     <option value="ft">Feet (ft)</option>
                 </select>
             </div>
@@ -25,7 +25,7 @@ require 'header.php';
                 <select class="form-control" id="unit_ref">
                     <option value="">Select</option>
                     <option value="m">Meter (m)</option>
-                    <option value="ft">Feet (ft)</option>
+                    <option selected value="ft">Feet (ft)</option>
                 </select>
             </div>
         </div>
@@ -95,9 +95,9 @@ require 'header.php';
                 }
             }
 
-            echo "<pre>";
-            print_r($lastRow);
-            echo "</pre>";
+            // echo "<pre>";
+            // print_r($lastRow);
+            // echo "</pre>";
             // die;
 
             //if ($key == count($rows)) {
@@ -215,24 +215,52 @@ require 'header.php';
                         var unit_uuc = $("#unit_uuc").val();
                         var unit_ref = $("#unit_ref").val();
                         var result = 0;
-                        if (unit_uuc == "m" && unit_ref == "ft") {
-                            result = metersToFeet(10);
-                            $(".input_val_" + heading_id + "").each(function() {
-                                $(this).val(result);
-                            });
-
+                        if (unit_uuc != "" && unit_ref != "") {
+                            var UUCReading = false;
+                            var UUCReadingVal = [];
                             multipleArr.forEach(function(column) {
                                 column.forEach(function(val) {
                                     if (val == "UUC reading") {
-                                        console.log(val);
+                                        UUCReading = true;
+                                    } else if (isNaN(val)) {
+                                        UUCReading = false;
+                                    }
+                                    if (UUCReading && val != "UUC reading") {
+                                        if (unit_uuc == "m" && unit_ref == "ft") {
+                                            UUCReadingVal.push(metersToFeet(val));
+                                        } else if (unit_uuc == "ft" && unit_ref == "m") {
+                                            UUCReadingVal.push(feetToMeters(val));
+                                        }
                                     }
                                 });
+                            });
+                            let x = 0;
+                            $(".input_val_" + heading_id + "").each(function() {
+                                $(this).val(UUCReadingVal[x++]);
                             });
                         }
                     }
                     if (column_function == "RM") {
-                        //put here REF MEAN formula
-
+                        var RefReading = false;
+                        var RefReadingSum = 0;
+                        var RefReadingCount = 0;
+                        multipleArr.forEach(function(column) {
+                            column.forEach(function(val) {
+                                if (val == "Ref reading") {
+                                    RefReading = true;
+                                } else if (isNaN(val)) {
+                                    RefReading = false;
+                                }
+                                if (RefReading && val != "Ref reading") {
+                                    RefReadingSum = RefReadingSum + parseFloat(val);
+                                    RefReadingCount++;
+                                }
+                            });
+                        });
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            $(this).val(parseFloat(RefReadingSum / RefReadingCount));
+                        });
                     }
                     if (column_function == "UCM") {
                         //put here UUC CONVERT MEAN formula
@@ -316,6 +344,10 @@ require 'header.php';
         function metersToFeet($meters) {
             $feet = $meters * 3.28084;
             return $feet;
+        }
+
+        function feetToMeters(feet) {
+            return feet * 0.3048; // 1 foot = 0.3048 meters
         }
     </script>
     <?php

@@ -163,7 +163,6 @@ require 'header.php';
                     success: function(response) {
                         var inputLevel = $('#inputLevel');
                         var totalLevels = response > 1 ? parseInt(response) + 1 : response;
-                        console.log(response, totalLevels);
                         var optionsHTML = '';
                         for (var count = 1; count <= totalLevels; count++) {
                             optionsHTML += '<option value="' + count + '">' + count + '</option>';

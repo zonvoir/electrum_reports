@@ -63,6 +63,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             case 'allTemplates':
                 handleAllTemplates($layouts);
+                break;
+            case 'loadSplitData':
+                handleSplitData($layouts);
                 break; 
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
@@ -376,6 +379,20 @@ function handleAllTemplates()
         $start = isset($_POST['start']) ? intval($_POST['start']) : 1;
         $length = isset($_POST['length']) ? intval($_POST['length']) : 10; // Adjust as needed
         $response = $layout->allTemplates($draw, $start, $length);
+
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
+
+function handleSplitData($layouts)
+{
+    if (isset($_POST['action']) && $_POST['action']=='loadSplitData') {
+
+        $response = $layouts->getSplitData($_POST);
 
         if ($response) {
             echo json_encode($response);

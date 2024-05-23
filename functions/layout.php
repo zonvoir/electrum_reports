@@ -1650,6 +1650,31 @@ class Layout
         return $response;
     }
 
+    public function getSplitData($postData)
+    {
+        $equipment_id = $postData['equipment_id'];
+        $sensor_id = $postData['sensor_id'];
+        $cal_date = $postData['cal_date'];
+        $range_min = $postData['range_min'];
+        $range_max = $postData['range_max'];
+        $x_split_no = $postData['x_split_no'];
+
+        $query = "SELECT * FROM si_cal_points WHERE eq_id=:equipmentId AND sensor_id=:sensorId AND split_no=:xSplitNo";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':equipmentId', $equipment_id, PDO::PARAM_STR);
+        $statement->bindParam(':sensorId', $sensor_id, PDO::PARAM_STR);
+        $statement->bindParam(':xSplitNo', $x_split_no, PDO::PARAM_STR);
+        $statement->execute();
+        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        // print_r($data); die;
+        $response = [
+            'status' => 'success',
+            "data" => $data,
+        ];
+
+        return $response;
+    }
 
     private function getLayoutTotalRecords()
     {

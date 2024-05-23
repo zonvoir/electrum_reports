@@ -12,22 +12,130 @@ require 'header.php';
     ?>
     <div class="container">
         <div class="row mt-4">
+            <div class="col-md-2">
+                <label for="equipment_id">Equipment ID</label>
+                <input type="text" id="equipment_id" class="form-control getSplitData" />
+            </div>
+            <div class="col-md-2">
+                <label for="sensor_id">Sensor ID</label>
+                <input type="text" id="sensor_id" class="form-control getSplitData" />
+            </div>
+            <div class="col-md-2">
+                <label for="cal_date">Cal date</label>
+                <input type="date" id="cal_date" class="form-control getSplitData" />
+            </div>
+            <div class="col-md-2">
+                <label for="range_min">Range</label>
+                <input type="number" id="range_min" class="form-control getSplitData" placeholder="Min" />
+            </div>
+            <div class="col-md-2">
+                <label for="range_min"></label>
+                <input type="number" id="range_max" class="form-control getSplitData" placeholder="Max" />
+            </div>
+            <div class="col-md-2">
+                <label for="x_split_no">X(split No.)</label>
+                <input type="text" id="x_split_no" class="form-control getSplitData" />
+            </div>
+        </div>
+        <div class="row mt-2 mb-4">
             <div class="col-md-4">
-                <label for="unit_uuc">Unit UUC : </label>
+                <label for="res">Res</label>
+                <input type="text" id="res" class="form-control" />
+            </div>
+            <div class="col-md-8">
+                <table class="table table-borderd" id="split_table">
+                    
+                </table>
+            </div>
+        </div>
+        <hr />
+        <div class="row mt-2">
+            <div class="col-md-4">
+                <label for="equipment_name">Equipment Name</label>
+                <input type="text" id="equipment_name" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="brand">Brand</label>
+                <input type="text" id="brand" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="serial_no">Serial #</label>
+                <input type="text" id="serial_no" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-md-4">
+                <label for="unit_ref">Unit ref</label>
+                <input type="text" id="unit_ref" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="resolution_ref">Resolution ref</label>
+                <input type="text" id="resolution_ref" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="cal_date_2">Cal Date</label>
+                <input type="date" id="cal_date_2" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="row mt-2 mb-4">
+            <div class="col-md-4">
+                <label for="C1">C1</label>
+                <input type="text" id="C1" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C2">C2</label>
+                <input type="text" id="C2" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C3">C3</label>
+                <input type="text" id="C3" class="form-control" readonly/>
+            </div>
+            <div class="col-md-4">
+                <label for="C4">C4</label>
+                <input type="text" id="C4" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C5">C5</label>
+                <input type="text" id="C5" class="form-control" readonly/>
+            </div>
+        </div>
+        <hr />
+        <div class="row mt-2">
+            <?php
+            $querySiRefEqInfo = "SELECT * FROM si_ref_eq_info GROUP BY unit";
+            $statementSiRefEqInfo = $conn->prepare($querySiRefEqInfo);
+            // $statementTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
+            $statementSiRefEqInfo->execute();
+            $siRefEqInfos = $statementSiRefEqInfo->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+            <div class="col-md-4">
+                <label for="unit_uuc">Unit UUC</label>
                 <select class="form-control" id="unit_uuc">
                     <option value="">Select</option>
-                    <option selected value="m">Meter (m)</option>
-                    <option value="ft">Feet (ft)</option>
+                    <?php
+                    foreach($siRefEqInfos as $siRefEqInfo)
+                    {
+                    ?>
+                        <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option>
+                    <?php
+                    }
+                    ?>
                 </select>
-            </div>
+            </div>  
             <div class="col-md-4">
-                <label for="unit_ref">Unit ref : </label>
-                <select class="form-control" id="unit_ref">
+                <label for="resolution_uuc">Resolution UUC</label>
+                <select class="form-control" id="resolution_uuc">
                     <option value="">Select</option>
-                    <option value="m">Meter (m)</option>
-                    <option selected value="ft">Feet (ft)</option>
+                    <?php
+                    foreach($siRefEqInfos as $siRefEqInfo)
+                    {
+                    ?>
+                        <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option>
+                    <?php
+                    }
+                    ?>
                 </select>
-            </div>
+            </div>  
         </div>
         <div class="row mt-4">
             <?php
@@ -64,13 +172,6 @@ require 'header.php';
                 $rows[$level][] = $heading;
             }
 
-            // foreach ($rows as $key => $row) {
-            //     echo "<pre>";
-            //     print_r($row);
-            //     echo "</pre>";
-            //     break;
-            // }
-
             echo '<table id="template-table" class="table table-bordered">';
             $levelIndex = 1;
             $count = 0;
@@ -95,18 +196,12 @@ require 'header.php';
                 }
             }
 
-            // echo "<pre>";
-            // print_r($lastRow);
-            // echo "</pre>";
-            // die;
-
-            //if ($key == count($rows)) {
-            //echo "count:" . count($row);
             echo '<tr>';
             for ($i = 0; $i <= $count - 1; $i++) {
                 if ($i == $count - 1) {
                     echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                        <div class="d-flex">                                            
+                                        <div class="d-flex">      
+                                            <input type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                          
                                             <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
                                         </div>';
                     echo '</td>';
@@ -123,7 +218,6 @@ require 'header.php';
                 }
             }
             echo '</tr>';
-            //}
             echo '</table>';
             echo '<div style="border-left:0 !important; border-right:0 !important">
                     <button class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
@@ -138,6 +232,54 @@ require 'header.php';
     ?>
 
     <script>
+        $("body").on('keyup change', '.getSplitData', function(){
+            var equipment_id    = $("#equipment_id").val();
+            var sensor_id       = $("#sensor_id").val();
+            var cal_date        = $("#cal_date").val();
+            var range_min       = $("#range_min").val();
+            var range_max       = $("#range_max").val();
+            var x_split_no      = $("#x_split_no").val();
+            console.log('equipment_id', equipment_id);
+            console.log('sensor_id', sensor_id);
+            console.log('cal_date', cal_date);
+            console.log('range_min', range_min);
+            console.log('range_max', range_max);
+            console.log('x_split_no', x_split_no);
+            if(equipment_id!='' && sensor_id!='' && cal_date!='' && range_min!='' && range_max!='' && x_split_no!=''){
+                $.ajax({
+                    type: 'POST',
+                    url: './functions/add-title.php',
+                    data: {
+                        action: 'loadSplitData',
+                        equipment_id: equipment_id,
+                        sensor_id: sensor_id,
+                        cal_date: cal_date,
+                        range_min: range_min,
+                        range_max: range_max,
+                        x_split_no: x_split_no,
+                    },
+                    success: function(data) {
+                        var response = JSON.parse(data)
+                        if (response.status === 'success') {
+                            var splitTable = $('#split_table');
+                            var splitTableHTML = '<tr><th>Ref Uncert</th><th>Split Data</th></tr>';
+                            $.each(response.data, function(index, row) {
+                                
+                                splitTableHTML += '<tr><td>'+row.uncert+'</td><td>'+row.split_no+'</td></tr>';
+                            });
+                            splitTable.html(splitTableHTML);
+                        } else {
+                            console.error('Error: ' + response.message);
+                        }
+                    },
+                    error: function(error) {
+                        alert('Error fetching templates!');
+                        console.log(error);
+                    }
+                });
+            }
+        });
+
         //Add table row
         $(".btnAddRow").click(function() {
             var table = $("#template-table").closest('table');

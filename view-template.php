@@ -43,8 +43,9 @@ require 'header.php';
                 <input type="text" id="res" class="form-control" />
             </div>
             <div class="col-md-8">
-                <table class="table table-borderd" id="split_table">
-                    
+                <table class="table table-borderd">
+                    <thead><tr><th>Ref Uncert</th><th>Split Data</th></tr></thead>
+                    <tbody id="split_table"></tbody>
                 </table>
             </div>
         </div>
@@ -239,12 +240,9 @@ require 'header.php';
             var range_min       = $("#range_min").val();
             var range_max       = $("#range_max").val();
             var x_split_no      = $("#x_split_no").val();
-            console.log('equipment_id', equipment_id);
-            console.log('sensor_id', sensor_id);
-            console.log('cal_date', cal_date);
-            console.log('range_min', range_min);
-            console.log('range_max', range_max);
-            console.log('x_split_no', x_split_no);
+            
+            var splitTable      = $('#split_table');
+            var splitTableHTML  = '';
             if(equipment_id!='' && sensor_id!='' && cal_date!='' && range_min!='' && range_max!='' && x_split_no!=''){
                 $.ajax({
                     type: 'POST',
@@ -261,8 +259,7 @@ require 'header.php';
                     success: function(data) {
                         var response = JSON.parse(data)
                         if (response.status === 'success') {
-                            var splitTable = $('#split_table');
-                            var splitTableHTML = '<tr><th>Ref Uncert</th><th>Split Data</th></tr>';
+                            
                             $.each(response.data, function(index, row) {
                                 
                                 splitTableHTML += '<tr><td>'+row.uncert+'</td><td>'+row.split_no+'</td></tr>';
@@ -277,6 +274,8 @@ require 'header.php';
                         console.log(error);
                     }
                 });
+            }else{
+                splitTable.html(splitTableHTML);
             }
         });
 

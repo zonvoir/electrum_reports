@@ -67,6 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'loadSplitData':
                 handleSplitData($layouts);
                 break; 
+            case 'loadCertificateData':
+                handleCertificateData($layouts);
+                break; 
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
                 break;
@@ -402,7 +405,19 @@ function handleSplitData($layouts)
     }
 }
 
+function handleCertificateData($layouts)
+{
+    if (isset($_POST['action']) && $_POST['action']=='loadCertificateData') {
 
+        $response = $layouts->getCertificateData($_POST);
+
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
 
 function getValuesUnderHeading(){
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {

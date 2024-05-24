@@ -124,7 +124,8 @@
                             <option value="UM">UUC MEAN</option>
                             <option value="RUC">REF UNIT CON</option>
                             <option value="CUS">COVERTD UUC STDEV</option>
-                            <option value="VC">Voltage Calculate</option>
+                            <option value="CR">CORRECTED REF</option>
+                            <!-- <option value="VC">Voltage Calculate</option> -->
                         </select>
                     </div>
                 </div>
@@ -177,6 +178,7 @@
                     <label for="column_function_edit" class="col-sm-4 col-form-label text-end">Function</label>
                     <div class="col-sm-6">
                         <select class="form-control form-control-sm inputFunction" id="column_function_edit">
+                        <option value="">Select Function</option>
                             <option value="CORRECTION">CORRECTION</option>
                             <option value="TUC">TEST UNIT CONVERTION</option>
                             <option value="TS">TEST STDEV</option>
@@ -189,7 +191,8 @@
                             <option value="UM">UUC MEAN</option>
                             <option value="RUC">REF UNIT CON</option>
                             <option value="CUS">COVERTD UUC STDEV</option>
-                            <option value="VC">Voltage Calculate</option>
+                            <option value="CR">CORRECTED REF</option>
+                            <!-- <option value="VC">Voltage Calculate</option> -->
                         </select>
                     </div>
                 </div>

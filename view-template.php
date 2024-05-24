@@ -40,7 +40,7 @@ require 'header.php';
         <div class="row mt-2 mb-4">
             <div class="col-md-4">
                 <label for="res">Res</label>
-                <input type="text" id="res" class="form-control" />
+                <input type="text" id="res" class="form-control getCertificateData" />
             </div>
             <div class="col-md-8">
                 <table class="table table-borderd">
@@ -112,28 +112,28 @@ require 'header.php';
             <div class="col-md-4">
                 <label for="unit_uuc">Unit UUC</label>
                 <select class="form-control" id="unit_uuc">
-                    <option value="">Select</option>
+                    <option value="ft">Feet</option>
                     <?php
-                    foreach($siRefEqInfos as $siRefEqInfo)
-                    {
+                    // foreach($siRefEqInfos as $siRefEqInfo)
+                    // {
                     ?>
-                        <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option>
+                        <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
                     <?php
-                    }
+                    // }
                     ?>
                 </select>
             </div>  
             <div class="col-md-4">
                 <label for="resolution_uuc">Resolution UUC</label>
                 <select class="form-control" id="resolution_uuc">
-                    <option value="">Select</option>
+                    <option value="m">Meter</option>
                     <?php
-                    foreach($siRefEqInfos as $siRefEqInfo)
-                    {
+                    // foreach($siRefEqInfos as $siRefEqInfo)
+                    // {
                     ?>
-                        <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option>
+                        <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
                     <?php
-                    }
+                    // }
                     ?>
                 </select>
             </div>  
@@ -243,6 +243,8 @@ require 'header.php';
             
             var splitTable      = $('#split_table');
             var splitTableHTML  = '';
+
+            // [equipment_id, sensor_id, cal_date, range_min, range_max, x_split_no].every(value => value !== '')
             if(equipment_id!='' && sensor_id!='' && cal_date!='' && range_min!='' && range_max!='' && x_split_no!=''){
                 $.ajax({
                     type: 'POST',
@@ -256,28 +258,74 @@ require 'header.php';
                         range_max: range_max,
                         x_split_no: x_split_no,
                     },
-                    success: function(data) {
-                        var response = JSON.parse(data)
+                    success: function(dataJSON) {
+                        var response = JSON.parse(dataJSON)
                         if (response.status === 'success') {
-                            
                             $.each(response.data, function(index, row) {
-                                
                                 splitTableHTML += '<tr><td>'+row.uncert+'</td><td>'+row.split_no+'</td></tr>';
                             });
                             splitTable.html(splitTableHTML);
-                        } else {
-                            console.error('Error: ' + response.message);
                         }
-                    },
-                    error: function(error) {
-                        alert('Error fetching templates!');
-                        console.log(error);
                     }
                 });
             }else{
                 splitTable.html(splitTableHTML);
             }
         });
+
+        $("body").on('input', '.getCertificateData', function(){
+            var equipment_id    = $("#equipment_id").val();
+            var sensor_id       = $("#sensor_id").val();
+            var cal_date        = $("#cal_date").val();
+            var range_min       = $("#range_min").val();
+            var range_max       = $("#range_max").val();
+            var x_split_no      = $("#x_split_no").val();
+            var res             = $("#res").val();
+        
+            if(equipment_id!='' && sensor_id!='' && cal_date!='' && range_min!='' && range_max!='' && x_split_no!='' && res!==''){
+                $.ajax({
+                    type: 'POST',
+                    url: './functions/add-title.php',
+                    data: {
+                        action: 'loadCertificateData',
+                        equipment_id: equipment_id,
+                        sensor_id: sensor_id,
+                        cal_date: cal_date,
+                        range_min: range_min,
+                        range_max: range_max,
+                        x_split_no: x_split_no,
+                        res: res,
+                    },
+                    success: function(dataJSON) {
+                        var response = JSON.parse(dataJSON)
+                        if (response.status === 'success') {
+                            $("#equipment_name").val(response.data.eq_name);
+                            $("#brand").val(response.data.brand);
+                            $("#serial_no").val(response.data.serial_no);
+                            $("#unit_ref").val('Meter'); //response.data.unit
+                            $("#resolution_ref").val('Feet'); //response.data.unit
+                            $("#cal_date_2").val(changeDateFormat(response.data.cal_date));
+                            $("#C1").val(response.data.c1);
+                            $("#C2").val(response.data.c2);
+                            $("#C3").val(response.data.c3);
+                            $("#C4").val(response.data.c4);
+                            $("#C5").val(response.data.c5);
+                        }
+                    }
+                });
+            }
+        });
+
+        function changeDateFormat(dateString) {
+            console.log('dateString',dateString);
+            if(dateString!='' && dateString!=undefined){
+                var parts = dateString.split('/');
+                var formattedDate = parts[2] + '-' + parts[0].padStart(2, '0') + '-' + parts[1].padStart(2, '0');
+                return formattedDate;
+            }else{
+                return '';
+            }
+        }
 
         //Add table row
         $(".btnAddRow").click(function() {
@@ -330,7 +378,42 @@ require 'header.php';
 
                     if (column_function == "CORRECTION") {
                         //put here CORRECTION formula
+                        var refUnitConValue = 0;
+                        var uUCMeanValue = 0;
+                        var refUnitCon = false;
+                        var uUCMean = false;
+                        multipleArr.forEach(function(column) {
+                            column.forEach(function(val) {
 
+                                if (val == "Ref unit con") {
+                                    refUnitCon = true;
+                                } else if (isNaN(val)) {
+                                    refUnitCon = false;
+                                }
+                                if (refUnitCon && val != "Ref unit con") {
+                                    refUnitConValue = parseFloat(val);
+                                }
+
+                                if (val == "UUC Mean") {
+                                    uUCMean = true;
+                                } else if (isNaN(val)) {
+                                    uUCMean = false;
+                                }
+                                if (uUCMean && val != "UUC Mean") {
+                                    uUCMeanValue = parseFloat(val);
+                                }
+
+                            });
+                        });
+
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(refUnitConValue - uUCMeanValue);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
                     }
                     if (column_function == "TUC") {
                         //put here TEST UNIT CONVERTION formula
@@ -346,6 +429,33 @@ require 'header.php';
                     }
                     if (column_function == "RS") {
                         //put here REF STDEV formula
+                        var RefReading = false;
+                        var uUUCCovertArr = [];
+                        var sampleStdev = 0;
+                        multipleArr.forEach(function(column) {
+                            column.forEach(function(val) {
+                                if (val == "Ref reading") {
+                                    RefReading = true;
+                                } else if (isNaN(val)) {
+                                    RefReading = false;
+                                }
+                                if (RefReading && val != "Ref reading") {
+                                    uUUCCovertArr.push(val);
+                                }
+                                var data = uUUCCovertArr;
+                                
+                                sampleStdev = sampleStandardDeviation(data);
+                                console.log("Sample Standard Deviation:", sampleStdev);
+                            });
+                        });
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(sampleStdev);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
 
                     }
                     if (column_function == "RC") {
@@ -353,8 +463,9 @@ require 'header.php';
 
                     }
                     if (column_function == "UC") {
+                        //put here UUC convrt formula
+                        var unit_ref = $("#unit_ref").val()=='Meter' ? 'm' : 'm';
                         var unit_uuc = $("#unit_uuc").val();
-                        var unit_ref = $("#unit_ref").val();
                         var result = 0;
                         if (unit_uuc != "" && unit_ref != "") {
                             var UUCReading = false;
@@ -377,11 +488,16 @@ require 'header.php';
                             });
                             let x = 0;
                             $(".input_val_" + heading_id + "").each(function() {
-                                $(this).val(UUCReadingVal[x++]);
+                                let v = UUCReadingVal[x++];
+                                $(this).val(v);
+                                singleInputHeadingWiseArray.push(v);
                             });
+                            multipleArr.push(singleInputHeadingWiseArray);
+                            console.log(multipleArr);
                         }
                     }
                     if (column_function == "RM") {
+                        //put here Ref Mean formula
                         var RefReading = false;
                         var RefReadingSum = 0;
                         var RefReadingCount = 0;
@@ -400,23 +516,154 @@ require 'header.php';
                         });
                         let x = 0;
                         $(".input_val_" + heading_id + "").each(function() {
-                            $(this).val(parseFloat(RefReadingSum / RefReadingCount));
+                            let v = parseFloat(RefReadingSum / RefReadingCount);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
                         });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
                     }
+
+                    if (column_function == "CR") {
+                        //put here CORRECTED REF formula
+                        var xSplitNo  = $("#x_split_no").val();
+                        var C1 = $("#C1").val();
+                        var C2 = $("#C2").val();
+                        var C3 = $("#C3").val();
+                        var C4 = $("#C4").val();
+                        var C5 = $("#C5").val();
+
+                        var correct_reference = C5*Math.pow(xSplitNo, 4) + C4*Math.pow(xSplitNo, 3) + C3*Math.pow(xSplitNo, 2) + C2*Math.pow(xSplitNo, 1) + C1;
+                        
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(correct_reference);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
+                    }
+
                     if (column_function == "UCM") {
                         //put here UUC CONVERT MEAN formula
+                        var RefReading = false;
+                        var RefReadingSum = 0;
+                        var RefReadingCount = 0;
+                        multipleArr.forEach(function(column) {
+                            column.forEach(function(val) {
+                                if (val == "UUC convert") {
+                                    RefReading = true;
+                                } else if (isNaN(val)) {
+                                    RefReading = false;
+                                }
+                                if (RefReading && val != "UUC convert") {
+                                    RefReadingSum = RefReadingSum + parseFloat(val);
+                                    RefReadingCount++;
+                                }
+                            });
+                        });
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(RefReadingSum / RefReadingCount);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
 
                     }
                     if (column_function == "UM") {
                         //put here UUC MEAN formula
-
+                        var RefReading = false;
+                        var RefReadingSum = 0;
+                        var RefReadingCount = 0;
+                        multipleArr.forEach(function(column) {
+                            column.forEach(function(val) {
+                                if (val == "UUC reading") {
+                                    RefReading = true;
+                                } else if (isNaN(val)) {
+                                    RefReading = false;
+                                }
+                                if (RefReading && val != "UUC reading") {
+                                    RefReadingSum = RefReadingSum + parseFloat(val);
+                                    RefReadingCount++;
+                                }
+                            });
+                        });
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(RefReadingSum / RefReadingCount);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
                     }
                     if (column_function == "RUC") {
                         //put here REF UNIT CON formula
+                        var resolution_ref = $("#resolution_ref").val()=='Feet' ? 'ft' : 'ft';
+                        var resolution_uuc = $("#resolution_uuc").val();
+                        var result = 0;
+                        if (resolution_uuc != "" && resolution_ref != "") {
+                            var refUnitCon = false;
+                            var refUnitConVal = [];
+                            multipleArr.forEach(function(column) {
+                                column.forEach(function(val) {
+                                    if (val == "Corrected Ref") {
+                                        refUnitCon = true;
+                                    } else if (isNaN(val)) {
+                                        refUnitCon = false;
+                                    }
+                                    if (refUnitCon && val != "Corrected Ref") {
+                                        if (resolution_uuc == "m" && resolution_ref == "ft") {
+                                            refUnitConVal.push(metersToFeet(val));
+                                        } else if (resolution_uuc == "ft" && resolution_ref == "m") {
+                                            refUnitConVal.push(feetToMeters(val));
+                                        }
+                                    }
+                                });
+                            });
+                            let x = 0;
+                            $(".input_val_" + heading_id + "").each(function() {
+                                let v = refUnitConVal[x++];
+                                $(this).val(v);
+                                singleInputHeadingWiseArray.push(v);
+                            });
+                            multipleArr.push(singleInputHeadingWiseArray);
+                            console.log(multipleArr);
+                        }
 
                     }
                     if (column_function == "CUS") {
                         //put here COVERTD UUC STDEV formula
+                        var RefReading = false;
+                        var uUUCCovertArr = [];
+                        var sampleStdev = 0;
+                        multipleArr.forEach(function(column) {
+                            column.forEach(function(val) {
+                                if (val == "UUC convert") {
+                                    RefReading = true;
+                                } else if (isNaN(val)) {
+                                    RefReading = false;
+                                }
+                                if (RefReading && val != "UUC convert") {
+                                    uUUCCovertArr.push(val);
+                                }
+                                var data = uUUCCovertArr;
+
+                                sampleStdev = sampleStandardDeviation(data);
+                                console.log("Sample Standard Deviation:", sampleStdev);
+                            });
+                        });
+                        let x = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(sampleStdev);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
 
                     }
                     if (column_function == "VC") {
@@ -452,6 +699,17 @@ require 'header.php';
                 });
             }
         });
+
+        function sampleStandardDeviation(data) 
+        {
+            const n = data.length;
+            if (n === 0 || n === 1) return null;
+
+            const mean = data.reduce((acc, val) => acc + val, 0) / n;
+            const variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (n - 1);
+
+            return Math.sqrt(variance);
+        }
 
         function getLastCell(rows, i, result) {
             var cells = rows[i].getElementsByTagName("td");

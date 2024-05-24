@@ -1652,12 +1652,12 @@ class Layout
 
     public function getSplitData($postData)
     {
-        $equipment_id = $postData['equipment_id'];
-        $sensor_id = $postData['sensor_id'];
-        $cal_date = $postData['cal_date'];
-        $range_min = $postData['range_min'];
-        $range_max = $postData['range_max'];
-        $x_split_no = $postData['x_split_no'];
+        $equipment_id   = $postData['equipment_id'];
+        $sensor_id      = $postData['sensor_id'];
+        $cal_date       = $postData['cal_date'];
+        $range_min      = $postData['range_min'];
+        $range_max      = $postData['range_max'];
+        $x_split_no     = $postData['x_split_no'];
 
         $query = "SELECT * FROM si_cal_points WHERE eq_id=:equipmentId AND sensor_id=:sensorId AND split_no=:xSplitNo";
         $statement = $this->conn->prepare($query);
@@ -1667,12 +1667,35 @@ class Layout
         $statement->execute();
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
 
+        $response = [
+            'status' => 'success',
+            "data" => $data,
+        ];
+        return $response;
+    }
+
+    public function getCertificateData($postData)
+    {
+        $equipment_id   = $postData['equipment_id'];
+        $sensor_id      = $postData['sensor_id'];
+        $cal_date       = $postData['cal_date'];
+        $range_min      = $postData['range_min'];
+        $range_max      = $postData['range_max'];
+        $x_split_no     = $postData['x_split_no'];
+        $res            = $postData['res'];
+
+        $query = "SELECT * FROM si_ref_eq_info WHERE eq_id=:equipmentId AND sensor_id=:sensorId AND res LIKE :res AND split_no IN (SELECT split_no FROM si_cal_points WHERE eq_id=:equipmentId AND sensor_id=:sensorId)";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':equipmentId', $equipment_id, PDO::PARAM_STR);
+        $statement->bindParam(':sensorId', $sensor_id, PDO::PARAM_STR);
+        $statement->bindParam(':res', $res, PDO::PARAM_STR);
+        $statement->execute();
+        $data = $statement->fetch(PDO::FETCH_ASSOC);
         // print_r($data); die;
         $response = [
             'status' => 'success',
             "data" => $data,
         ];
-
         return $response;
     }
 

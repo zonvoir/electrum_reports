@@ -12,39 +12,45 @@ require 'header.php';
     ?>
     <div class="container">
         <div class="row mt-4">
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label for="equipment_id">Equipment ID</label>
                 <input type="text" id="equipment_id" class="form-control getSplitData" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label for="sensor_id">Sensor ID</label>
                 <input type="text" id="sensor_id" class="form-control getSplitData" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label for="cal_date">Cal date</label>
                 <input type="date" id="cal_date" class="form-control getSplitData" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
+                <label for="res">Res</label>
+                <input type="text" id="res" class="form-control getCertificateData" />
+            </div>
+            <div class="col-md-2 hide">
                 <label for="range_min">Range</label>
-                <input type="number" id="range_min" class="form-control getSplitData" placeholder="Min" />
+                <input type="number" id="range_min" class="form-control getSplitData" placeholder="Min" value="0" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 hide">
                 <label for="range_min"></label>
-                <input type="number" id="range_max" class="form-control getSplitData" placeholder="Max" />
+                <input type="number" id="range_max" class="form-control getSplitData" placeholder="Max" value="0" />
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2 hide">
                 <label for="x_split_no">X(split No.)</label>
                 <input type="text" id="x_split_no" class="form-control getSplitData" />
             </div>
         </div>
         <div class="row mt-2 mb-4">
+            <div class="col-md-8">&nbsp;</div>
             <div class="col-md-4">
-                <label for="res">Res</label>
-                <input type="text" id="res" class="form-control getCertificateData" />
-            </div>
-            <div class="col-md-8">
                 <table class="table table-borderd">
-                    <thead><tr><th>Ref Uncert</th><th>Split Data</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Ref Uncert</th>
+                            <th>Split Data</th>
+                        </tr>
+                    </thead>
                     <tbody id="split_table"></tbody>
                 </table>
             </div>
@@ -89,7 +95,7 @@ require 'header.php';
             </div>
             <div class="col-md-4">
                 <label for="C3">C3</label>
-                <input type="text" id="C3" class="form-control" readonly/>
+                <input type="text" id="C3" class="form-control" readonly />
             </div>
             <div class="col-md-4">
                 <label for="C4">C4</label>
@@ -97,7 +103,7 @@ require 'header.php';
             </div>
             <div class="col-md-4">
                 <label for="C5">C5</label>
-                <input type="text" id="C5" class="form-control" readonly/>
+                <input type="text" id="C5" class="form-control" readonly />
             </div>
         </div>
         <hr />
@@ -117,12 +123,12 @@ require 'header.php';
                     // foreach($siRefEqInfos as $siRefEqInfo)
                     // {
                     ?>
-                        <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
+                    <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
                     <?php
                     // }
                     ?>
                 </select>
-            </div>  
+            </div>
             <div class="col-md-4">
                 <label for="resolution_uuc">Resolution UUC</label>
                 <select class="form-control" id="resolution_uuc">
@@ -131,12 +137,12 @@ require 'header.php';
                     // foreach($siRefEqInfos as $siRefEqInfo)
                     // {
                     ?>
-                        <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
+                    <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
                     <?php
                     // }
                     ?>
                 </select>
-            </div>  
+            </div>
         </div>
         <div class="row mt-4">
             <?php
@@ -221,9 +227,10 @@ require 'header.php';
             echo '</tr>';
             echo '</table>';
             echo '<div style="border-left:0 !important; border-right:0 !important">
-                    <button class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>
+                    <button class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
+                    <button style="float:right" class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                     <!--button class="btn btn-primary" type="submit">Submit</button-->
-                </div>';
+                </div><p>&nbsp;</p><p>&nbsp;</p>';
 
             ?>
         </div>
@@ -233,56 +240,56 @@ require 'header.php';
     ?>
 
     <script>
-        $("body").on('keyup change', '.getSplitData', function(){
-            var equipment_id    = $("#equipment_id").val();
-            var sensor_id       = $("#sensor_id").val();
-            var cal_date        = $("#cal_date").val();
-            var range_min       = $("#range_min").val();
-            var range_max       = $("#range_max").val();
-            var x_split_no      = $("#x_split_no").val();
-            
-            var splitTable      = $('#split_table');
-            var splitTableHTML  = '';
+        // $("body").on('keyup change', '.getSplitData', function() {
+        //     var equipment_id = $("#equipment_id").val();
+        //     var sensor_id = $("#sensor_id").val();
+        //     var cal_date = $("#cal_date").val();
+        //     var range_min = $("#range_min").val();
+        //     var range_max = $("#range_max").val();
+        //     //var x_split_no = $("#x_split_no").val();
 
-            // [equipment_id, sensor_id, cal_date, range_min, range_max, x_split_no].every(value => value !== '')
-            if(equipment_id!='' && sensor_id!='' && cal_date!='' && range_min!='' && range_max!='' && x_split_no!=''){
-                $.ajax({
-                    type: 'POST',
-                    url: './functions/add-title.php',
-                    data: {
-                        action: 'loadSplitData',
-                        equipment_id: equipment_id,
-                        sensor_id: sensor_id,
-                        cal_date: cal_date,
-                        range_min: range_min,
-                        range_max: range_max,
-                        x_split_no: x_split_no,
-                    },
-                    success: function(dataJSON) {
-                        var response = JSON.parse(dataJSON)
-                        if (response.status === 'success') {
-                            $.each(response.data, function(index, row) {
-                                splitTableHTML += '<tr><td>'+row.uncert+'</td><td>'+row.split_no+'</td></tr>';
-                            });
-                            splitTable.html(splitTableHTML);
-                        }
-                    }
-                });
-            }else{
-                splitTable.html(splitTableHTML);
-            }
-        });
+        //     var splitTable = $('#split_table');
+        //     var splitTableHTML = '';
 
-        $("body").on('input', '.getCertificateData', function(){
-            var equipment_id    = $("#equipment_id").val();
-            var sensor_id       = $("#sensor_id").val();
-            var cal_date        = $("#cal_date").val();
-            var range_min       = $("#range_min").val();
-            var range_max       = $("#range_max").val();
-            var x_split_no      = $("#x_split_no").val();
-            var res             = $("#res").val();
-        
-            if(equipment_id!='' && sensor_id!='' && cal_date!='' && range_min!='' && range_max!='' && x_split_no!='' && res!==''){
+        //     // [equipment_id, sensor_id, cal_date, range_min, range_max, x_split_no].every(value => value !== '')
+        //     if (equipment_id != '' && sensor_id != '' && cal_date != '' && range_min != '' && range_max != '') { //&& x_split_no != ''
+        //         $.ajax({
+        //             type: 'POST',
+        //             url: './functions/add-title.php',
+        //             data: {
+        //                 action: 'loadSplitData',
+        //                 equipment_id: equipment_id,
+        //                 sensor_id: sensor_id,
+        //                 cal_date: cal_date,
+        //                 range_min: range_min,
+        //                 range_max: range_max,
+        //                 //x_split_no: x_split_no,
+        //             },
+        //             success: function(dataJSON) {
+        //                 var response = JSON.parse(dataJSON)
+        //                 if (response.status === 'success') {
+        //                     $.each(response.data, function(index, row) {
+        //                         splitTableHTML += '<tr><td>' + row.uncert + '</td><td>' + row.split_no + '</td></tr>';
+        //                     });
+        //                     splitTable.html(splitTableHTML);
+        //                 }
+        //             }
+        //         });
+        //     } else {
+        //         splitTable.html(splitTableHTML);
+        //     }
+        // });
+
+        $("body").on('input', '.getCertificateData', function() {
+            var equipment_id = $("#equipment_id").val();
+            var sensor_id = $("#sensor_id").val();
+            var cal_date = $("#cal_date").val();
+            var range_min = $("#range_min").val();
+            var range_max = $("#range_max").val();
+            //var x_split_no = $("#x_split_no").val();
+            var res = $("#res").val();
+
+            if (equipment_id != '' && sensor_id != '' && cal_date != '' && range_min != '' && range_max != '' && res !== '') { //&& x_split_no != ''
                 $.ajax({
                     type: 'POST',
                     url: './functions/add-title.php',
@@ -293,7 +300,7 @@ require 'header.php';
                         cal_date: cal_date,
                         range_min: range_min,
                         range_max: range_max,
-                        x_split_no: x_split_no,
+                        //x_split_no: x_split_no,
                         res: res,
                     },
                     success: function(dataJSON) {
@@ -310,6 +317,37 @@ require 'header.php';
                             $("#C3").val(response.data.c3);
                             $("#C4").val(response.data.c4);
                             $("#C5").val(response.data.c5);
+                            $("#x_split_no").val(response.data.split_no);
+
+                            var x_split_no = response.data.split_no;
+                            var splitTable = $('#split_table');
+                            var splitTableHTML = '';
+
+                            $.ajax({
+                                type: 'POST',
+                                url: './functions/add-title.php',
+                                data: {
+                                    action: 'loadSplitData',
+                                    equipment_id: equipment_id,
+                                    sensor_id: sensor_id,
+                                    cal_date: cal_date,
+                                    range_min: range_min,
+                                    range_max: range_max,
+                                    x_split_no: x_split_no,
+                                },
+                                success: function(dataJSON) {
+                                    var response = JSON.parse(dataJSON)
+                                    if (response.status === 'success') {
+                                        $.each(response.data, function(index, row) {
+                                            splitTableHTML += '<tr><td>' + row.uncert + '</td><td>' + row.split_no + '</td></tr>';
+                                        });
+                                        splitTable.html(splitTableHTML);
+                                    }
+                                }
+                            });
+
+
+
                         }
                     }
                 });
@@ -317,12 +355,12 @@ require 'header.php';
         });
 
         function changeDateFormat(dateString) {
-            console.log('dateString',dateString);
-            if(dateString!='' && dateString!=undefined){
+            console.log('dateString', dateString);
+            if (dateString != '' && dateString != undefined) {
                 var parts = dateString.split('/');
                 var formattedDate = parts[2] + '-' + parts[0].padStart(2, '0') + '-' + parts[1].padStart(2, '0');
                 return formattedDate;
-            }else{
+            } else {
                 return '';
             }
         }
@@ -443,7 +481,7 @@ require 'header.php';
                                     uUUCCovertArr.push(val);
                                 }
                                 var data = uUUCCovertArr;
-                                
+
                                 sampleStdev = sampleStandardDeviation(data);
                                 console.log("Sample Standard Deviation:", sampleStdev);
                             });
@@ -464,7 +502,7 @@ require 'header.php';
                     }
                     if (column_function == "UC") {
                         //put here UUC convrt formula
-                        var unit_ref = $("#unit_ref").val()=='Meter' ? 'm' : 'm';
+                        var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
                         var unit_uuc = $("#unit_uuc").val();
                         var result = 0;
                         if (unit_uuc != "" && unit_ref != "") {
@@ -526,15 +564,15 @@ require 'header.php';
 
                     if (column_function == "CR") {
                         //put here CORRECTED REF formula
-                        var xSplitNo  = $("#x_split_no").val();
+                        var xSplitNo = $("#x_split_no").val();
                         var C1 = $("#C1").val();
                         var C2 = $("#C2").val();
                         var C3 = $("#C3").val();
                         var C4 = $("#C4").val();
                         var C5 = $("#C5").val();
 
-                        var correct_reference = C5*Math.pow(xSplitNo, 4) + C4*Math.pow(xSplitNo, 3) + C3*Math.pow(xSplitNo, 2) + C2*Math.pow(xSplitNo, 1) + C1;
-                        
+                        var correct_reference = C5 * Math.pow(xSplitNo, 4) + C4 * Math.pow(xSplitNo, 3) + C3 * Math.pow(xSplitNo, 2) + C2 * Math.pow(xSplitNo, 1) + C1;
+
                         let x = 0;
                         $(".input_val_" + heading_id + "").each(function() {
                             let v = parseFloat(correct_reference);
@@ -602,7 +640,7 @@ require 'header.php';
                     }
                     if (column_function == "RUC") {
                         //put here REF UNIT CON formula
-                        var resolution_ref = $("#resolution_ref").val()=='Feet' ? 'ft' : 'ft';
+                        var resolution_ref = $("#resolution_ref").val() == 'Feet' ? 'ft' : 'ft';
                         var resolution_uuc = $("#resolution_uuc").val();
                         var result = 0;
                         if (resolution_uuc != "" && resolution_ref != "") {
@@ -700,8 +738,7 @@ require 'header.php';
             }
         });
 
-        function sampleStandardDeviation(data) 
-        {
+        function sampleStandardDeviation(data) {
             const n = data.length;
             if (n === 0 || n === 1) return null;
 

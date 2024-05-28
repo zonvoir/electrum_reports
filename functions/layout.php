@@ -74,15 +74,23 @@ class Layout
         $colspan        = $data['colspan'];
         $column_type    = $data['column_type'];
         $column_function = $data['column_function'];
+        $multi_line          = $data['multi_line'];
+        $data_entry        = $data['data_entry'];
+        $analysis    = $data['analysis'];
+        $report = $data['report'];
 
-        $queryHeadings = "INSERT INTO headings (layout_template_id,title,level,colspan,column_type) 
-                        VALUES (:layout_template_id,:title,:level,:colspan,:column_type)";
+        $queryHeadings = "INSERT INTO headings (layout_template_id,title,level,colspan,column_type,multi_line,data_entry,analysis,report) 
+                        VALUES (:layout_template_id,:title,:level,:colspan,:column_type,:multi_line,:data_entry,:analysis,:report)";
         $statementHeadings = $this->conn->prepare($queryHeadings);
         $statementHeadings->bindParam(':layout_template_id', $template_id);
         $statementHeadings->bindParam(':title', $title);
         $statementHeadings->bindParam(':level', $level);
         $statementHeadings->bindParam(':colspan', $colspan);
         $statementHeadings->bindParam(':column_type', $column_type);
+        $statementHeadings->bindParam(':multi_line', $multi_line);
+        $statementHeadings->bindParam(':data_entry', $data_entry);
+        $statementHeadings->bindParam(':analysis', $analysis);
+        $statementHeadings->bindParam(':report', $report);
 
         if ($statementHeadings->execute()) {
             $headingsId = $this->conn->lastInsertId(); // Get the last inserted ID from headings table
@@ -1681,7 +1689,7 @@ class Layout
         $cal_date       = $postData['cal_date'];
         $range_min      = $postData['range_min'];
         $range_max      = $postData['range_max'];
-        $x_split_no     = $postData['x_split_no'];
+        //$x_split_no     = $postData['x_split_no'];
         $res            = $postData['res'];
 
         $query = "SELECT * FROM si_ref_eq_info WHERE eq_id=:equipmentId AND sensor_id=:sensorId AND res LIKE :res AND split_no IN (SELECT split_no FROM si_cal_points WHERE eq_id=:equipmentId AND sensor_id=:sensorId)";
@@ -1744,18 +1752,32 @@ class Layout
         $headingType = $postData['column_type'];
         $headingFunction = $postData['column_function'];
         $referenceColumns = isset($postData['re_columns']) ? $postData['re_columns'] : [];
+        $multi_line = isset($postData['multi_line']) ? $postData['multi_line'] : [];
+        $data_entry = isset($postData['data_entry']) ? $postData['data_entry'] : [];
+        $analysis = isset($postData['analysis']) ? $postData['analysis'] : [];
+        $report = isset($postData['report']) ? $postData['report'] : [];
 
         try {
             // Begin transaction
             $this->conn->beginTransaction();
 
-            $updateQuery = "UPDATE headings SET title = :title, level=:level, colspan=:colspan, column_type = :headingType WHERE id = :heading_id";
+            $updateQuery = "UPDATE headings SET title = :title, level=:level, colspan=:colspan, column_type = :headingType 
+            , multi_line = :multi_line
+            , data_entry = :data_entry
+            , analysis = :analysis
+            , report = :report
+            WHERE id = :heading_id";
             $updateStatement = $this->conn->prepare($updateQuery);
             $updateStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
             $updateStatement->bindParam(':title', $title, PDO::PARAM_STR);
             $updateStatement->bindParam(':level', $level, PDO::PARAM_STR);
             $updateStatement->bindParam(':colspan', $colspan, PDO::PARAM_STR);
             $updateStatement->bindParam(':headingType', $headingType, PDO::PARAM_STR);
+
+            $updateStatement->bindParam(':multi_line', $multi_line, PDO::PARAM_INT);
+            $updateStatement->bindParam(':data_entry', $data_entry, PDO::PARAM_INT);
+            $updateStatement->bindParam(':analysis', $analysis, PDO::PARAM_INT);
+            $updateStatement->bindParam(':report', $report, PDO::PARAM_INT);
             $updateStatement->execute();
 
             if ($headingType !== "DATA") {

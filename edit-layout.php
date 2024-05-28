@@ -191,6 +191,23 @@ require 'header.php';
                     return false;
                 }
 
+                var multi_line = 0;
+                var data_entry = 0;
+                var analysis = 0;
+                var report = 0;
+                if ($('#multi_line').prop('checked')) {
+                    multi_line = 1;
+                }
+                if ($('#data_entry').prop('checked')) {
+                    data_entry = 1;
+                }
+                if ($('#analysis').prop('checked')) {
+                    analysis = 1;
+                }
+                if ($('#report').prop('checked')) {
+                    report = 1;
+                }
+
                 $.ajax({
                     type: 'POST',
                     url: './functions/add-title.php',
@@ -202,7 +219,11 @@ require 'header.php';
                         level: level,
                         colspan: colspan,
                         column_type: column_type,
-                        column_function: column_function
+                        column_function: column_function,
+                        multi_line: multi_line,
+                        data_entry: data_entry,
+                        analysis: analysis,
+                        report: report
                     },
                     success: function(data) {
                         var response = JSON.parse(data)
@@ -257,6 +278,22 @@ require 'header.php';
                         }
                         $('#column_function_edit').val(heading.column_function);
 
+                        if (heading.multi_line) {
+                            $("#multi_line_edit").prop("checked", true);
+                        }
+
+                        if (heading.data_entry) {
+                            $("#data_entry_edit").prop("checked", true);
+                        }
+
+                        if (heading.analysis) {
+                            $("#analysis_edit").prop("checked", true);
+                        }
+
+                        if (heading.report) {
+                            $("#report_edit").prop("checked", true);
+                        }
+
                         $('#editHeadingModal').modal('show');
                     }
                 });
@@ -271,7 +308,22 @@ require 'header.php';
                 var colspan = $('#inputColspanEdit').val();
                 var column_type = $('#column_type_edit').val();
                 var column_function = $('#column_function_edit').val();
-
+                var multi_line = 0;
+                var data_entry = 0;
+                var analysis = 0;
+                var report = 0;
+                if ($('#multi_line_edit').prop('checked')) {
+                    multi_line = 1;
+                }
+                if ($('#data_entry_edit').prop('checked')) {
+                    data_entry = 1;
+                }
+                if ($('#analysis_edit').prop('checked')) {
+                    analysis = 1;
+                }
+                if ($('#report_edit').prop('checked')) {
+                    report = 1;
+                }
                 // Make AJAX request
                 $.ajax({
                     type: 'POST',
@@ -284,7 +336,11 @@ require 'header.php';
                         level: level,
                         colspan: colspan,
                         column_type: column_type,
-                        column_function: column_function
+                        column_function: column_function,
+                        multi_line: multi_line,
+                        data_entry: data_entry,
+                        analysis: analysis,
+                        report: report
                     },
                     success: function(responseJson) {
                         var response = JSON.parse(responseJson)

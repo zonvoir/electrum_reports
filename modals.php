@@ -91,7 +91,7 @@
                         <select class="form-control form-control-sm inputType" id="inputLevel">
                         </select>
                     </div>
-                </div>  
+                </div>
                 <div class="mb-3 row">
                     <label for="inputColspan" class="col-sm-4 col-form-label text-end">Colspan</label>
                     <div class="col-sm-6">
@@ -129,6 +129,27 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="mb-6 row">
+                    <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
+                    <div class="col-sm-3">
+                        <input class="form-check-input" name="multi_line" type="checkbox" id="multi_line"> Multi-line
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-check-input" name="data_entry" type="checkbox" id="data_entry"> Data Entry
+                    </div>
+                </div>
+
+                <div class="mb-6 row">
+                    <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
+                    <div class="col-sm-3">
+                        <input disabled checked class="form-check-input" name="analysis" type="checkbox" id="analysis"> Analysis
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-check-input" name="report" type="checkbox" id="report"> Report
+                    </div>
+                </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary btn-sm add-hedding">Save</button>
                 </div>
@@ -174,11 +195,12 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="mb-3 row" style="display: none;">
                     <label for="column_function_edit" class="col-sm-4 col-form-label text-end">Function</label>
                     <div class="col-sm-6">
                         <select class="form-control form-control-sm inputFunction" id="column_function_edit">
-                        <option value="">Select Function</option>
+                            <option value="">Select Function</option>
                             <option value="CORRECTION">CORRECTION</option>
                             <option value="TUC">TEST UNIT CONVERTION</option>
                             <option value="TS">TEST STDEV</option>
@@ -196,6 +218,27 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="mb-6 row">
+                    <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
+                    <div class="col-sm-3">
+                        <input class="form-check-input" name="multi_line" type="checkbox" id="multi_line_edit"> Multi-line
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-check-input" name="data_entry" type="checkbox" id="data_entry_edit"> Data Entry
+                    </div>
+                </div>
+
+                <div class="mb-6 row">
+                    <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
+                    <div class="col-sm-3">
+                        <input disabled checked class="form-check-input" name="analysis" type="checkbox" id="analysis_edit"> Analysis
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="form-check-input" name="report" type="checkbox" id="report_edit"> Report
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger delete-heading" data-bs-dismiss="modal">Delete</button>

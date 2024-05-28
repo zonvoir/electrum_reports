@@ -795,13 +795,16 @@ require 'header.php';
             $(".heading_check").prop('checked', false);
         });
 
-        function metersToFeet($meters) {
-            $feet = $meters * 3.28084;
-            return $feet;
+        function metersToFeet(meters) {
+            const meter = math.unit(meters + ' m');
+            var feet = meter.to('inch').toString();
+            return feet;
         }
 
         function feetToMeters(feet) {
-            return feet * 0.3048; // 1 foot = 0.3048 meters
+            const meter = math.unit(feet + ' ft');
+            var meters = meter.to('m').toString();
+            return meters;
         }
     </script>
     <?php

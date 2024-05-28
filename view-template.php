@@ -159,9 +159,9 @@ require 'header.php';
             $in  = str_repeat('?,', count($hLevel) - 1) . '?';
 
             $query1 = "SELECT h.*, c.column_function FROM headings h 
-                    LEFT JOIN column_functions c ON h.id = c.headings_id 
-                    WHERE  h.level IN ($in) AND h.layout_template_id = ? 
-                    ORDER BY h.id, h.parent_id";
+            LEFT JOIN column_functions c ON h.id = c.headings_id 
+            WHERE  h.level IN ($in) AND h.layout_template_id = ? 
+            ORDER BY h.id, h.parent_id";
 
             $statement1 = $conn->prepare($query1);
             $statement1->execute([...$hLevel, $layoutTemplateID]);
@@ -191,14 +191,8 @@ require 'header.php';
                 $count = 0;
                 echo '<tr>';
                 foreach ($row as $heading) {
-                    $hide = "";
-                    $hideChkBox = "hide";
-                    if ($heading['column_function'] != "") {
-                        $hide = "hide";
-                        $hideChkBox = "";
-                    }
-                    echo '<th class="' . $hide . '" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '"   >
-                                    <label for="' . $heading['id'] . '">'
+                    echo '<th colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '"   >
+                                <label for="' . $heading['id'] . '">'
                         . $heading['title'];
                     if ($totalLevels == $heading['level']) {
                         echo ' <input class="heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
@@ -217,33 +211,38 @@ require 'header.php';
             for ($i = 0; $i <= $count - 1; $i++) {
                 if ($i == $count - 1) {
                     echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                        <div class="d-flex">      
-                                            <input type="number" class="hide form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                          
-                                            <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
-                                        </div>';
+                                    <div class="d-flex">      
+                                        <input type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                          
+                                        <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
+                                    </div>';
                     echo '</td>';
                 } else if ($lastRow[$i]['column_function'] != "") {
-                    echo '<td class="hide" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                        <div class="d-flex">
-                                            <input type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
-                                        </div>';
+                    echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
+                                    <div class="d-flex">
+                                        <input type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
+                                    </div>';
                     echo '</td>';
                 } else {
-                    echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                        <input type="number" class="form-control valueChange input_val_' . $row[$i]['id'] . '" />
-                                    </td>';
+                    echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
+                    if ($row[$i]['multi_line'] == 1) {
+                        echo '<textarea class="form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
+                    } else {
+                        echo '<input type="number" class="form-control valueChange input_val_' . $row[$i]['id'] . '" />';
+                    }
+                    echo '</td>';
                 }
             }
             echo '</tr>';
             echo '</table>';
             echo '<div style="border-left:0 !important; border-right:0 !important">
-                    <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
-                    <button style="float:right" class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
-                    <!--button class="btn btn-primary" type="submit">Submit</button-->
-                </div><p>&nbsp;</p><p>&nbsp;</p>';
+            <button class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
+            <button style="float:right" class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
+            <!--button class="btn btn-primary" type="submit">Submit</button-->
+        </div><p>&nbsp;</p><p>&nbsp;</p>';
 
             ?>
         </div>
+
     </div>
     <?php
     require 'modals.php';

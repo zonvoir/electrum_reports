@@ -241,7 +241,7 @@ require 'header.php';
             echo '</tr>';
             echo '</table>';
             echo '<div style="border-left:0 !important; border-right:0 !important">
-                    <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
+                    <button onclick="calculateAndSave();" class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
                     <button style="float:right" class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                     <!--button class="btn btn-primary" type="submit">Submit</button-->
                 </div><p>&nbsp;</p><p>&nbsp;</p>';
@@ -752,9 +752,80 @@ require 'header.php';
             }
         });
 
-        function calculate() {
-            $(".heading_check").trigger("click");
-        }
+    function calculateAndSave() {
+        let templateId = <?php echo $_GET['id']; ?>;
+
+        // Fetch layout_id and headings
+        $.ajax({
+            url: 'get_layout_and_headings.php',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ template_id: templateId }),
+            success: function(response) {
+                if (response.error) {
+                    alert(response.error);
+                    return;
+                }
+
+                let layoutId = response.layout_id;
+                let headings = response.headings;
+
+                // Gather data from the table
+                let data = [];
+                $("#template-table tr").each(function() {
+                    $(this).find("input:not([type=checkbox]), textarea").each(function() {
+                        let inputVal = $(this).val();
+                        let headingId = $(this).attr("id");
+
+                        if (inputVal !== undefined && inputVal !== "") {
+                            data.push({
+                                heading_id: headingId,
+                                value: inputVal
+                            });
+                        }
+                    });
+                });
+
+                // AJAX request to save data to the database
+                $.ajax({
+                    url: 'save_template_data.php',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        template_id: templateId,
+                        layout_id: layoutId,
+                        data: data
+                    }),
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred:", status, error);
+                        alert("Failed to save data.");
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("An error occurred while fetching layout_id and headings:", status, error);
+                alert("Failed to fetch layout_id and headings.");
+            }
+    });
+}
+
+
+// document.querySelector(".btnCalulate").addEventListener("click", calculateAndSave);
+
+
+// document.querySelector(".btnCalulate").addEventListener("click", calculateAndSave);
+
+
+
+
+
+
+
+
+
 
         function sampleStandardDeviation(data) {
             const n = data.length;

@@ -12,21 +12,25 @@ require 'header.php';
     ?>
     <div class="container">
         <div class="row mt-4">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="equipment_id">Equipment ID</label>
-                <input type="text" id="equipment_id" class="form-control getSplitData" />
+                <input type="text" id="equipment_id" value="ECAL/WS/E02" class="form-control getSplitData" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="sensor_id">Sensor ID</label>
-                <input type="text" id="sensor_id" class="form-control getSplitData" />
+                <input type="text" id="sensor_id" value="ECAL/WS/E02-DCV" class="form-control getSplitData" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="cal_date">Cal date</label>
                 <input type="date" id="cal_date" class="form-control getSplitData" />
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="res">Res</label>
                 <input type="text" id="res" class="form-control getCertificateData" />
+            </div>
+            <div class="col-md-2">
+                <label for="x">X</label>
+                <input type="text" id="x" class="form-control getSplitData" />
             </div>
             <div class="col-md-2 hide">
                 <label for="range_min">Range</label>
@@ -37,7 +41,7 @@ require 'header.php';
                 <input type="number" id="range_max" class="form-control getSplitData" placeholder="Max" value="0" />
             </div>
             <div class="col-md-2 hide">
-                <label for="x_split_no">X(split No.)</label>
+                <label for="x_split_no">X</label>
                 <input type="text" id="x_split_no" class="form-control getSplitData" />
             </div>
         </div>
@@ -73,11 +77,35 @@ require 'header.php';
         <div class="row mt-2">
             <div class="col-md-4">
                 <label for="unit_ref">Unit ref</label>
-                <input type="text" id="unit_ref" class="form-control" readonly />
+                <!-- <input type="text" id="unit_ref" class="form-control" readonly /> -->
+                <select class="form-control" id="unit_ref">
+                    <option value="ft">Feet</option>
+                    <option selected value="m">Meter</option>
+                    <?php
+                    // foreach($siRefEqInfos as $siRefEqInfo)
+                    // {
+                    ?>
+                    <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
+                    <?php
+                    // }
+                    ?>
+                </select>
             </div>
             <div class="col-md-4">
                 <label for="resolution_ref">Resolution ref</label>
-                <input type="text" id="resolution_ref" class="form-control" readonly />
+                <!-- <input type="text" id="resolution_ref" class="form-control" readonly /> -->
+                <select class="form-control" id="resolution_ref">
+                    <option selected value="ft">Feet</option>
+                    <option value="m">Meter</option>
+                    <?php
+                    // foreach($siRefEqInfos as $siRefEqInfo)
+                    // {
+                    ?>
+                    <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
+                    <?php
+                    // }
+                    ?>
+                </select>
             </div>
             <div class="col-md-4">
                 <label for="cal_date_2">Cal Date</label>
@@ -118,7 +146,8 @@ require 'header.php';
             <div class="col-md-4">
                 <label for="unit_uuc">Unit UUC</label>
                 <select class="form-control" id="unit_uuc">
-                    <option value="ft">Feet</option>
+                    <option selected value="ft">Feet</option>
+                    <option value="m">Meter</option>
                     <?php
                     // foreach($siRefEqInfos as $siRefEqInfo)
                     // {
@@ -132,7 +161,8 @@ require 'header.php';
             <div class="col-md-4">
                 <label for="resolution_uuc">Resolution UUC</label>
                 <select class="form-control" id="resolution_uuc">
-                    <option value="m">Meter</option>
+                    <option value="ft">Feet</option>
+                    <option selected value="m">Meter</option>
                     <?php
                     // foreach($siRefEqInfos as $siRefEqInfo)
                     // {
@@ -323,8 +353,8 @@ require 'header.php';
                             $("#equipment_name").val(response.data.eq_name);
                             $("#brand").val(response.data.brand);
                             $("#serial_no").val(response.data.serial_no);
-                            $("#unit_ref").val('Meter'); //response.data.unit
-                            $("#resolution_ref").val('Feet'); //response.data.unit
+                            //$("#unit_ref").val('m'); //response.data.unit
+                            //$("#resolution_ref").val('ft'); //response.data.unit
                             $("#cal_date_2").val(changeDateFormat(response.data.cal_date));
                             $("#C1").val(response.data.c1);
                             $("#C2").val(response.data.c2);
@@ -422,7 +452,7 @@ require 'header.php';
                         }
                     });
                     multipleArr.push(singleInputHeadingWiseArray);
-                    console.log(multipleArr);
+                    //console.log(multipleArr);
 
                 } else {
 
@@ -465,7 +495,7 @@ require 'header.php';
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        console.log(multipleArr);
+                        //console.log(multipleArr);
                     }
                     if (column_function == "TUC") {
                         //put here TEST UNIT CONVERTION formula
@@ -497,7 +527,7 @@ require 'header.php';
                                 var data = uUUCCovertArr;
 
                                 sampleStdev = sampleStandardDeviation(data);
-                                console.log("Sample Standard Deviation:", sampleStdev);
+                                //console.log("Sample Standard Deviation:", sampleStdev);
                             });
                         });
                         let x = 0;
@@ -507,7 +537,7 @@ require 'header.php';
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        console.log(multipleArr);
+                        //console.log(multipleArr);
 
                     }
                     if (column_function == "RC") {
@@ -516,8 +546,9 @@ require 'header.php';
                     }
                     if (column_function == "UC") {
                         //put here UUC convrt formula
-                        var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
+                        var unit_ref = $("#unit_ref").val();
                         var unit_uuc = $("#unit_uuc").val();
+                        console.log(unit_ref + ", " + unit_uuc);
                         var result = 0;
                         if (unit_uuc != "" && unit_ref != "") {
                             var UUCReading = false;
@@ -533,6 +564,7 @@ require 'header.php';
                                         if (unit_uuc == "m" && unit_ref == "ft") {
                                             UUCReadingVal.push(metersToFeet(val));
                                         } else if (unit_uuc == "ft" && unit_ref == "m") {
+                                            console.log(val);
                                             UUCReadingVal.push(feetToMeters(val));
                                         }
                                     }
@@ -545,7 +577,7 @@ require 'header.php';
                                 singleInputHeadingWiseArray.push(v);
                             });
                             multipleArr.push(singleInputHeadingWiseArray);
-                            console.log(multipleArr);
+                            //console.log(multipleArr);
                         }
                     }
                     if (column_function == "RM") {
@@ -573,20 +605,21 @@ require 'header.php';
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        console.log(multipleArr);
+                        //console.log(multipleArr);
                     }
 
                     if (column_function == "CR") {
                         //put here CORRECTED REF formula
-                        var xSplitNo = $("#x_split_no").val();
+                        var x_val = $("#x").val();
                         var C1 = $("#C1").val();
                         var C2 = $("#C2").val();
                         var C3 = $("#C3").val();
                         var C4 = $("#C4").val();
                         var C5 = $("#C5").val();
 
-                        var correct_reference = C5 * Math.pow(xSplitNo, 4) + C4 * Math.pow(xSplitNo, 3) + C3 * Math.pow(xSplitNo, 2) + C2 * Math.pow(xSplitNo, 1) + C1;
-
+                        var correct_reference = C5 * Math.pow(x_val, 4) + C4 * Math.pow(x_val, 3) + C3 * Math.pow(x_val, 2) + C2 * Math.pow(x_val, 1) + C1;
+                        //console.log("x: " + x_val);
+                        //console.log("correct_reference: " + parseFloat(correct_reference));
                         let x = 0;
                         $(".input_val_" + heading_id + "").each(function() {
                             let v = parseFloat(correct_reference);
@@ -622,8 +655,24 @@ require 'header.php';
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        console.log(multipleArr);
+                        //console.log(multipleArr);
 
+                    }
+                    if (column_function == "UM1") {
+                        console.log(multipleArr);
+                        var removeFirstColumnArr = removeFirstColumn(multipleArr);
+                        var transposedArray = transposeArray(removeFirstColumnArr);
+                        console.log(transposedArray);
+                        transposedArray.forEach(function(column) {
+                            var sum = 0;
+                            column.forEach(function(val) {
+                                if (!isNaN(val)) {
+                                    console.log(val);
+                                    sum = sum + parseFloat(val);
+                                }
+                            });
+                            console.log("Sum: " + sum);
+                        });
                     }
                     if (column_function == "UM") {
                         //put here UUC MEAN formula
@@ -635,7 +684,7 @@ require 'header.php';
                                 if (val == "UUC reading") {
                                     RefReading = true;
                                 } else if (isNaN(val)) {
-                                    RefReading = false;
+                                    RefReading = true;
                                 }
                                 if (RefReading && val != "UUC reading") {
                                     RefReadingSum = RefReadingSum + parseFloat(val);
@@ -650,7 +699,7 @@ require 'header.php';
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        console.log(multipleArr);
+                        //console.log(multipleArr);
                     }
                     if (column_function == "RUC") {
                         //put here REF UNIT CON formula
@@ -683,7 +732,7 @@ require 'header.php';
                                 singleInputHeadingWiseArray.push(v);
                             });
                             multipleArr.push(singleInputHeadingWiseArray);
-                            console.log(multipleArr);
+                            //console.log(multipleArr);
                         }
 
                     }
@@ -705,7 +754,7 @@ require 'header.php';
                                 var data = uUUCCovertArr;
 
                                 sampleStdev = sampleStandardDeviation(data);
-                                console.log("Sample Standard Deviation:", sampleStdev);
+                                //console.log("Sample Standard Deviation:", sampleStdev);
                             });
                         });
                         let x = 0;
@@ -715,7 +764,7 @@ require 'header.php';
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        console.log(multipleArr);
+                        //console.log(multipleArr);
 
                     }
                     if (column_function == "VC") {
@@ -795,16 +844,16 @@ require 'header.php';
             $(".heading_check").prop('checked', false);
         });
 
-        function metersToFeet(meters) {
-            const meter = math.unit(meters + ' m');
-            var feet = meter.to('inch').toString();
+        function metersToFeet(meter) {
+            meter = math.unit(meter + ' m');
+            var feet = parseFloat(meter.to('ft'));
             return feet;
         }
 
         function feetToMeters(feet) {
-            const meter = math.unit(feet + ' ft');
-            var meters = meter.to('m').toString();
-            return meters;
+            feet = math.unit(feet + ' ft');
+            var meter = parseFloat(feet.to('m'));
+            return meter;
         }
     </script>
     <?php

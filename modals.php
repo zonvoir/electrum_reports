@@ -130,6 +130,14 @@
                     </div>
                 </div>
 
+                <div class="mb-3 row">
+                    <label for="column_function_multi_select" class="col-sm-4 col-form-label text-end">Function fields</label>
+                    <div class="col-sm-6">
+                        <select multiple class="form-control form-control-sm inputFunction" id="column_function_options_add">
+                        </select>
+                    </div>
+                </div>
+
                 <div class="mb-6 row">
                     <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
                     <div class="col-sm-3">
@@ -219,6 +227,14 @@
                     </div>
                 </div>
 
+                <div class="mb-3 row">
+                    <label for="column_function_multi_select" class="col-sm-4 col-form-label text-end">Function fields</label>
+                    <div class="col-sm-6">
+                        <select multiple class="form-control form-control-sm inputFunction" id="column_function_options">
+                        </select>
+                    </div>
+                </div>
+
                 <div class="mb-6 row">
                     <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
                     <div class="col-sm-3">
@@ -285,6 +301,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary btn-sm storeSubTitle">Save</button>
                 </div>

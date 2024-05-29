@@ -2049,6 +2049,16 @@ class Layout
         $statementH->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
         $statementH->execute();
         $resultMaxLevel = $statementH->fetch(PDO::FETCH_ASSOC);
-        return $resultMaxLevel['max_level'] ? $resultMaxLevel['max_level'] : 1;
+
+        $column_type = "DATA";
+        $queryJ = "SELECT id, title FROM headings WHERE layout_template_id = :layoutTemplateID";
+        $statementJ = $this->conn->prepare($queryJ);
+        $statementJ->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
+        //$statementJ->bindParam(':column_type', $column_type, PDO::PARAM_STR);
+        $statementJ->execute();
+        $dataFields = $statementJ->fetchAll(PDO::FETCH_ASSOC);
+        $data['max_level'] = $resultMaxLevel['max_level'] ? $resultMaxLevel['max_level'] : 1;
+        $data['dataFields'] = !empty($dataFields) ? $dataFields : [];
+        return $data;
     }
 }

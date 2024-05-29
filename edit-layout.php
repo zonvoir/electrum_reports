@@ -161,13 +161,23 @@ require 'header.php';
                         template_id: selectedTemplateId,
                     },
                     success: function(response) {
+                        var response = JSON.parse(response);
                         var inputLevel = $('#inputLevel');
-                        var totalLevels = response > 1 ? parseInt(response) + 1 : response;
+                        var totalLevels = response['max_level'] > 1 ? parseInt(response['max_level']) + 1 : response['max_level'];
                         var optionsHTML = '';
                         for (var count = 1; count <= totalLevels; count++) {
                             optionsHTML += '<option value="' + count + '">' + count + '</option>';
                         }
                         inputLevel.html(optionsHTML);
+
+                        var dataFieldsOptions = '';
+                        var column_function_options = $('#column_function_options_add');
+                        response['dataFields'].forEach(function(number, index) {
+                            console.log("Element at index " + number['id'] + " is: " + number['title']);
+                            dataFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
+                        });
+                        column_function_options.html(dataFieldsOptions);
+
                         $('#addHeadingModal').modal('show');
                     }
                 });
@@ -257,12 +267,14 @@ require 'header.php';
                         template_id: selectedTemplateId,
                     },
                     success: function(response) {
+                        var response = JSON.parse(response);
+                        console.log(response);
                         $('#headingId').val(heading.id);
                         $('#inputTitleEdit').val(heading.title);
 
                         var inputLevel = $('#inputLevelEdit');
                         var optionsHTML = '';
-                        for (var count = 1; count <= response; count++) {
+                        for (var count = 1; count <= response['max_level']; count++) {
                             optionsHTML += '<option value="' + count + '">' + count + '</option>';
                         }
                         inputLevel.html(optionsHTML);
@@ -277,6 +289,14 @@ require 'header.php';
                             $('.inputFunction').closest('.row').hide();
                         }
                         $('#column_function_edit').val(heading.column_function);
+
+                        var dataFieldsOptions = '';
+                        var column_function_options = $('#column_function_options');
+                        response['dataFields'].forEach(function(number, index) {
+                            console.log("Element at index " + number['id'] + " is: " + number['title']);
+                            dataFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
+                        });
+                        column_function_options.html(dataFieldsOptions);
 
                         if (heading.multi_line) {
                             $("#multi_line_edit").prop("checked", true);

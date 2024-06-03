@@ -217,68 +217,72 @@ require 'header.php';
             // print_r($rows);
             // echo "</pre>";
 
+            echo '<form id="calculation_template_form">';
             echo '<table id="template-table" class="table table-bordered">';
-            $levelIndex = 1;
-            $count = 0;
-            $lastRow = [];
-            foreach ($rows as $key => $row) {
+                $levelIndex = 1;
                 $count = 0;
-                echo '<tr>';
-                foreach ($row as $heading) {
-                    $hide = "";
-                    $hideChkBox = "hide";
-                    if ($heading['column_function'] != "") {
-                        $hide = "hide";
-                        $hideChkBox = "";
-                    }
-                    echo '<th class="' . $hide . '" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '"   >
+                $lastRow = [];
+                foreach ($rows as $key => $row) {
+                    $count = 0;
+                    echo '<tr>';
+                        foreach ($row as $heading) {
+                            $hide = "";
+                            $hideChkBox = "hide";
+                            if ($heading['column_function'] != "") {
+                                $hide = "hide1";
+                                $hideChkBox = "";
+                            }
+                            echo '<th class="' . $hide . '" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '"   >
                                     <label for="' . $heading['id'] . '">'
-                        . $heading['title'];
-                    if ($totalLevels == $heading['level']) {
-                        echo ' <input class="heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
+                                        . $heading['title'];
+                                        if ($totalLevels == $heading['level']) {
+                                            echo ' <input class="hide heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
+                                        }
+                            echo '</label>';
+                            echo '</th>';
+                            $count++;
+                        }
+                        echo '<th>&nbsp;</th>';
+                    echo '</tr>';
+                    if ($key == count($rows)) {
+                        $lastRow = $row;
                     }
-                    echo '</label>';
-                    echo '</th>';
-                    $count++;
                 }
-                echo '<th>&nbsp;</th></tr>';
-                if ($key == count($rows)) {
-                    $lastRow = $row;
-                }
-            }
 
-            echo '<tr>';
-            for ($i = 0; $i <= $count - 1; $i++) {
-                if ($i == $count - 1) {
-                    echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                        <div class="d-flex">      
-                                            <input type="number" class="hide form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                          
-                                            <button class="btnDeleteRow border-1" type="button" disabled>&times;</button>
-                                        </div>';
-                    echo '</td>';
-                } else if ($lastRow[$i]['column_function'] != "") {
-                    echo '<td class="hide" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                        <div class="d-flex">
-                                            <input type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
-                                        </div>';
-                    echo '</td>';
-                } else {
-                    echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
-                    if ($row[$i]['multi_line'] == 1) {
-                        echo '<textarea class="form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
-                    } else {
-                        echo '<input type="number" class="form-control valueChange input_val_' . $row[$i]['id'] . '" />';
+                echo '<tr>';
+                    for ($i = 0; $i <= $count - 1; $i++) {
+                        if ($i == $count - 1) {
+                            echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
+                                    <div class="d-flex">      
+                                        <input name="title['.$row[$i]['title'].']" type="number" class="hide1 form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />
+                                    </div>';
+                            echo '</td>';
+                        } else if ($lastRow[$i]['column_function'] != "") {
+                            echo '<td class="hide1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
+                                    <div class="d-flex">
+                                        <input name="title['.$row[$i]['title'].']" type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
+                                    </div>';
+                            echo '</td>';
+                        } else {
+                            echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
+                                if ($row[$i]['multi_line'] == 1) {
+                                    echo '<textarea name="title['.$row[$i]['title'].']" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
+                                } else {
+                                    echo '<input name="title['.$row[$i]['title'].']" type="number" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" />';
+                                }
+                            echo '</td>';
+                        }
                     }
-                    echo '</td>';
-                }
-            }
-            echo '</tr>';
+                    echo '<td><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
+                echo '</tr>';
             echo '</table>';
-            echo '<div style="border-left:0 !important; border-right:0 !important">
+            echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
                     <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
                     <button style="float:right" class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                     <!--button class="btn btn-primary" type="submit">Submit</button-->
-                </div><p>&nbsp;</p><p>&nbsp;</p>';
+                  </div>';
+
+            echo '</form>';
 
             ?>
         </div>
@@ -423,6 +427,9 @@ require 'header.php';
             table.find('.btnDeleteRow').removeAttr("disabled");
         });
 
+        //for checl validation click on calculate & save
+        let isValid = false;
+
         //Delete table row
         $(".btnDeleteRow").click(function() {
             var rowCount = $(this).closest('table').find('tbody tr').length;
@@ -433,6 +440,7 @@ require 'header.php';
             if (rowCount <= 2) {
                 $(document).find('.btnDeleteRow').prop('disabled', true);
             }
+            isValid = false;
         });
 
         var multipleArr = [];
@@ -797,7 +805,66 @@ require 'header.php';
         });
 
         function calculate() {
-            $(".heading_check").trigger("click");
+            var equipment_id = $("#equipment_id").val();
+            var sensor_id = $("#sensor_id").val();
+            var cal_date = $("#cal_date").val();
+            var res = $("#res").val();
+            var x = $("#x").val();
+            if (equipment_id=='') {
+                toastr.error('Equipment field is required!', 'Error!')
+                return false;
+            }
+            if (sensor_id=='') {
+                toastr.error('Sensor field is required!', 'Error!')
+                return false;
+            }
+            if (cal_date=='') {
+                toastr.error('Cal date field is required!', 'Error!')
+                return false;
+            }
+            if (res=='') {
+                toastr.error('Res field is required!', 'Error!')
+                return false;
+            }
+            if (x=='') {
+                toastr.error('X field is required!', 'Error!')
+                return false;
+            }
+            
+            $('.input-field').each(function () {
+                isValid = validateInput($(this));
+            });
+
+            if (isValid==false) {
+                toastr.error('Please fill data entry fields is required!', 'Opps!')
+            }else{
+                $(".heading_check").trigger("click");
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const templateId = urlParams.get('id');
+
+                var formData = new FormData($("#calculation_template_form")[0]);
+                formData.append('action', 'storeCalculationFormData');
+                formData.append('template_id', templateId);
+                $.ajax({
+                    type: 'POST',
+                    url: './functions/add-title.php',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(dataJSON) {
+                    }
+                });
+            }
+        }
+
+        function validateInput(input) {
+            const value = input.val().trim();
+            if (value === '') {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         function sampleStandardDeviation(data) {

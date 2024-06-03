@@ -70,6 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'loadCertificateData':
                 handleCertificateData($layouts);
                 break;
+            case 'storeCalculationFormData':
+                handleStoreCalculationFormData($layouts);
+                break;
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
                 break;
@@ -430,6 +433,23 @@ function handleCertificateData($layouts)
     if (isset($_POST['action']) && $_POST['action'] == 'loadCertificateData') {
 
         $response = $layouts->getCertificateData($_POST);
+
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
+
+function handleStoreCalculationFormData($layouts)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'storeCalculationFormData') {
+        echo '<pre>';
+        print_r($_POST); 
+        echo '</pre>';
+        die;
+        $response = $layouts->storeCalculationData($_POST);
 
         if ($response) {
             echo json_encode($response);

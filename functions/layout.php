@@ -73,20 +73,22 @@ class Layout
         $level          = $data['level'];
         $colspan        = $data['colspan'];
         $column_type    = $data['column_type'];
+        $function_fields  = $data['function_fields'];
         $column_function = $data['column_function'];
         $multi_line          = $data['multi_line'];
         $data_entry        = $data['data_entry'];
         $analysis    = $data['analysis'];
         $report = $data['report'];
 
-        $queryHeadings = "INSERT INTO headings (layout_template_id,title,level,colspan,column_type,multi_line,data_entry,analysis,report) 
-                        VALUES (:layout_template_id,:title,:level,:colspan,:column_type,:multi_line,:data_entry,:analysis,:report)";
+        $queryHeadings = "INSERT INTO headings (layout_template_id,title,level,colspan,column_type,function_fields,multi_line,data_entry,analysis,report) 
+                        VALUES (:layout_template_id,:title,:level,:colspan,:column_type,:function_fields,:multi_line,:data_entry,:analysis,:report)";
         $statementHeadings = $this->conn->prepare($queryHeadings);
         $statementHeadings->bindParam(':layout_template_id', $template_id);
         $statementHeadings->bindParam(':title', $title);
         $statementHeadings->bindParam(':level', $level);
         $statementHeadings->bindParam(':colspan', $colspan);
         $statementHeadings->bindParam(':column_type', $column_type);
+        $statementHeadings->bindParam(':function_fields', $function_fields);
         $statementHeadings->bindParam(':multi_line', $multi_line);
         $statementHeadings->bindParam(':data_entry', $data_entry);
         $statementHeadings->bindParam(':analysis', $analysis);
@@ -1682,6 +1684,23 @@ class Layout
         return $response;
     }
 
+    public function getHeadingData($postData)
+    {
+        $layout_template_id   = $postData['layout_template_id'];
+
+        $query = "SELECT id,function_fields FROM headings WHERE layout_template_id=:layout_template_id AND function_fields IS NOT NULL";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':layout_template_id', $layout_template_id, PDO::PARAM_STR);
+        $statement->execute();
+        $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        $response = [
+            'status' => 'success',
+            "data" => $data,
+        ];
+        return $response;
+    }
+
     public function getCertificateData($postData)
     {
         $equipment_id   = $postData['equipment_id'];
@@ -1750,6 +1769,7 @@ class Layout
         $level = $postData['level'];
         $colspan = $postData['colspan'];
         $headingType = $postData['column_type'];
+        $function_fields = $postData['function_fields'];
         $headingFunction = $postData['column_function'];
         $referenceColumns = isset($postData['re_columns']) ? $postData['re_columns'] : [];
         $multi_line = isset($postData['multi_line']) ? $postData['multi_line'] : [];
@@ -1761,8 +1781,10 @@ class Layout
             // Begin transaction
             $this->conn->beginTransaction();
 
-            $updateQuery = "UPDATE headings SET title = :title, level=:level, colspan=:colspan, column_type = :headingType 
-            , multi_line = :multi_line
+            $updateQuery = "UPDATE headings SET title = :title, level=:level, colspan=:colspan, column_type = :headingType";
+            if ($function_fields != '')
+                $updateQuery .= ", function_fields = :function_fields";
+            $updateQuery .= ", multi_line = :multi_line
             , data_entry = :data_entry
             , analysis = :analysis
             , report = :report
@@ -1773,7 +1795,8 @@ class Layout
             $updateStatement->bindParam(':level', $level, PDO::PARAM_STR);
             $updateStatement->bindParam(':colspan', $colspan, PDO::PARAM_STR);
             $updateStatement->bindParam(':headingType', $headingType, PDO::PARAM_STR);
-
+            if ($function_fields != '')
+                $updateStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
             $updateStatement->bindParam(':multi_line', $multi_line, PDO::PARAM_INT);
             $updateStatement->bindParam(':data_entry', $data_entry, PDO::PARAM_INT);
             $updateStatement->bindParam(':analysis', $analysis, PDO::PARAM_INT);
@@ -1813,6 +1836,7 @@ class Layout
                     $insertRefColumnsStatement->execute();
                 }
             } else {
+                //return $headingType;
                 // Delete from column_functions and reference columns if heading type is "DATA"
                 $deleteFuncQuery = "DELETE FROM column_functions WHERE headings_id = :heading_id";
                 $deleteFuncStatement = $this->conn->prepare($deleteFuncQuery);
@@ -1823,6 +1847,13 @@ class Layout
                 $clearRefColumnsStatement = $this->conn->prepare($clearRefColumnsQuery);
                 $clearRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
                 $clearRefColumnsStatement->execute();
+
+                $function_fields = null;
+                $updateFuncQuery = "UPDATE headings SET function_fields = :function_fields WHERE id = :heading_id";
+                $updateFuncStatement = $this->conn->prepare($updateFuncQuery);
+                $updateFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
+                $updateFuncStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
+                $updateFuncStatement->execute();
             }
 
             // Commit transaction

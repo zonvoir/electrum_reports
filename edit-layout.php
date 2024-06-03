@@ -173,7 +173,7 @@ require 'header.php';
                         var dataFieldsOptions = '';
                         var column_function_options = $('#column_function_options_add');
                         response['dataFields'].forEach(function(number, index) {
-                            console.log("Element at index " + number['id'] + " is: " + number['title']);
+                            //console.log("Element at index " + number['id'] + " is: " + number['title']);
                             dataFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
                         });
                         column_function_options.html(dataFieldsOptions);
@@ -191,6 +191,8 @@ require 'header.php';
                 var colspan = $('#inputColspan').val();
                 var column_type = $('#column_type').val();
                 var column_function = $('#column_function').val();
+                var function_fields = $('#column_function_options_add').val();
+                var function_field = function_fields.toString();
 
                 if (templateID == "0" || templateID === undefined) {
                     toastr.error('Template not selected!', 'Error!')
@@ -229,6 +231,7 @@ require 'header.php';
                         level: level,
                         colspan: colspan,
                         column_type: column_type,
+                        function_fields: function_field,
                         column_function: column_function,
                         multi_line: multi_line,
                         data_entry: data_entry,
@@ -275,7 +278,7 @@ require 'header.php';
                         var inputLevel = $('#inputLevelEdit');
                         var optionsHTML = '';
                         for (var count = 1; count <= response['max_level']; count++) {
-                            optionsHTML += '<option value="' + count + '">' + count + '</option>';
+                            optionsHTML += '<option selected value="' + count + '">' + count + '</option>';
                         }
                         inputLevel.html(optionsHTML);
                         $('#inputLevelEdit').val(heading.level);
@@ -293,7 +296,6 @@ require 'header.php';
                         var dataFieldsOptions = '';
                         var column_function_options = $('#column_function_options');
                         response['dataFields'].forEach(function(number, index) {
-                            console.log("Element at index " + number['id'] + " is: " + number['title']);
                             dataFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
                         });
                         column_function_options.html(dataFieldsOptions);
@@ -327,6 +329,10 @@ require 'header.php';
                 var level = $('#inputLevelEdit').val();
                 var colspan = $('#inputColspanEdit').val();
                 var column_type = $('#column_type_edit').val();
+                var function_fields = $('#column_function_options').val();
+                var function_field = '';
+                if (function_fields != '')
+                    function_field = function_fields.toString();
                 var column_function = $('#column_function_edit').val();
                 var multi_line = 0;
                 var data_entry = 0;
@@ -356,6 +362,7 @@ require 'header.php';
                         level: level,
                         colspan: colspan,
                         column_type: column_type,
+                        function_fields: function_field,
                         column_function: column_function,
                         multi_line: multi_line,
                         data_entry: data_entry,
@@ -363,6 +370,7 @@ require 'header.php';
                         report: report
                     },
                     success: function(responseJson) {
+                        console.log(responseJson);
                         var response = JSON.parse(responseJson)
                         if (response.status == 'success') {
                             toastr.success(response.message, 'Success!', {

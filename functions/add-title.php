@@ -66,10 +66,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             case 'loadSplitData':
                 handleSplitData($layouts);
-                break; 
+                break;
             case 'loadCertificateData':
                 handleCertificateData($layouts);
-                break; 
+                break;
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
                 break;
@@ -88,11 +88,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'getValueofValues':
                 getValueOfValuesIds($layouts);
                 break;
+            case 'getHeadingData':
+                getHeadingData($layouts);
+                break;
             default:
                 echo json_encode(['status' => 'error', 'message' => 'Invalid action.']);
         }
     } else {
-        echo json_encode(['status' => 'error', 'message' => $_POST['action'].' Action not provided.']);
+        echo json_encode(['status' => 'error', 'message' => $_POST['action'] . ' Action not provided.']);
     }
 }
 
@@ -134,8 +137,7 @@ function handleLoadTemplates($layouts)
 
 function handleDeleteTemplate($layouts)
 {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') 
-    {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $template_id = $_POST['template_id'];
         $result = $layouts->removeTemplate($template_id);
         echo json_encode($result);
@@ -154,8 +156,7 @@ function handleLoadLayouts($layouts)
 
 function handleDeleteLayout($layouts)
 {
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') 
-    {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $layout_id = $_POST['layout_id'];
         $result = $layouts->removeLayout($layout_id);
         echo json_encode($result);
@@ -174,8 +175,9 @@ function handleLoadHeadings($layouts)
     }
 }
 
-function handleGetMaxLevel($layouts){
-    if (isset($_POST['template_id'])) {        
+function handleGetMaxLevel($layouts)
+{
+    if (isset($_POST['template_id'])) {
         $template_id = $_POST['template_id'];
         $result = $layouts->maxLevel($template_id);
         echo json_encode($result);
@@ -195,7 +197,8 @@ function handleAddHeading($layouts)
     }
 }
 
-function handleUpdateHeading($layouts){
+function handleUpdateHeading($layouts)
+{
     if (isset($_POST['title'])) {
         $result = $layouts->updateHeading($_POST);
         echo json_encode($result);
@@ -206,7 +209,7 @@ function handleUpdateHeading($layouts){
 
 function handleDeleteHeading($layouts)
 {
-    if (isset($_POST['action']) && $_POST['action']=='deleteHeading') {
+    if (isset($_POST['action']) && $_POST['action'] == 'deleteHeading') {
         $headingId = $_POST['heading_id'];
         $result = $layouts->deleteHeading($headingId);
         echo json_encode($result);
@@ -217,8 +220,7 @@ function handleDeleteHeading($layouts)
 
 function handleAddSubTitle($layouts)
 {
-    if (isset($_POST['action']) && $_POST['action']=='addSubTitle') 
-    {
+    if (isset($_POST['action']) && $_POST['action'] == 'addSubTitle') {
         $result = $layouts->storeSubTitle($_POST);
         echo json_encode($result);
     } else {
@@ -226,20 +228,22 @@ function handleAddSubTitle($layouts)
     }
 }
 
-function handleResultValues($layouts){
+function handleResultValues($layouts)
+{
     if (isset($_POST['value_id']) && isset($_POST['value'])) {
         $valueId = $_POST['value_id'];
         $value = $_POST['value'];
         $template_id = $_POST['template_id'];
         $header_id = $_POST['header_id'];
         $rowId = $_POST['row_id'];
-        $result = $layouts->updateResultValues($valueId, $value, $template_id, $header_id,$rowId);
+        $result = $layouts->updateResultValues($valueId, $value, $template_id, $header_id, $rowId);
         echo json_encode($result);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid Value']);
     }
 }
-function handleGetCellValues($layouts){
+function handleGetCellValues($layouts)
+{
     if (isset($_POST['cell_id'])) {
         $valueId = $_POST['cell_id'];
         $result = $layouts->getCellValues($valueId);
@@ -248,7 +252,8 @@ function handleGetCellValues($layouts){
         echo json_encode(['status' => 'error', 'message' => 'Invalid Value']);
     }
 }
-function handleUpdateCellValues($layouts){
+function handleUpdateCellValues($layouts)
+{
     if (isset($_POST['cell_id']) && isset($_POST['cell_value'])) {
         $id = $_POST['cell_id'];
         $value = $_POST['cell_value'];
@@ -260,7 +265,8 @@ function handleUpdateCellValues($layouts){
 }
 
 
-function handleInsertMultipleValues($layouts){
+function handleInsertMultipleValues($layouts)
+{
     if (isset($_POST['value_id']) && isset($_POST['value'])) {
         $valueId = $_POST['value_id'];
         $value = $_POST['value'];
@@ -325,7 +331,7 @@ function  handleAddValues()
         $strs = $_POST['strs'];
 
         $layout = new Layout();
-        $success = $layout->insertHeddingValues($level, $values, $ids, $templateID,$strs);
+        $success = $layout->insertHeddingValues($level, $values, $ids, $templateID, $strs);
 
         if ($success) {
             echo 'Data inserted successfully';
@@ -393,7 +399,7 @@ function handleAllTemplates()
 
 function handleSplitData($layouts)
 {
-    if (isset($_POST['action']) && $_POST['action']=='loadSplitData') {
+    if (isset($_POST['action']) && $_POST['action'] == 'loadSplitData') {
 
         $response = $layouts->getSplitData($_POST);
 
@@ -405,9 +411,23 @@ function handleSplitData($layouts)
     }
 }
 
+function getHeadingData($layouts)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'getHeadingData') {
+
+        $response = $layouts->getHeadingData($_POST);
+
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
+
 function handleCertificateData($layouts)
 {
-    if (isset($_POST['action']) && $_POST['action']=='loadCertificateData') {
+    if (isset($_POST['action']) && $_POST['action'] == 'loadCertificateData') {
 
         $response = $layouts->getCertificateData($_POST);
 
@@ -419,23 +439,22 @@ function handleCertificateData($layouts)
     }
 }
 
-function getValuesUnderHeading(){
+function getValuesUnderHeading()
+{
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $headingID = $_POST['heding_id'];
         $templateID = $_POST['template_id'];
-
-
-
     }
 }
 
 
-function getMultipleValueCount($layout){
+function getMultipleValueCount($layout)
+{
     if (isset($_POST['value_id'])) {
         $valueId = $_POST['value_id'];
         $response = $layout->getValuesCount($valueId);
     }
-    
+
     if ($response) {
         echo json_encode($response);
     } else {
@@ -444,11 +463,12 @@ function getMultipleValueCount($layout){
 }
 
 
-function getValueOfValuesIds($layout){
+function getValueOfValuesIds($layout)
+{
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idlist'])) {
         // Decode JSON data into PHP array
         $idlist = json_decode($_POST['idlist']);
-    
+
         // Check if decoding was successful
         if ($idlist === null) {
             // Error handling for invalid JSON

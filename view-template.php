@@ -227,7 +227,7 @@ require 'header.php';
                     echo '<tr>';
                         foreach ($row as $heading) {
                             $hide = "";
-                            $hideChkBox = "hide";
+                            $hideChkBox = "hide1";
                             if ($heading['column_function'] != "") {
                                 $hide = "hide1";
                                 $hideChkBox = "";
@@ -236,7 +236,7 @@ require 'header.php';
                                     <label for="' . $heading['id'] . '">'
                                         . $heading['title'];
                                         if ($totalLevels == $heading['level']) {
-                                            echo ' <input class="hide heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
+                                            echo ' <input class="hide1 heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
                                         }
                             echo '</label>';
                             echo '</th>';
@@ -254,21 +254,21 @@ require 'header.php';
                         if ($i == $count - 1) {
                             echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
                                     <div class="d-flex">      
-                                        <input name="title['.$row[$i]['title'].']" type="number" class="hide1 form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />
+                                        <input name="title['.$row[$i]['title'].'][]" type="number" class="hide1 form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />
                                     </div>';
                             echo '</td>';
                         } else if ($lastRow[$i]['column_function'] != "") {
                             echo '<td class="hide1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
                                     <div class="d-flex">
-                                        <input name="title['.$row[$i]['title'].']" type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
+                                        <input name="title['.$row[$i]['title'].'][]" type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
                                     </div>';
                             echo '</td>';
                         } else {
                             echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
                                 if ($row[$i]['multi_line'] == 1) {
-                                    echo '<textarea name="title['.$row[$i]['title'].']" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
+                                    echo '<textarea name="title['.$row[$i]['title'].'][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
                                 } else {
-                                    echo '<input name="title['.$row[$i]['title'].']" type="number" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" />';
+                                    echo '<input name="title['.$row[$i]['title'].'][]" type="number" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" />';
                                 }
                             echo '</td>';
                         }
@@ -277,13 +277,11 @@ require 'header.php';
                 echo '</tr>';
             echo '</table>';
             echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
-                    <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save</button>
-                    <button style="float:right" class="btn btn-primary btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
+                    <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
+                    <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                     <!--button class="btn btn-primary" type="submit">Submit</button-->
                   </div>';
-
             echo '</form>';
-
             ?>
         </div>
     </div>
@@ -421,7 +419,7 @@ require 'header.php';
             var table = $("#template-table").closest('table');
             var lastRow = table.find('tbody tr').last();
             var newRow = lastRow.clone(true, true);
-            newRow.find('input').val('');
+            newRow.find('input, textarea').val('');
             // newRow.find('.growTextarea').css('height','auto');
             newRow.insertAfter(lastRow);
             table.find('.btnDeleteRow').removeAttr("disabled");
@@ -564,6 +562,7 @@ require 'header.php';
                                     RefReading = false;
                                 }
                                 if (RefReading && val != function_fields[heading_id] + '@@@') {
+                                    console.log('val', val);
                                     RefReadingSum = RefReadingSum + parseFloat(val);
                                     RefReadingCount++;
                                 }
@@ -847,13 +846,35 @@ require 'header.php';
                 formData.append('action', 'storeCalculationFormData');
                 formData.append('template_id', templateId);
                 $.ajax({
+                    beforeSend:function(){
+                        $(".btnCalulate").attr('disabled',true);
+                        $(".fa-spinner").show();
+                    },
                     type: 'POST',
                     url: './functions/add-title.php',
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function(dataJSON) {
-                    }
+                        var response = JSON.parse(dataJSON)
+                        if (response.status=='success') {
+                            toastr.success(response.message, 'Success!', {
+                                timeOut: 3000,
+                                extendedTimeOut: 2000,
+                                progressBar: true,
+                                closeButton: true,
+                                tapToDismiss: false,
+                                positionClass: "toast-top-right",
+                            });
+                            // $('#calculation_template_form')[0].reset();
+                        }else{
+                            toastr.error('Someing want wrong!', 'Opps!')
+                        }                        
+                    },
+                    complete:function(){
+                        $(".btnCalulate").attr('disabled',false);
+                        $(".fa-spinner").hide();
+                    },
                 });
             }
         }

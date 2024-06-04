@@ -151,6 +151,15 @@ require 'header.php';
                 }
             });
 
+            function initializeSelect2(modalId) {
+                $('.select2').select2({
+                    dropdownParent: $('#'+modalId),
+                    placeholder: 'Select an option',
+                    allowClear: true,
+                    width: '100%'
+                });
+            }
+
             $("body").on('click', '.addHeading', function() {
                 var selectedTemplateId = $("#templateSelect").find(':selected').val();
                 $.ajax({
@@ -173,10 +182,11 @@ require 'header.php';
                         var dataFieldsOptions = '';
                         var column_function_options = $('#column_function_options_add');
                         response['dataFields'].forEach(function(number, index) {
-                            //console.log("Element at index " + number['id'] + " is: " + number['title']);
                             dataFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
                         });
                         column_function_options.html(dataFieldsOptions);
+
+                        initializeSelect2('addHeadingModal');
 
                         $('#addHeadingModal').modal('show');
                     }
@@ -271,10 +281,9 @@ require 'header.php';
                     },
                     success: function(response) {
                         var response = JSON.parse(response);
-                        console.log(response);
+
                         $('#headingId').val(heading.id);
                         $('#inputTitleEdit').val(heading.title);
-
                         var inputLevel = $('#inputLevelEdit');
                         var optionsHTML = '';
                         for (var count = 1; count <= response['max_level']; count++) {
@@ -282,38 +291,44 @@ require 'header.php';
                         }
                         inputLevel.html(optionsHTML);
                         $('#inputLevelEdit').val(heading.level);
-
                         $('#inputColspanEdit').val(heading.colspan);
                         $('#column_type_edit').val(heading.column_type);
-
+                        $('#column_function_edit').val(heading.column_function);
                         if (heading.column_type === 'FUNCTION') {
                             $('.inputFunction').closest('.row').show();
+                            $('.inputData').closest('.row').hide();
+
+                            var functionFieldsOptions = '';
+                            var columnFunctionOptions = $('#column_function_options');
+                            response['dataFields'].forEach(function(number, index) {
+                                functionFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
+                            });
+                            columnFunctionOptions.html(functionFieldsOptions);
+
+                            var functionFieldsArr = heading.function_fields ? heading.function_fields.split(",") : 0;
+                            $("#column_function_options").val(functionFieldsArr);
+                            
+                            initializeSelect2('editHeadingModal');
+                            
                         } else {
                             $('.inputFunction').closest('.row').hide();
-                        }
-                        $('#column_function_edit').val(heading.column_function);
+                            $('.inputData').closest('.row').show();
 
-                        var dataFieldsOptions = '';
-                        var column_function_options = $('#column_function_options');
-                        response['dataFields'].forEach(function(number, index) {
-                            dataFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
-                        });
-                        column_function_options.html(dataFieldsOptions);
+                            if (heading.multi_line) {
+                                $("#multi_line_edit").prop("checked", true);
+                            }
 
-                        if (heading.multi_line) {
-                            $("#multi_line_edit").prop("checked", true);
-                        }
+                            if (heading.data_entry) {
+                                $("#data_entry_edit").prop("checked", true);
+                            }
 
-                        if (heading.data_entry) {
-                            $("#data_entry_edit").prop("checked", true);
-                        }
+                            if (heading.analysis) {
+                                $("#analysis_edit").prop("checked", true);
+                            }
 
-                        if (heading.analysis) {
-                            $("#analysis_edit").prop("checked", true);
-                        }
-
-                        if (heading.report) {
-                            $("#report_edit").prop("checked", true);
+                            if (heading.report) {
+                                $("#report_edit").prop("checked", true);
+                            }
                         }
 
                         $('#editHeadingModal').modal('show');

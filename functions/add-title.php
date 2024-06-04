@@ -445,10 +445,10 @@ function handleCertificateData($layouts)
 function handleStoreCalculationFormData($layouts)
 {
     if (isset($_POST['action']) && $_POST['action'] == 'storeCalculationFormData') {
-        echo '<pre>';
-        print_r($_POST); 
-        echo '</pre>';
-        die;
+        // echo '<pre>';
+        // print_r($_POST); 
+        // echo '</pre>';
+        // die;
         $response = $layouts->storeCalculationData($_POST);
 
         if ($response) {

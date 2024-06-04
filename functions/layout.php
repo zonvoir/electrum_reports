@@ -1726,6 +1726,28 @@ class Layout
         return $response;
     }
 
+    public function storeCalculationData($data)
+    {
+        $templateId = $data['template_id'];
+
+        $query = "INSERT INTO calculation_template (template_id, title, title_value) VALUES (:templateId, :title, :titleValue)";
+        $statement = $this->conn->prepare($query);
+
+        foreach ($data['title'] as $title=>$titleValueArr) {
+            foreach ($titleValueArr as $titleValue) {
+                $statement->bindParam(':templateId', $templateId);
+                $statement->bindParam(':title', $title);
+                $statement->bindParam(':titleValue', $titleValue);
+                $statement->execute();
+            }
+        }
+    
+        return [
+            'status' => 'success',
+            'message' => 'Calculated data has been stored successfully.',
+        ];
+    }
+
     private function getLayoutTotalRecords()
     {
         $query = "SELECT COUNT(*) as count FROM layouts";

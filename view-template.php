@@ -9,38 +9,7 @@ require 'header.php';
     <?php
     require 'navigation.php';
     ?>
-    <script type="text/javascript">
-        const url = new URL(window.location.href);
-        const layout_template_id = url.searchParams.get('id');
-        console.log(layout_template_id);
-        var function_fields = [];
-        $.ajax({
-            type: 'POST',
-            url: './functions/add-title.php',
-            data: {
-                action: 'getHeadingData',
-                layout_template_id: layout_template_id,
-            },
-            success: function(dataJSON) {
-                var response = JSON.parse(dataJSON);
-                //console.log(response);
-                if (response.status === 'success') {
-                    $.each(response.data, function(index, row) {
-                        function_fields[row.id] = row.function_fields;
-                    });
-
-                    console.log(function_fields);
-
-                    // $.each(function_fields, function(index, row) {
-                    //     if(row){
-                    //         console.log(index + ", " + row);
-                    //     }                          
-                    // });
-                }
-            }
-        });
-    </script>
-    <div class="container">
+    <div class="container1 p-3">
         <div class="row mt-4">
             <div class="col-md-2">
                 <label for="equipment_id">Equipment ID</label>
@@ -52,7 +21,7 @@ require 'header.php';
             </div>
             <div class="col-md-2">
                 <label for="cal_date">Cal date</label>
-                <input type="date" id="cal_date" class="form-control getSplitData" />
+                <input type="date" id="cal_date" class="form-control getSplitData" value="2024-06-05" />
             </div>
             <div class="col-md-2">
                 <label for="res">Res</label>
@@ -251,29 +220,25 @@ require 'header.php';
 
                 echo '<tr>';
                     for ($i = 0; $i <= $count - 1; $i++) {
-                        if ($i == $count - 1) {
-                            echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                    <div class="d-flex">      
-                                        <input name="title['.$row[$i]['title'].'][]" type="number" class="hide1 form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />
-                                    </div>';
-                            echo '</td>';
-                        } else if ($lastRow[$i]['column_function'] != "") {
+                        if ($lastRow[$i]['column_function'] != "") {
                             echo '<td class="hide1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
                                     <div class="d-flex">
-                                        <input name="title['.$row[$i]['title'].'][]" type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
+                                        <!--input name="title['.$row[$i]['title'].'][]" type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly /-->   
+                                        <textarea name="title['.$row[$i]['title'].'][]" class="input-field form-control me-1 valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly></textarea>                                         
                                     </div>';
                             echo '</td>';
                         } else {
                             echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
-                                if ($row[$i]['multi_line'] == 1) {
-                                    echo '<textarea name="title['.$row[$i]['title'].'][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
-                                } else {
-                                    echo '<input name="title['.$row[$i]['title'].'][]" type="number" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" />';
-                                }
+                                echo '<textarea name="title['.$row[$i]['title'].'][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;"></textarea>';
+                                // if ($row[$i]['multi_line'] == 1) {
+                                //     echo '<textarea name="title['.$row[$i]['title'].'][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" rows="4" style="resize:none;"></textarea>';
+                                // } else {
+                                //     echo '<input name="title['.$row[$i]['title'].'][]" type="number" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" />';
+                                // }
                             echo '</td>';
                         }
                     }
-                    echo '<td><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
+                    echo '<td class="align-middle"><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
                 echo '</tr>';
             echo '</table>';
             echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
@@ -329,6 +294,27 @@ require 'header.php';
         //         splitTable.html(splitTableHTML);
         //     }
         // });      
+        
+        const url = new URL(window.location.href);
+        const layout_template_id = url.searchParams.get('id');
+        var function_fields = [];
+        $.ajax({
+            type: 'POST',
+            url: './functions/add-title.php',
+            data: {
+                action: 'getHeadingData',
+                layout_template_id: layout_template_id,
+            },
+            success: function(dataJSON) {
+                var response = JSON.parse(dataJSON);
+                if (response.status === 'success') {
+                    $.each(response.data, function(index, row) {
+                        function_fields[row.id] = row.function_fields;
+                    });
+                    // console.log('function_fields',function_fields);
+                }
+            }
+        });
 
         $("body").on('input', '.getCertificateData', function() {
             var equipment_id = $("#equipment_id").val();
@@ -446,9 +432,10 @@ require 'header.php';
         $(".heading_check").on('click', function() {
             var heading = JSON.parse($(this).attr('data-data'));
             var heading_id = heading.id;
-            var column_type = heading.column_type;
-            var column_function = heading.column_function;
             var title = heading.title;
+            var column_type = heading.column_type;
+            var multi_line = heading.multi_line;
+            var column_function = heading.column_function;
             var singleInputHeadingWiseArray = [heading_id + "@@@"];
             var valueToRemove = heading_id + "@@@";
 
@@ -461,7 +448,7 @@ require 'header.php';
                         }
                     });
                     multipleArr.push(singleInputHeadingWiseArray);
-                    //console.log(multipleArr);
+                    console.log(multipleArr);
 
                 } else {
 
@@ -519,23 +506,37 @@ require 'header.php';
                         //put here UUC convrt formula
                         var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
                         var unit_uuc = $("#unit_uuc").val();
-                        var result = 0;
+                        var UUCReading = false;
+                        var UUCReadingVal = [];
+
                         if (unit_uuc != "" && unit_ref != "") {
-                            var UUCReading = false;
-                            var UUCReadingVal = [];
                             multipleArr.forEach(function(column) {
                                 column.forEach(function(val) {
                                     if (val == function_fields[heading_id] + '@@@') {
                                         UUCReading = true;
-                                    } else if (isNaN(val)) {
+                                    } else if (isNaN(val) && val.indexOf('@@@') > 0) {
                                         UUCReading = false;
                                     }
                                     if (UUCReading && val != function_fields[heading_id] + '@@@') {
+                                        let uUCReadingArr = val.split('\n');
+                                        
                                         if (unit_uuc == "m" && unit_ref == "ft") {
-                                            UUCReadingVal.push(metersToFeet(val));
+                                            var feetsArray = $.map(uUCReadingArr, function(meters) {
+                                                return convertMetersToFeet(meters);
+                                            });
+                                            var feetsString = feetsArray.join('\n')
+                                            UUCReadingVal.push(feetsString);
+                                            
                                         } else if (unit_uuc == "ft" && unit_ref == "m") {
-                                            UUCReadingVal.push(feetToMeters(val));
+
+                                            var metersArray = $.map(uUCReadingArr, function(feets) {
+                                                return convertFeetToMeters(feets);
+                                            });
+                                            var metersString = metersArray.join('\n');
+                                            UUCReadingVal.push(metersString);
+                                            
                                         }
+                                        
                                     }
                                 });
                             });
@@ -546,36 +547,42 @@ require 'header.php';
                                 singleInputHeadingWiseArray.push(v);
                             });
                             multipleArr.push(singleInputHeadingWiseArray);
-                            //console.log(multipleArr);
+                            console.log(multipleArr);
                         }
                     }
                     if (column_function == "RM") {
                         //put here Ref Mean formula
                         var RefReading = false;
-                        var RefReadingSum = 0;
-                        var RefReadingCount = 0;
+                        var refMeanValue = 0;
+                        var refMeanValueArr = [];
                         multipleArr.forEach(function(column) {
                             column.forEach(function(val) {
                                 if (val == function_fields[heading_id] + '@@@') {
                                     RefReading = true;
-                                } else if (isNaN(val)) {
+                                } else if (isNaN(val) && val.indexOf('@@@') > 0) {
                                     RefReading = false;
                                 }
                                 if (RefReading && val != function_fields[heading_id] + '@@@') {
-                                    console.log('val', val);
-                                    RefReadingSum = RefReadingSum + parseFloat(val);
-                                    RefReadingCount++;
+                                    let refReadingArr = val.split('\n');
+                                    let refReadingCount = refReadingArr.length;
+                                    var refReadingSum = refReadingArr.reduce(function(sum, value) {
+                                        return sum + parseInt(value, 10);
+                                    }, 0);
+
+                                    refMeanValue = refReadingSum/refReadingCount;
+                                    refMeanValueArr.push(refMeanValue);
                                 }
                             });
                         });
                         let x = 0;
                         $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(RefReadingSum / RefReadingCount);
+                            let v = parseFloat(refMeanValueArr[x]);
                             $(this).val(v);
                             singleInputHeadingWiseArray.push(v);
+                            x++;
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
+                        console.log(multipleArr);
                     }
 
                     if (column_function == "CR") {
@@ -936,7 +943,16 @@ require 'header.php';
         function feetToMeters(feet) {
             feet = math.unit(feet + ' ft');
             var meter = parseFloat(feet.to('m'));
+            console.log('meter',meter);
             return meter;
+        }
+
+        function convertFeetToMeters(feets) {
+            return (parseFloat(feets) * 0.3048).toFixed(4);
+        }
+
+        function convertMetersToFeet(meters) {
+            return (parseFloat(meters) * 3.28084).toFixed(4);
         }
     </script>
     <?php

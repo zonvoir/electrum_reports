@@ -141,20 +141,20 @@
                 <div class="mb-6 row">
                     <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="multi_line" type="checkbox" id="multi_line"> Multi-line
+                        <input class="form-check-input" name="multi_line" type="checkbox" id="multi_line"> Multi-line
                     </div>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="data_entry" type="checkbox" id="data_entry"> Data Entry
+                        <input class="form-check-input" name="data_entry" type="checkbox" id="data_entry"> Data Entry
                     </div>
                 </div>
 
                 <div class="mb-6 row">
                     <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="analysis" type="checkbox" id="analysis" disabled checked> Analysis
+                        <input class="form-check-input" name="analysis" type="checkbox" id="analysis" disabled checked> Analysis
                     </div>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="report" type="checkbox" id="report"> Report
+                        <input class="form-check-input" name="report" type="checkbox" id="report"> Report
                     </div>
                 </div>
 
@@ -235,22 +235,22 @@
                     </div>
                 </div>
         
-                <div class="mb-6 row" style="display: none;">
+                <div class="mb-6 row">
                     <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="multi_line" type="checkbox" id="multi_line_edit"> Multi-line
+                        <input class="form-check-input" name="multi_line" type="checkbox" id="multi_line_edit"> Multi-line
                     </div>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="data_entry" type="checkbox" id="data_entry_edit"> Data Entry
+                        <input class="form-check-input" name="data_entry" type="checkbox" id="data_entry_edit"> Data Entry
                     </div>
                 </div>
-                <div class="mb-6 row" style="display: none;">
+                <div class="mb-6 row">
                     <label for="column_type_edit" class="col-sm-4 col-form-label text-end">&nbsp;</label>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData " name="analysis" type="checkbox" id="analysis_edit" disabled checked> Analysis
+                        <input class="form-check-input " name="analysis" type="checkbox" id="analysis_edit" disabled checked> Analysis
                     </div>
                     <div class="col-sm-3">
-                        <input class="form-check-input inputData" name="report" type="checkbox" id="report_edit"> Report
+                        <input class="form-check-input" name="report" type="checkbox" id="report_edit"> Report
                     </div>
                 </div>
 
@@ -383,10 +383,8 @@
         $(document).on('change', '.inputType', function() {
             if ($(this).val() === 'FUNCTION') {
                 $('.inputFunction').closest('.row').show();
-                $('.inputData').closest('.row').hide();
             } else {
                 $('.inputFunction').closest('.row').hide();
-                $('.inputData').closest('.row').show();
             }
         });
     });

@@ -172,7 +172,7 @@ require 'header.php';
                     success: function(response) {
                         var response = JSON.parse(response);
                         var inputLevel = $('#inputLevel');
-                        var totalLevels = response['max_level'] > 1 ? parseInt(response['max_level']) + 1 : response['max_level'];
+                        var totalLevels = response['levels'];
                         var optionsHTML = '';
                         for (var count = 1; count <= totalLevels; count++) {
                             optionsHTML += '<option value="' + count + '">' + count + '</option>';
@@ -286,7 +286,7 @@ require 'header.php';
                         $('#inputTitleEdit').val(heading.title);
                         var inputLevel = $('#inputLevelEdit');
                         var optionsHTML = '';
-                        for (var count = 1; count <= response['max_level']; count++) {
+                        for (var count = 1; count <= response['levels']; count++) {
                             optionsHTML += '<option selected value="' + count + '">' + count + '</option>';
                         }
                         inputLevel.html(optionsHTML);
@@ -296,7 +296,6 @@ require 'header.php';
                         $('#column_function_edit').val(heading.column_function);
                         if (heading.column_type === 'FUNCTION') {
                             $('.inputFunction').closest('.row').show();
-                            $('.inputData').closest('.row').hide();
 
                             var functionFieldsOptions = '';
                             var columnFunctionOptions = $('#column_function_options');
@@ -312,7 +311,6 @@ require 'header.php';
                             
                         } else {
                             $('.inputFunction').closest('.row').hide();
-                            $('.inputData').closest('.row').show();
 
                             if (heading.multi_line) {
                                 $("#multi_line_edit").prop("checked", true);

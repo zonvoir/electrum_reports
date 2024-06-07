@@ -9,38 +9,7 @@ require 'header.php';
     <?php
     require 'navigation.php';
     ?>
-    <script type="text/javascript">
-        const url = new URL(window.location.href);
-        const layout_template_id = url.searchParams.get('id');
-        console.log(layout_template_id);
-        var function_fields = [];
-        $.ajax({
-            type: 'POST',
-            url: './functions/add-title.php',
-            data: {
-                action: 'getHeadingData',
-                layout_template_id: layout_template_id,
-            },
-            success: function(dataJSON) {
-                var response = JSON.parse(dataJSON);
-                //console.log(response);
-                if (response.status === 'success') {
-                    $.each(response.data, function(index, row) {
-                        function_fields[row.id] = row.function_fields;
-                    });
-
-                    console.log(function_fields);
-
-                    // $.each(function_fields, function(index, row) {
-                    //     if(row){
-                    //         console.log(index + ", " + row);
-                    //     }                          
-                    // });
-                }
-            }
-        });
-    </script>
-    <div class="container">
+    <div class="container1 p-3">
         <div class="row mt-4">
             <div class="col-md-2">
                 <label for="equipment_id">Equipment ID</label>
@@ -52,7 +21,7 @@ require 'header.php';
             </div>
             <div class="col-md-2">
                 <label for="cal_date">Cal date</label>
-                <input type="date" id="cal_date" class="form-control getSplitData" />
+                <input type="date" id="cal_date" class="form-control getSplitData" value="2024-06-05" />
             </div>
             <div class="col-md-2">
                 <label for="res">Res</label>
@@ -145,7 +114,6 @@ require 'header.php';
             <?php
             $querySiRefEqInfo = "SELECT * FROM si_ref_eq_info GROUP BY unit";
             $statementSiRefEqInfo = $conn->prepare($querySiRefEqInfo);
-            // $statementTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
             $statementSiRefEqInfo->execute();
             $siRefEqInfos = $statementSiRefEqInfo->fetchAll(PDO::FETCH_ASSOC);
             ?>
@@ -213,74 +181,54 @@ require 'header.php';
                 $rows[$level][] = $heading;
             }
 
-            // echo "<pre>";
-            // print_r($rows);
-            // echo "</pre>";
-
             echo '<form id="calculation_template_form">';
+            echo '<div class="table-responive">';
             echo '<table id="template-table" class="table table-bordered">';
-                $levelIndex = 1;
+            $count = 0;
+            $lastRow = [];
+            foreach ($rows as $key => $row) {
                 $count = 0;
-                $lastRow = [];
-                foreach ($rows as $key => $row) {
-                    $count = 0;
-                    echo '<tr>';
-                        foreach ($row as $heading) {
-                            $hide = "";
-                            $hideChkBox = "hide1";
-                            if ($heading['column_function'] != "") {
-                                $hide = "hide1";
-                                $hideChkBox = "";
-                            }
-                            echo '<th class="' . $hide . '" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '"   >
-                                    <label for="' . $heading['id'] . '">'
-                                        . $heading['title'];
-                                        if ($totalLevels == $heading['level']) {
-                                            echo ' <input class="hide1 heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
-                                        }
-                            echo '</label>';
-                            echo '</th>';
-                            $count++;
-                        }
-                        echo '<th>&nbsp;</th>';
-                    echo '</tr>';
-                    if ($key == count($rows)) {
-                        $lastRow = $row;
-                    }
-                }
-
                 echo '<tr>';
-                    for ($i = 0; $i <= $count - 1; $i++) {
-                        if ($i == $count - 1) {
-                            echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                    <div class="d-flex">      
-                                        <input name="title['.$row[$i]['title'].'][]" type="number" class="hide1 form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />
-                                    </div>';
-                            echo '</td>';
-                        } else if ($lastRow[$i]['column_function'] != "") {
-                            echo '<td class="hide1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">
-                                    <div class="d-flex">
-                                        <input name="title['.$row[$i]['title'].'][]" type="number" class="form-control me-1 input_val_' . $row[$i]['id'] . '" readonly />                                            
-                                    </div>';
-                            echo '</td>';
-                        } else {
-                            echo '<td colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
-                                if ($row[$i]['multi_line'] == 1) {
-                                    echo '<textarea name="title['.$row[$i]['title'].'][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '"></textarea>';
-                                } else {
-                                    echo '<input name="title['.$row[$i]['title'].'][]" type="number" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" />';
-                                }
-                            echo '</td>';
-                        }
+                foreach ($row as $heading) {
+                    $hide = "";
+                    $hideChkBox = "hide1";
+                    if ($heading['column_function'] != "") {
+                        $hide = "hide1";
+                        $hideChkBox = "";
                     }
-                    echo '<td><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
+                    echo '<th class="' . $hide . ' p-1 text-nowrap text-center" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '">';
+                    echo $heading['title'];
+                    echo '<input class="hide heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
+                    echo '</th>';
+                    $count++;
+                }
+                echo '<th>&nbsp;</th>';
                 echo '</tr>';
+                if ($key == count($rows)) {
+                    $lastRow = $row;
+                }
+            }
+
+            echo '<tr>';
+            for ($i = 0; $i <= $count - 1; $i++) {
+                if ($lastRow[$i]['column_function'] != "") {
+                    echo '<td class="hide1 p-1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
+                    echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly rows="3"></textarea>';
+                    echo '</td>';
+                } else {
+                    echo '<td class="p-1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
+                    echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" rows="3"></textarea>';
+                    echo '</td>';
+                }
+            }
+            echo '<td class="align-middle"><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
+            echo '</tr>';
             echo '</table>';
             echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
-                    <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
-                    <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
-                    <!--button class="btn btn-primary" type="submit">Submit</button-->
-                  </div>';
+                        <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
+                        <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
+                      </div>';
+            echo '</div>';
             echo '</form>';
             ?>
         </div>
@@ -290,45 +238,30 @@ require 'header.php';
     ?>
 
     <script>
-        // $("body").on('keyup change', '.getSplitData', function() {
-        //     var equipment_id = $("#equipment_id").val();
-        //     var sensor_id = $("#sensor_id").val();
-        //     var cal_date = $("#cal_date").val();
-        //     var range_min = $("#range_min").val();
-        //     var range_max = $("#range_max").val();
-        //     //var x_split_no = $("#x_split_no").val();
+        $('.input-field').on('input', function() {
+            var sanitizedValue = $(this).val().replace(/[^0-9.\n]/g, '');
+            $(this).val(sanitizedValue);
+        });
 
-        //     var splitTable = $('#split_table');
-        //     var splitTableHTML = '';
-
-        //     // [equipment_id, sensor_id, cal_date, range_min, range_max, x_split_no].every(value => value !== '')
-        //     if (equipment_id != '' && sensor_id != '' && cal_date != '' && range_min != '' && range_max != '') { //&& x_split_no != ''
-        //         $.ajax({
-        //             type: 'POST',
-        //             url: './functions/add-title.php',
-        //             data: {
-        //                 action: 'loadSplitData',
-        //                 equipment_id: equipment_id,
-        //                 sensor_id: sensor_id,
-        //                 cal_date: cal_date,
-        //                 range_min: range_min,
-        //                 range_max: range_max,
-        //                 //x_split_no: x_split_no,
-        //             },
-        //             success: function(dataJSON) {
-        //                 var response = JSON.parse(dataJSON)
-        //                 if (response.status === 'success') {
-        //                     $.each(response.data, function(index, row) {
-        //                         splitTableHTML += '<tr><td>' + row.uncert + '</td><td>' + row.split_no + '</td></tr>';
-        //                     });
-        //                     splitTable.html(splitTableHTML);
-        //                 }
-        //             }
-        //         });
-        //     } else {
-        //         splitTable.html(splitTableHTML);
-        //     }
-        // });      
+        const url = new URL(window.location.href);
+        const layout_template_id = url.searchParams.get('id');
+        var function_fields = [];
+        $.ajax({
+            type: 'POST',
+            url: './functions/add-title.php',
+            data: {
+                action: 'getHeadingData',
+                layout_template_id: layout_template_id,
+            },
+            success: function(dataJSON) {
+                var response = JSON.parse(dataJSON);
+                if (response.status === 'success') {
+                    $.each(response.data, function(index, row) {
+                        function_fields[row.id] = row.function_fields;
+                    });
+                }
+            }
+        });
 
         $("body").on('input', '.getCertificateData', function() {
             var equipment_id = $("#equipment_id").val();
@@ -336,7 +269,6 @@ require 'header.php';
             var cal_date = $("#cal_date").val();
             var range_min = $("#range_min").val();
             var range_max = $("#range_max").val();
-            //var x_split_no = $("#x_split_no").val();
             var res = $("#res").val();
 
             if (equipment_id != '' && sensor_id != '' && cal_date != '' && range_min != '' && range_max != '' && res !== '') { //&& x_split_no != ''
@@ -350,7 +282,6 @@ require 'header.php';
                         cal_date: cal_date,
                         range_min: range_min,
                         range_max: range_max,
-                        //x_split_no: x_split_no,
                         res: res,
                     },
                     success: function(dataJSON) {
@@ -404,7 +335,6 @@ require 'header.php';
         });
 
         function changeDateFormat(dateString) {
-            //console.log('dateString', dateString);
             if (dateString != '' && dateString != undefined) {
                 var parts = dateString.split('/');
                 var formattedDate = parts[2] + '-' + parts[0].padStart(2, '0') + '-' + parts[1].padStart(2, '0');
@@ -419,13 +349,12 @@ require 'header.php';
             var table = $("#template-table").closest('table');
             var lastRow = table.find('tbody tr').last();
             var newRow = lastRow.clone(true, true);
-            newRow.find('input, textarea').val('');
-            // newRow.find('.growTextarea').css('height','auto');
+            newRow.find('input, textarea').val('');;
             newRow.insertAfter(lastRow);
             table.find('.btnDeleteRow').removeAttr("disabled");
         });
 
-        //for checl validation click on calculate & save
+        //for check validation click on calculate & save
         let isValid = false;
 
         //Delete table row
@@ -442,13 +371,13 @@ require 'header.php';
         });
 
         var multipleArr = [];
-
         $(".heading_check").on('click', function() {
             var heading = JSON.parse($(this).attr('data-data'));
             var heading_id = heading.id;
-            var column_type = heading.column_type;
-            var column_function = heading.column_function;
             var title = heading.title;
+            var column_type = heading.column_type;
+            var multi_line = heading.multi_line;
+            var column_function = heading.column_function;
             var singleInputHeadingWiseArray = [heading_id + "@@@"];
             var valueToRemove = heading_id + "@@@";
 
@@ -461,125 +390,109 @@ require 'header.php';
                         }
                     });
                     multipleArr.push(singleInputHeadingWiseArray);
-                    //console.log(multipleArr);
-
+                    console.log(multipleArr);
                 } else {
-
                     var i = 1;
 
-                    if (column_function == "TUC") {
-                        //put here TEST UNIT CONVERTION formula
+                    //put here TEST UNIT CONVERTION formula
+                    if (column_function == "TUC") {}
 
-                    }
-                    if (column_function == "TS") {
-                        //put here TEST STDEV formula
+                    //put here TEST STDEV formula
+                    if (column_function == "TS") {}
 
-                    }
-                    if (column_function == "TC") {
-                        //put here TEST COUNT formula
+                    //put here TEST COUNT formula
+                    if (column_function == "TC") {}
 
-                    }
-                    if (column_function == "RS") {
-                        //put here REF STDEV formula
-                        var RefReading = false;
-                        var uUUCCovertArr = [];
-                        var sampleStdev = 0;
-                        multipleArr.forEach(function(column) {
-                            column.forEach(function(val) {
-                                if (val == function_fields[heading_id] + '@@@') {
-                                    RefReading = true;
-                                } else if (isNaN(val)) {
-                                    RefReading = false;
-                                }
-                                if (RefReading && val != function_fields[heading_id] + '@@@') {
-                                    uUUCCovertArr.push(val);
-                                }
-                                //console.log(uUUCCovertArr);
-                                var data = uUUCCovertArr;
+                    //put here REF COUNT formula
+                    if (column_function == "RC") {}
 
-                                sampleStdev = sampleStandardDeviation(data);
-                                //console.log("Sample Standard Deviation:", sampleStdev);
-                            });
-                        });
-                        let x = 0;
-                        $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(sampleStdev);
-                            $(this).val(v);
-                            singleInputHeadingWiseArray.push(v);
-                        });
-                        multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
-
-                    }
-                    if (column_function == "RC") {
-                        //put here REF COUNT formula
-
-                    }
+                    // Apply here UUC convrt formula
                     if (column_function == "UC") {
-                        //put here UUC convrt formula
                         var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
                         var unit_uuc = $("#unit_uuc").val();
-                        var result = 0;
+                        var UUCReading = false;
+                        var UUCReadingVal = [];
                         if (unit_uuc != "" && unit_ref != "") {
-                            var UUCReading = false;
-                            var UUCReadingVal = [];
                             multipleArr.forEach(function(column) {
                                 column.forEach(function(val) {
                                     if (val == function_fields[heading_id] + '@@@') {
                                         UUCReading = true;
-                                    } else if (isNaN(val)) {
+                                    } else if (isNaN(val) && val.indexOf('@@@') > 0) {
                                         UUCReading = false;
                                     }
                                     if (UUCReading && val != function_fields[heading_id] + '@@@') {
+                                        let uUCReadingArr = val.split('\n');
+
                                         if (unit_uuc == "m" && unit_ref == "ft") {
-                                            UUCReadingVal.push(metersToFeet(val));
+                                            var feetsArray = $.map(uUCReadingArr, function(meters) {
+                                                return convertMetersToFeet(meters);
+                                            });
+                                            var feetsString = feetsArray.join('\n')
+                                            UUCReadingVal.push(feetsString);
+
                                         } else if (unit_uuc == "ft" && unit_ref == "m") {
-                                            UUCReadingVal.push(feetToMeters(val));
+
+                                            var metersArray = $.map(uUCReadingArr, function(feets) {
+                                                return convertFeetToMeters(feets);
+                                            });
+                                            var metersString = metersArray.join('\n');
+                                            UUCReadingVal.push(metersString);
                                         }
                                     }
                                 });
                             });
-                            let x = 0;
+                            let index = 0;
                             $(".input_val_" + heading_id + "").each(function() {
-                                let v = UUCReadingVal[x++];
+                                let v = UUCReadingVal[index];
                                 $(this).val(v);
                                 singleInputHeadingWiseArray.push(v);
+                                index++;
                             });
                             multipleArr.push(singleInputHeadingWiseArray);
-                            //console.log(multipleArr);
+                            console.log(multipleArr);
                         }
                     }
-                    if (column_function == "RM") {
-                        //put here Ref Mean formula
-                        var RefReading = false;
-                        var RefReadingSum = 0;
-                        var RefReadingCount = 0;
+
+                    // Apply here Ref Mean formula
+                    if (column_function === "RM") {
+                        var isValueMatch = false;
+                        var calculatedValue = 0;
+                        var calculatedValues = [];
+
                         multipleArr.forEach(function(column) {
-                            column.forEach(function(val) {
-                                if (val == function_fields[heading_id] + '@@@') {
-                                    RefReading = true;
-                                } else if (isNaN(val)) {
-                                    RefReading = false;
+                            column.forEach(function(value) {
+                                if (value === function_fields[heading_id] + '@@@') {
+                                    isValueMatch = true;
+                                } else if (isNaN(value) && value.indexOf('@@@') > 0) {
+                                    isValueMatch = false;
                                 }
-                                if (RefReading && val != function_fields[heading_id] + '@@@') {
-                                    console.log('val', val);
-                                    RefReadingSum = RefReadingSum + parseFloat(val);
-                                    RefReadingCount++;
+
+                                if (isValueMatch && value !== function_fields[heading_id] + '@@@') {
+                                    let previousValues = value.split('\n');
+                                    let previousValuesCount = previousValues.length;
+                                    var previousValuesSum = previousValues.reduce(function(sum, currentValue) {
+                                        return sum + parseFloat(currentValue);
+                                    }, 0);
+
+                                    calculatedValue = previousValuesSum / previousValuesCount;
+                                    calculatedValues.push(calculatedValue);
                                 }
                             });
                         });
-                        let x = 0;
-                        $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(RefReadingSum / RefReadingCount);
-                            $(this).val(v);
-                            singleInputHeadingWiseArray.push(v);
+
+                        let index = 0;
+                        $(".input_val_" + heading_id).each(function() {
+                            let formattedValue = parseFloat(calculatedValues[index]).toFixed(2);
+                            $(this).val(formattedValue);
+                            singleInputHeadingWiseArray.push(formattedValue);
+                            index++;
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
+                        console.log(multipleArr);
                     }
 
+                    // Apply here CORRECTED REF formula
                     if (column_function == "CR") {
-                        //put here CORRECTED REF formula
                         var xSplitNo = $("#x").val();
                         var C1 = $("#C1").val();
                         var C2 = $("#C2").val();
@@ -587,119 +500,139 @@ require 'header.php';
                         var C4 = $("#C4").val();
                         var C5 = $("#C5").val();
 
-                        var correct_reference = C5 * Math.pow(xSplitNo, 4) + C4 * Math.pow(xSplitNo, 3) + C3 * Math.pow(xSplitNo, 2) + C2 * Math.pow(xSplitNo, 1) + C1;
+                        var correctRef = C5 * Math.pow(xSplitNo, 4) + C4 * Math.pow(xSplitNo, 3) + C3 * Math.pow(xSplitNo, 2) + C2 * Math.pow(xSplitNo, 1) + C1;
 
-                        let x = 0;
+                        let index = 0;
                         $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(correct_reference);
+                            let v = parseFloat(correctRef).toFixed(2);
                             $(this).val(v);
                             singleInputHeadingWiseArray.push(v);
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
+                        console.log(multipleArr);
                     }
 
+                    // Apply here UUC CONVERT MEAN formula
                     if (column_function == "UCM") {
-                        //put here UUC CONVERT MEAN formula
-                        var RefReading = false;
-                        var RefReadingSum = 0;
-                        var RefReadingCount = 0;
+                        var isValueMatch = false;
+                        var calculatedValue = 0;
+                        var calculatedValues = [];
+
                         multipleArr.forEach(function(column) {
-                            column.forEach(function(val) {
-                                if (val == function_fields[heading_id] + '@@@') {
-                                    RefReading = true;
-                                } else if (isNaN(val)) {
-                                    RefReading = false;
+                            column.forEach(function(value) {
+                                if (value === function_fields[heading_id] + '@@@') {
+                                    isValueMatch = true;
+                                } else if (isNaN(value) && value.indexOf('@@@') > 0) {
+                                    isValueMatch = false;
                                 }
-                                if (RefReading && val != function_fields[heading_id] + '@@@') {
-                                    RefReadingSum = RefReadingSum + parseFloat(val);
-                                    RefReadingCount++;
+
+                                if (isValueMatch && value !== function_fields[heading_id] + '@@@') {
+                                    let previousValues = value.split('\n');
+                                    let previousValuesCount = previousValues.length;
+                                    var previousValuesSum = previousValues.reduce(function(sum, currentValue) {
+                                        return sum + parseFloat(currentValue);
+                                    }, 0);
+
+                                    calculatedValue = previousValuesSum / previousValuesCount;
+                                    calculatedValues.push(calculatedValue);
                                 }
                             });
                         });
-                        let x = 0;
-                        $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(RefReadingSum / RefReadingCount);
-                            $(this).val(v);
-                            singleInputHeadingWiseArray.push(v);
+
+                        let index = 0;
+                        $(".input_val_" + heading_id).each(function() {
+                            let formattedValue = parseFloat(calculatedValues[index]).toFixed(2);
+                            $(this).val(formattedValue);
+                            singleInputHeadingWiseArray.push(formattedValue);
+                            index++;
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
-
+                        console.log(multipleArr);
                     }
+
+                    // Apply here UUC MEAN formula
                     if (column_function == "UM") {
-                        //put here UUC MEAN formula
-                        var RefReading = false;
-                        var RefReadingSum = 0;
-                        var RefReadingCount = 0;
+                        var isValueMatch = false;
+                        var calculatedValue = 0;
+                        var calculatedValues = [];
+
                         multipleArr.forEach(function(column) {
-                            column.forEach(function(val) {
-                                if (val == function_fields[heading_id] + '@@@') {
-                                    RefReading = true;
-                                } else if (isNaN(val)) {
-                                    RefReading = false;
+                            column.forEach(function(value) {
+                                if (value === function_fields[heading_id] + '@@@') {
+                                    isValueMatch = true;
+                                } else if (isNaN(value) && value.indexOf('@@@') > 0) {
+                                    isValueMatch = false;
                                 }
-                                if (RefReading && val != function_fields[heading_id] + '@@@') {
-                                    RefReadingSum = RefReadingSum + parseFloat(val);
-                                    RefReadingCount++;
+
+                                if (isValueMatch && value !== function_fields[heading_id] + '@@@') {
+                                    let previousValues = value.split('\n');
+                                    let previousValuesCount = previousValues.length;
+                                    var previousValuesSum = previousValues.reduce(function(sum, currentValue) {
+                                        return sum + parseFloat(currentValue);
+                                    }, 0);
+
+                                    calculatedValue = previousValuesSum / previousValuesCount;
+                                    calculatedValues.push(calculatedValue);
                                 }
                             });
                         });
-                        let x = 0;
-                        $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(RefReadingSum / RefReadingCount);
-                            $(this).val(v);
-                            singleInputHeadingWiseArray.push(v);
+
+                        let index = 0;
+                        $(".input_val_" + heading_id).each(function() {
+                            let formattedValue = parseFloat(calculatedValues[index]).toFixed(2);
+                            $(this).val(formattedValue);
+                            singleInputHeadingWiseArray.push(formattedValue);
+                            index++;
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
+                        console.log(multipleArr);
                     }
 
+                    // Apply here REF UNIT CON formula
                     if (column_function == "RUC") {
-                        //put here REF UNIT CON formula
                         var resolution_ref = $("#resolution_ref").val() == 'Feet' ? 'ft' : 'ft';
                         var resolution_uuc = $("#resolution_uuc").val();
-                        var result = 0;
+                        var refUnitCon = false;
+                        var refUnitConVal = [];
                         if (resolution_uuc != "" && resolution_ref != "") {
-                            var refUnitCon = false;
-                            var refUnitConVal = [];
                             multipleArr.forEach(function(column) {
                                 column.forEach(function(val) {
                                     if (val == function_fields[heading_id] + '@@@') {
                                         refUnitCon = true;
-                                    } else if (isNaN(val)) {
+                                    } else if (isNaN(val) && val.indexOf('@@@') > 0) {
                                         refUnitCon = false;
                                     }
                                     if (refUnitCon && val != function_fields[heading_id] + '@@@') {
                                         if (resolution_uuc == "m" && resolution_ref == "ft") {
-                                            refUnitConVal.push(metersToFeet(val));
+                                            refUnitConVal.push(convertMetersToFeet(val));
                                         } else if (resolution_uuc == "ft" && resolution_ref == "m") {
-                                            refUnitConVal.push(feetToMeters(val));
+                                            refUnitConVal.push(convertFeetToMeters(val));
                                         }
                                     }
                                 });
                             });
-                            let x = 0;
+                            let index = 0;
                             $(".input_val_" + heading_id + "").each(function() {
-                                let v = refUnitConVal[x++];
+                                let v = refUnitConVal[index];
                                 $(this).val(v);
                                 singleInputHeadingWiseArray.push(v);
+                                index++;
                             });
                             multipleArr.push(singleInputHeadingWiseArray);
-                            //console.log(multipleArr);
+                            console.log(multipleArr);
                         }
-
                     }
 
+                    // Apply here CORRECTION formula
                     if (column_function == "CORRECTION") {
-                        //put here CORRECTION formula
                         var refUnitConId = 0;
                         var uUCMeanId = 0;
-                        var refUnitConValue = 0;
-                        var uUCMeanValue = 0;
                         var refUnitCon = false;
                         var uUCMean = false;
-
+                        var uUCMeanValue = 0;
+                        var uUCMeanValues = [];
+                        var refUnitConValue = 0;
+                        var refUnitConValues = [];
                         multipleArr.forEach(function(column) {
                             column.forEach(function(val) {
                                 if (function_fields[heading_id] !== undefined && function_fields[heading_id].includes(",")) {
@@ -715,6 +648,7 @@ require 'header.php';
                                     }
                                     if (uUCMean && val != uUCMeanId + '@@@') {
                                         uUCMeanValue = parseFloat(val);
+                                        uUCMeanValues.push(uUCMeanValue);
                                     }
 
                                     if (val == refUnitConId + '@@@') {
@@ -724,76 +658,80 @@ require 'header.php';
                                     }
                                     if (refUnitCon && val != refUnitConId + '@@@') {
                                         refUnitConValue = parseFloat(val);
+                                        refUnitConValues.push(refUnitConValue);
                                     }
                                 }
                             });
                         });
 
-                        let x = 0;
+                        let index = 0;
                         $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(refUnitConValue - uUCMeanValue);
+                            let v = parseFloat(refUnitConValues[index] - uUCMeanValues[index]).toFixed(2);
                             $(this).val(v);
                             singleInputHeadingWiseArray.push(v);
+                            index++;
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
                         console.log(multipleArr);
                     }
 
+                    // Apply here COVERTD UUC STDEV formula
                     if (column_function == "CUS") {
-                        //put here COVERTD UUC STDEV formula
                         var RefReading = false;
                         var uUUCCovertArr = [];
-                        var sampleStdev = 0;
                         multipleArr.forEach(function(column) {
                             column.forEach(function(val) {
                                 if (val == function_fields[heading_id] + '@@@') {
                                     RefReading = true;
-                                } else if (isNaN(val)) {
+                                } else if (isNaN(val) && val.indexOf('@@@') > 0) {
                                     RefReading = false;
                                 }
                                 if (RefReading && val != function_fields[heading_id] + '@@@') {
-                                    uUUCCovertArr.push(val);
+
+                                    let data = val.split('\n');
+                                    var sampleStdev = sampleStandardDeviation(data);
+                                    uUUCCovertArr.push(sampleStdev);
                                 }
-                                var data = uUUCCovertArr;
-                                sampleStdev = sampleStandardDeviation(data);
-                                //console.log("Sample Standard Deviation:", sampleStdev);
                             });
                         });
-                        let x = 0;
+                        let index = 0;
                         $(".input_val_" + heading_id + "").each(function() {
-                            let v = parseFloat(sampleStdev);
+                            let v = parseFloat(uUUCCovertArr[index]).toFixed(2);
                             $(this).val(v);
                             singleInputHeadingWiseArray.push(v);
+                            index++;
                         });
                         multipleArr.push(singleInputHeadingWiseArray);
-                        //console.log(multipleArr);
-
+                        console.log(multipleArr);
                     }
-                    if (column_function == "VC") {
-                        //this is testing function for Voltage Calculate formula V = IR
-                        var removeFirstColumnArr = removeFirstColumn(multipleArr);
-                        var transposedArray = transposeArray(removeFirstColumnArr);
 
-                        var table = document.getElementById("template-table");
-                        var rows = table.getElementsByTagName("tr");
-
-                        transposedArray.forEach(function(column) {
-
-                            var vc_cal_result = 1;
+                    // Apply here REF STDEV formula
+                    if (column_function == "RS") {
+                        var RefReading = false;
+                        var uUUCCovertArr = [];
+                        multipleArr.forEach(function(column) {
                             column.forEach(function(val) {
-                                console.log('val', val);
-                                vc_cal_result = vc_cal_result * parseFloat(val);
+                                if (val == function_fields[heading_id] + '@@@') {
+                                    RefReading = true;
+                                } else if (isNaN(val) && val.indexOf('@@@') > 0) {
+                                    RefReading = false;
+                                }
+                                if (RefReading && val != function_fields[heading_id] + '@@@') {
+                                    let data = val.split('\n');
+                                    var sampleStdev = sampleStandardDeviation(data);
+                                    uUUCCovertArr.push(sampleStdev);
+                                }
                             });
-
-                            var cells = rows[i].getElementsByTagName("td");
-                            var lastCell = cells[cells.length - 1];
-                            var lastCellInput = cells[cells.length - 1].querySelector("input[type='number']");
-                            if (lastCellInput) {
-                                lastCellInput.value = result; // You can set any value here
-                            }
-
-                            i++;
                         });
+                        let index = 0;
+                        $(".input_val_" + heading_id + "").each(function() {
+                            let v = parseFloat(uUUCCovertArr[index]).toFixed(2);
+                            $(this).val(v);
+                            singleInputHeadingWiseArray.push(v);
+                            index++;
+                        });
+                        multipleArr.push(singleInputHeadingWiseArray);
+                        console.log(multipleArr);
                     }
                 }
             } else if (column_type == 'FUNCTION') {
@@ -803,40 +741,63 @@ require 'header.php';
             }
         });
 
+        function sampleStandardDeviation(data) {
+            const n = data.length;
+            if (n === 0 || n === 1) return 0;
+            const numericData = data.map(Number);
+            const mean = numericData.reduce((acc, val) => acc + val, 0) / n;
+            const variance = numericData.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (n - 1);
+            return Math.sqrt(variance);
+        }
+
+        function removeRowByFirstValue(array, valueToRemove) {
+            return array.filter(function(row) {
+                return row[0] !== valueToRemove;
+            });
+        }
+
+        function convertFeetToMeters(feets) {
+            return (parseFloat(feets) * 0.3048).toFixed(2);
+        }
+
+        function convertMetersToFeet(meters) {
+            return (parseFloat(meters) * 3.28084).toFixed(2);
+        }
+
         function calculate() {
             var equipment_id = $("#equipment_id").val();
             var sensor_id = $("#sensor_id").val();
             var cal_date = $("#cal_date").val();
             var res = $("#res").val();
             var x = $("#x").val();
-            if (equipment_id=='') {
-                toastr.error('Equipment field is required!', 'Error!')
+            if (equipment_id == '') {
+                toastrErrorMessage('Equipment field is required!');
                 return false;
             }
-            if (sensor_id=='') {
-                toastr.error('Sensor field is required!', 'Error!')
+            if (sensor_id == '') {
+                toastrErrorMessage('Sensor field is required!');
                 return false;
             }
-            if (cal_date=='') {
-                toastr.error('Cal date field is required!', 'Error!')
+            if (cal_date == '') {
+                toastrErrorMessage('Cal date field is required!');
                 return false;
             }
-            if (res=='') {
-                toastr.error('Res field is required!', 'Error!')
+            if (res == '') {
+                toastrErrorMessage('Res field is required!');
                 return false;
             }
-            if (x=='') {
-                toastr.error('X field is required!', 'Error!')
+            if (x == '') {
+                toastrErrorMessage('X field is required!');
                 return false;
             }
-            
-            $('.input-field').each(function () {
+
+            $('.input-field').each(function() {
                 isValid = validateInput($(this));
             });
 
-            if (isValid==false) {
-                toastr.error('Please fill data entry fields is required!', 'Opps!')
-            }else{
+            if (isValid == false) {
+                toastrErrorMessage('Please fill data entry fields is required!');
+            } else {
                 $(".heading_check").trigger("click");
 
                 const urlParams = new URLSearchParams(window.location.search);
@@ -846,8 +807,8 @@ require 'header.php';
                 formData.append('action', 'storeCalculationFormData');
                 formData.append('template_id', templateId);
                 $.ajax({
-                    beforeSend:function(){
-                        $(".btnCalulate").attr('disabled',true);
+                    beforeSend: function() {
+                        $(".btnCalulate").attr('disabled', true);
                         $(".fa-spinner").show();
                     },
                     type: 'POST',
@@ -857,7 +818,7 @@ require 'header.php';
                     contentType: false,
                     success: function(dataJSON) {
                         var response = JSON.parse(dataJSON)
-                        if (response.status=='success') {
+                        if (response.status == 'success') {
                             toastr.success(response.message, 'Success!', {
                                 timeOut: 3000,
                                 extendedTimeOut: 2000,
@@ -867,16 +828,28 @@ require 'header.php';
                                 positionClass: "toast-top-right",
                             });
                             // $('#calculation_template_form')[0].reset();
-                        }else{
-                            toastr.error('Someing want wrong!', 'Opps!')
-                        }                        
+                            $(".heading_check").prop('checked', false);
+                        } else {
+                            toastrErrorMessage('Someing want wrong!');
+                        }
                     },
-                    complete:function(){
-                        $(".btnCalulate").attr('disabled',false);
+                    complete: function() {
+                        $(".btnCalulate").attr('disabled', false);
                         $(".fa-spinner").hide();
                     },
                 });
             }
+        }
+
+        function toastrErrorMessage(message) {
+            toastr.error(message, 'Opps!', {
+                timeOut: 3000,
+                extendedTimeOut: 2000,
+                progressBar: true,
+                closeButton: true,
+                tapToDismiss: false,
+                positionClass: "toast-top-right",
+            });
         }
 
         function validateInput(input) {
@@ -888,56 +861,10 @@ require 'header.php';
             }
         }
 
-        function sampleStandardDeviation(data) {
-            const n = data.length;
-            if (n === 0 || n === 1) return 0;
-
-            const mean = data.reduce((acc, val) => acc + val, 0) / n;
-            const variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / (n - 1);
-
-            return Math.sqrt(variance);
-        }
-
-        function getLastCell(rows, i, result) {
-            var cells = rows[i].getElementsByTagName("td");
-            var lastCell = cells[cells.length - 1];
-            var lastCellInput = cells[cells.length - 1].querySelector("input[type='number']");
-            if (lastCellInput) {
-                lastCellInput.value = result; // You can set any value here
-            }
-        }
-
-        function removeRowByFirstValue(array, valueToRemove) {
-            return array.filter(function(row) {
-                return row[0] !== valueToRemove;
-            });
-        }
-
-        function transposeArray(array) {
-            return array[0].map((_, colIndex) => array.map(row => row[colIndex]));
-        }
-
-        function removeFirstColumn(array) {
-            return array.map(function(row) {
-                return row.slice(1); // Remove the first element from each row
-            });
-        }
-
-        $(".valueChange").on("keyup mouseup", function() {
-            $(".heading_check").prop('checked', false);
-        });
-
-        function metersToFeet(meter) {
-            meter = math.unit(meter + ' m');
-            var feet = parseFloat(meter.to('ft'));
-            return feet;
-        }
-
-        function feetToMeters(feet) {
-            feet = math.unit(feet + ' ft');
-            var meter = parseFloat(feet.to('m'));
-            return meter;
-        }
+        // $(".valueChange").on("keyup mouseup", function() 
+        // {
+        //     $(".heading_check").prop('checked', false);
+        // });
     </script>
     <?php
     require 'footer.php';

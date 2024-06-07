@@ -110,7 +110,7 @@ class Layout
             $maxLevel = $this->maxLevel($template_id);
             $updatequery = "UPDATE layout_template SET levels = :levels WHERE id = :template_id";
             $update = $this->conn->prepare($updatequery);
-            $update->bindParam(':levels', $maxLevel, PDO::PARAM_INT);
+            $update->bindParam(':levels', $maxLevel['levels'], PDO::PARAM_INT);
             $update->bindParam(':template_id', $template_id, PDO::PARAM_INT);
             $update->execute();
 
@@ -1718,11 +1718,18 @@ class Layout
         $statement->bindParam(':res', $res, PDO::PARAM_STR);
         $statement->execute();
         $data = $statement->fetch(PDO::FETCH_ASSOC);
-        // print_r($data); die;
-        $response = [
-            'status' => 'success',
-            "data" => $data,
-        ];
+         
+        if (!empty($data)) {
+            $response = [
+                'status' => 'success',
+                "data" => $data,
+            ];
+            
+        }else{
+            $response = [
+                'status' => 'failed',
+            ];
+        }
         return $response;
     }
 
@@ -2097,21 +2104,20 @@ class Layout
 
     public function maxLevel($temlpateId)
     {
-        $queryH = "SELECT MAX(level) AS max_level FROM headings WHERE layout_template_id = :layoutTemplateID";
-        $statementH = $this->conn->prepare($queryH);
-        $statementH->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
-        $statementH->execute();
-        $resultMaxLevel = $statementH->fetch(PDO::FETCH_ASSOC);
+        $query = "SELECT MAX(level) AS levels FROM headings WHERE layout_template_id = :layoutTemplateID";
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        $column_type = "DATA";
-        $queryJ = "SELECT id, title FROM headings WHERE layout_template_id = :layoutTemplateID";
-        $statementJ = $this->conn->prepare($queryJ);
-        $statementJ->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
-        //$statementJ->bindParam(':column_type', $column_type, PDO::PARAM_STR);
-        $statementJ->execute();
-        $dataFields = $statementJ->fetchAll(PDO::FETCH_ASSOC);
-        $data['max_level'] = $resultMaxLevel['max_level'] ? $resultMaxLevel['max_level'] : 1;
-        $data['dataFields'] = !empty($dataFields) ? $dataFields : [];
+        $queryHeadings = "SELECT id, title FROM headings WHERE layout_template_id = :layoutTemplateID";
+        $statementHeadings = $this->conn->prepare($queryHeadings);
+        $statementHeadings->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
+        $statementHeadings->execute();
+        $resultHeadings = $statementHeadings->fetchAll(PDO::FETCH_ASSOC);
+
+        $data['levels']     = $result['levels']+1;
+        $data['dataFields'] = !empty($resultHeadings) ? $resultHeadings : [];
         return $data;
     }
 }

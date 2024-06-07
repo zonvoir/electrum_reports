@@ -433,7 +433,6 @@ function handleCertificateData($layouts)
     if (isset($_POST['action']) && $_POST['action'] == 'loadCertificateData') {
 
         $response = $layouts->getCertificateData($_POST);
-
         if ($response) {
             echo json_encode($response);
         } else {

@@ -29,11 +29,14 @@
                 </li>
             </ul>
         </div>
-        <div class="mb-3 row">
+        <div class="mb-0 row">
             <div class="col">
                 <!-- This empty div will take up the remaining space -->
             </div>
             <div class="col-auto">
+                <a href="register.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-user"></i> REGISTER</a>
+                <a href="login.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-sign-in"></i> LOGIN</a>
+                <!-- <a type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-sign-out"></i> LOGOUT</a> -->
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
             </div>
         </div>

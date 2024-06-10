@@ -16,9 +16,9 @@
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item addTemplate" href="javascript:void(0);">Add new Template</a></li>
                         <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addLayoutModal">Add new Layout</a></li>
-                        <li>
+                        <!-- <li>
                             <hr class="dropdown-divider">
-                        </li>
+                        </li> -->
                         <li><a class="dropdown-item" href="templates.php">All Templates</a></li>
                         <li><a class="dropdown-item" href="layouts.php">All Layouts</a></li>
                         <!-- <li>
@@ -34,9 +34,19 @@
                 <!-- This empty div will take up the remaining space -->
             </div>
             <div class="col-auto">
-                <a href="register.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-user"></i> REGISTER</a>
-                <a href="login.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-sign-in"></i> LOGIN</a>
-                <!-- <a type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-sign-out"></i> LOGOUT</a> -->
+                <?php
+                if (isset($_SESSION['user'])) {
+                ?>
+                    <a href="logout.php" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-sign-out"></i> Sign Out
+                    </a>
+                <?php
+                } else {
+                ?>
+                    <a href="login.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-sign-in"></i> Sign In</a>
+                <?php
+                }
+                ?>
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
             </div>
         </div>

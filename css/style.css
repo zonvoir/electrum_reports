@@ -2,3 +2,84 @@
 .hide {
     display: none;
 }
+.error {
+    color: red;
+}
+
+/******Reg and Login Start******/
+.auth-body{
+    background-repeat: no-repeat !important;
+    margin: 0 auto;
+    background: url(../assets/login_bg.jpg);
+    background-position: center;
+    background-size: cover;
+ 
+}
+.reg-card {
+    min-height: 90vh;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    justify-content: center;
+    padding: 40px;
+}
+.auth-nav-wrap{
+    height: 10vh;
+}
+.auth-form-area{      
+    width: 480px;
+    padding: 40px 30px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0 0 37px rgba(8, 21, 66, 0.05);
+    box-shadow: 0 0 37px rgba(8, 21, 66, 0.05);
+    margin: 0 auto;
+    background-color: #fff;
+}
+.auth-form-area h4{      
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+.auth-form-area p{    
+    margin-bottom: 25px;
+    font-size: 14px;
+    color: #9B9B9B;
+}
+/* .auth-form-area label{      
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+} */
+.auth-form-area input,
+.auth-form-area select{
+    border: 1px solid #b9c1cc80;
+    background-color: rgba(92, 97, 242, 0.1) !important;
+    padding: 7px;
+    outline: 0 !important;
+    box-shadow: inherit !important;
+}
+
+a.forget-password-link {
+    display: inline-block;
+    width: 100%;
+    text-align: right;
+    text-decoration: none;
+    font-size: 14px;
+    margin-top: 8px;
+    font-weight: 600;
+}
+.create-account {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 15px !important;
+}
+.create-account a{
+    text-decoration: none;
+}
+/******Reg and Login End******/

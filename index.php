@@ -3,6 +3,11 @@ require_once('database.php');
 $database = new Database();
 $conn = $database->getConnection();
 require 'header.php';
+// session_destroy();
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+}
 ?>
 <body>
 <form action="report.php" method="post">

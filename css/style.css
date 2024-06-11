@@ -1,3 +1,6 @@
+body{font-family: "Red Hat Display", sans-serif !important;}
+
+
 /* style.css */
 .hide {
     display: none;
@@ -83,3 +86,165 @@ a.forget-password-link {
     text-decoration: none;
 }
 /******Reg and Login End******/
+
+.wrap-tbl-content{background-color: #f2f1f9;}
+.tbl-csmz h4{}
+.tbl-csmz h4{    font-size: 20px;}
+
+.tbl-csmz table{}
+.tbl-csmz tr{}
+.tbl-csmz td {
+    background-color: transparent !important;
+    border: 0 !important;
+    padding: 14px 35px !important;
+    border-top: 0.5px dashed #013e6d1f !important;
+}
+.tbl-csmz th{border: 0 !important;}
+
+.tbl-csmz .dataTables_length{    padding: 20px;}
+.tbl-csmz .dataTables_filter{    padding: 20px;}
+
+.tbl-csmz .dataTables_info{}
+.tbl-csmz .paging_full_numbers{}
+
+.tbl-csmz .dataTables_length select{    padding: 8px;
+    background-color: whitesmoke;
+    margin: 6px;
+    border-radius: 8px;
+    border: 2px solid #aaaaaa3d;
+    outline: 0;}
+
+.tbl-csmz .dataTables_length label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #747373;
+    }
+
+
+.tbl-csmz .dataTables_filter label{    font-size: 16px;
+    font-weight: 500;
+    color: #747373;}
+
+.tbl-csmz .dataTables_filter input {
+        padding: 9px !important;
+        margin: 1px 0px 0 15px;
+        background-color: whitesmoke !important;
+        border-radius: 8px !important;
+        border: 2px solid #aaaaaa3d !important;
+        outline: 0;
+    }
+
+
+    .tbl-csmz .dataTables_info {
+        font-size: 15px;
+        font-weight: 500;
+        padding: 20px;
+        color: #747373;
+    }
+
+    .tbl-csmz .paging_full_numbers {
+        padding: 8px;
+    }
+
+    .tbl-csmz .paging_full_numbers .paginate_button{    font-size: 16px;
+        font-weight: 500;
+        padding: 8px 16px;     border: 0 !important;}
+
+    .tbl-csmz .paging_full_numbers .paginate_button.current{     background: #013e6d !important;
+    border: 0 !important;
+    color: white !important;
+ }
+
+
+ .tbl-csmz .paging_full_numbers .paginate_button.current:hover{color: white !important;}
+
+ .tbl-csmz table.dataTable.no-footer {
+    border-bottom: 1px solid #eaeaea;
+}
+
+.tbl-csmz thead th{    color: #013e6d;
+    font-weight: 700 !important; padding: 14px 35px !important;}
+
+
+.tbl-csmz tbody td a{    text-decoration: none;
+    color: #013e6d;
+    font-size: 17px;}
+
+    .tbl-csmz tbody td .d-flex{    gap: 10px;}
+
+    .navbar-expand-lg .btn.btn-primary {
+        padding: 10px 20px !important;
+        font-size: 15px;
+        margin-left: 15px;
+    }
+
+    .sign-out,
+    .sign-out:hover{    background-color: #FF5722 !important;
+        border-color: transparent !important;}
+
+
+.tbl-csmz .edit-btn{    background-color: #00800029 !important;
+    color: green !important; outline: 0; box-shadow: none;}
+.tbl-csmz .delete-btn{    background-color: #ff8f8f5e !important;
+    color: #ff0000c2 !important; outline: 0; box-shadow: none;}
+.tbl-csmz .analysis-btn{    outline: 0;
+    box-shadow: none;
+    background-color: #013e6d3d !important;
+    color: #013e6d !important;}
+
+
+    
+
+/*============Responsive============*/
+
+
+
+
+
+/*Mobile*/
+
+@media(max-width:767px) {
+
+ 
+
+}
+
+
+
+
+/*For small mobile devices*/
+@media (min-width:320px) and (max-width:479px) {
+    
+    
+}
+
+
+/*For landscape mobiles devices*/
+@media (max-width:736px) and (orientation:landscape) {
+
+}
+
+
+/*tablet devices (both orentations)*/
+@media (min-width:768px) and (max-width:979px) {}
+
+
+/*For small screens and laptops devices*/
+@media (min-width:980px) and (max-width:1199px) {
+
+
+
+}
+
+
+@media (min-width:1200px) and (max-width:1399px) {
+    
+}
+
+
+
+@media (min-width: 1200px){
+    
+
+    
+}

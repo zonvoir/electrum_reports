@@ -33,11 +33,12 @@
             <div class="col">
                 <!-- This empty div will take up the remaining space -->
             </div>
-            <div class="col-auto">
+            <div class="col-auto nav-right-btn">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
                 <?php
                 if (isset($_SESSION['user'])) {
                 ?>
-                    <a href="logout.php" class="btn btn-primary btn-sm">
+                    <a href="logout.php" class="btn btn-primary btn-sm sign-out">
                         <i class="fa-solid fa-sign-out"></i> Sign Out
                     </a>
                 <?php
@@ -47,7 +48,7 @@
                 <?php
                 }
                 ?>
-                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
+              
             </div>
         </div>
     </div>

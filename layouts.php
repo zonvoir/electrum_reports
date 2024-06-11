@@ -5,12 +5,19 @@ $conn = $database->getConnection();
 require 'header.php';
 ?>
 
-<body>
+<body class="wrap-tbl-content">
 <?php
 require 'navigation.php';
 ?>
 <div class="container" style="padding-top: 50px;padding-bottom: 20px;">
+
+<div class="card border-0 tbl-csmz mb-5">
+    
+    <div class="card-header p-3 ">
     <h4>Layouts</h4>
+     </div>
+
+     <div class="card-body p-0">
     <table id="layoutsTable" class="display table table-sm  table-hover" style="width:100%">
         <thead class="table-light">
             <tr>
@@ -22,6 +29,9 @@ require 'navigation.php';
         </thead>
         <tbody></tbody>
     </table>
+    </div>
+    </div>
+
 </div>
 
 <?php
@@ -57,8 +67,8 @@ $(document).ready(function() {
             {
                 "data": null,
                 "defaultContent": "<div class='d-flex'>\
-                                    <button class='btn btn-warning btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
-                                    <button class='btn btn-danger btn-sm delete-btn'><i class='fa-solid fa-trash'></i></button>\
+                                    <button class='btn btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
+                                    <button class='btn btn-sm delete-btn'><i class='fa-solid fa-trash'></i></button>\
                                     </div>",
                 "orderable": false
             },

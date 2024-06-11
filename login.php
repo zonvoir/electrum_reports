@@ -2,10 +2,9 @@
 require_once('database.php');
 $database = new Database();
 $conn = $database->getConnection();
+require 'check-login.php';
 require 'header.php';
 ?>
-
-
 
 <body class="overflow-hidden auth-body">
     <div class="auth-nav-wrap">

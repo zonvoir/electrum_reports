@@ -1,4 +1,94 @@
 jQuery( function( $ ){
+
+    $("#form").validate({
+        // errorPlacement: function (error, element) {
+        //     return;
+        // },
+        // highlight: function(element) {
+        //     $(element).addClass('is-invalid');
+        //     $(element).parent().addClass("error");
+        // },
+        // unhighlight: function(element) {
+        //     console.log(element);
+        //     $(element).parent().removeClass("error");
+        //     $(element).removeClass('is-invalid');
+        // },
+        submitHandler: function(form){
+            var formData = new FormData($("#form")[0]);
+            $.ajax({
+                beforeSend:function(){
+                    $("#form").find('button').attr('disabled',true);
+                    $("#form").find('button>i').show();
+                },
+                url: $("#form").attr('action'),
+                data: formData,
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                success:function(dataJSON){
+                    var response = JSON.parse(dataJSON)
+                    if(response.status){
+                        toastr.success(response.message, 'Success', {
+                            timeOut: 3000,
+                            extendedTimeOut: 2000,
+                            progressBar: true,
+                            closeButton: true,
+                            tapToDismiss: false,
+                            positionClass: "toast-top-right",
+                        });
+                        if (response.redirect_url !='') {
+                            setTimeout(function(){
+                                location.href = response.redirect_url;
+                            },2000);
+                        }else{
+                            location.reload();
+                        }
+                    }else{
+                        toastr.error(response.message, '', {
+                            timeOut: 3000,
+                            extendedTimeOut: 2000,
+                            progressBar: true,
+                            closeButton: true,
+                            tapToDismiss: false,
+                            positionClass: "toast-top-right",
+                        });
+                    }
+                },
+                complete:function(){
+                    $("#form").find('button').attr('disabled',false);
+                    $("#form").find('button>i').hide();
+                },
+                error:function(xhr, status, error){
+                    var errors = JSON.parse(xhr.responseText);
+                    if(xhr.status == 422){
+                        $("#form").find('button').attr('disabled',false);
+                        $("#form").find('button>i').hide();
+                        $.each(errors.errors, function(i,v){
+                            toastr.error(v, '', {
+                                timeOut: 3000,
+                                extendedTimeOut: 2000,
+                                progressBar: true,
+                                closeButton: true,
+                                tapToDismiss: false,
+                                positionClass: "toast-top-right",
+                            });
+						});
+					}else{
+						toastr.error(errors.message, 'Opps!', {
+                            timeOut: 3000,
+                            extendedTimeOut: 2000,
+                            progressBar: true,
+                            closeButton: true,
+                            tapToDismiss: false,
+                            positionClass: "toast-top-right",
+                        });
+					}
+              	}
+			});
+			return false;
+		}
+	});
+    
     $("body").on('click', '.addTemplate', function(){
         $("#templateName").val("");
         $("#template_id").val(0);

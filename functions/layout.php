@@ -1755,6 +1755,101 @@ class Layout
         ];
     }
 
+    public function userStore($data)
+    {
+        $first_name = $data['first_name'];
+        $last_name = $data['last_name'];
+        $email = $data['email'];
+        $password = md5($data['password']);
+        $mobile_no = $data['mobile_no'];
+        $role_id = $data['role_id'];
+
+        try {
+
+            // Check if email already exists
+            $checkEmailQuery  = "SELECT COUNT(*) FROM users WHERE email = :email";
+            $checkStatement  = $this->conn->prepare($checkEmailQuery );
+            $checkStatement ->bindParam(':email', $email);
+            $checkStatement ->execute();
+            $count = $checkStatement ->fetchColumn();
+
+            if ($count > 0) {
+                // Email already exists
+                return [
+                    'status' => false,
+                    'message' => 'Email already exists.',
+                ];
+            }
+            
+            // Proceed to insert the user
+            $insertQuery  = "INSERT INTO users (first_name, last_name, email, password, mobile_no, role_id) VALUES (:firstName, :lastName, :email, :password, :mobileNo, :roleId)";
+            $insertStatement  = $this->conn->prepare($insertQuery );
+            $insertStatement ->bindParam(':firstName', $first_name);
+            $insertStatement ->bindParam(':lastName', $last_name);
+            $insertStatement ->bindParam(':email', $email);
+            $insertStatement ->bindParam(':password', $password);
+            $insertStatement ->bindParam(':mobileNo', $mobile_no);
+            $insertStatement ->bindParam(':roleId', $role_id);
+            if ($insertStatement ->execute()) {
+                return [
+                    'status' => true,
+                    'message' => 'Account has been created.',
+                    'redirect_url' => 'login.php'
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Account has been not created.',
+                ];
+            }
+        } catch (PDOException $e) {
+            return [
+                'status' => false,
+                'message' => 'Database error: ' . $e->getMessage(),
+            ];
+        }
+    }
+
+    public function userLogin($data)
+    {
+        $email = $data['email'];
+        $password = md5($data['password']);
+
+        try {
+            $query  = "SELECT * FROM users WHERE email = :email";
+            $statement  = $this->conn->prepare($query );
+            $statement ->bindParam(':email', $email);
+            $statement ->execute();
+            $user = $statement->fetch(PDO::FETCH_ASSOC);
+
+            if ($user) {
+                if ($password === $user['password']) {
+                    $_SESSION['user'] = $user;
+                    return [
+                        'status' => true,
+                        'message' => 'Login successful.',
+                        'redirect_url' => 'index.php'
+                    ];
+                } else {
+                    return [
+                        'status' => false,
+                        'message' => 'Invalid password.',
+                    ];
+                }
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Invalid email.',
+                ];
+            }
+        } catch (PDOException $e) {
+            return [
+                'status' => false,
+                'message' => 'Database error: ' . $e->getMessage(),
+            ];
+        }
+    }
+
     private function getLayoutTotalRecords()
     {
         $query = "SELECT COUNT(*) as count FROM layouts";

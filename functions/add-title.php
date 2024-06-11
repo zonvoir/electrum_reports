@@ -73,6 +73,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'storeCalculationFormData':
                 handleStoreCalculationFormData($layouts);
                 break;
+            case 'userSignUp':
+                handleUserSignUp($layouts);
+                break;
+            case 'userSignIn':
+                handleUserSignIn($layouts);
+                break;
+            case 'userSignOut':
+                handleUserSignOut($layouts);
+                break;
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
                 break;
@@ -444,17 +453,50 @@ function handleCertificateData($layouts)
 function handleStoreCalculationFormData($layouts)
 {
     if (isset($_POST['action']) && $_POST['action'] == 'storeCalculationFormData') {
-        // echo '<pre>';
-        // print_r($_POST); 
-        // echo '</pre>';
-        // die;
         $response = $layouts->storeCalculationData($_POST);
-
         if ($response) {
             echo json_encode($response);
         } else {
             echo 'Error retreaving data';
         }
+    }
+}
+
+function handleUserSignUp($layouts)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'userSignUp') {
+
+        $response = $layouts->userStore($_POST);
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
+
+function handleUserSignIn($layouts)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'userSignIn') {
+
+        $response = $layouts->userLogin($_POST);
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
+
+function handleUserSignOut($layouts)
+{
+    echo $_POST['action'];
+    
+    if (isset($_POST['action']) && $_POST['action'] == 'userSignOut') {
+
+        session_destroy();
+        header("Location: login.php");
+        exit();
     }
 }
 

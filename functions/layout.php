@@ -1777,7 +1777,7 @@ class Layout
                 // Email already exists
                 return [
                     'status' => false,
-                    'message' => 'Email already exists.',
+                    'message' => 'Email already exists!',
                 ];
             }
             
@@ -1833,13 +1833,13 @@ class Layout
                 } else {
                     return [
                         'status' => false,
-                        'message' => 'Invalid password.',
+                        'message' => 'Invalid password!',
                     ];
                 }
             } else {
                 return [
                     'status' => false,
-                    'message' => 'Invalid email.',
+                    'message' => 'Invalid email!',
                 ];
             }
         } catch (PDOException $e) {

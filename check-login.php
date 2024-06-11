@@ -1,5 +1,4 @@
 <?php
-ob_start();
 function redirect($url) 
 {
     header("Location: $url");
@@ -16,11 +15,9 @@ if (!isset($_SESSION['user'])) {
 
 } else {
     
-    
     if ($currentPage == 'login.php' || $currentPage == 'register.php') {
         $previousPage = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'index.php';
         redirect($previousPage);
     }
 }
-ob_end_flush();
 ?>

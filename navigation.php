@@ -10,7 +10,7 @@
                     <a class="nav-link active" aria-current="page" href="index.php" style="color: #FCFEFC;font-size: 25px;">Electruments</a>
                 </li>
                 <?php
-                if (isset($_SESSION['user'])) {
+                if ($loggedInUser) {
                 ?>
                 <li class="nav-item dropdown" style="margin-top: 6px;color: #FCFEFC;">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FCFEFC;">
@@ -34,12 +34,11 @@
             <div class="col-auto nav-right-btn">
             <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
                 <?php
-                if (isset($_SESSION['user'])) {
+                if ($loggedInUser) {
                 ?>
                     <a href="logout.php" class="btn btn-primary btn-sm sign-out">
                         <i class="fa-solid fa-sign-out"></i> Sign Out
                     </a>
-                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
                 <?php
                 } else {
                 ?>

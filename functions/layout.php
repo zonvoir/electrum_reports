@@ -1824,11 +1824,25 @@ class Layout
 
             if ($user) {
                 if ($password === $user['password']) {
+
+                    $queryRole  = "SELECT * FROM roles WHERE id = :roleId";
+                    $statementRole  = $this->conn->prepare($queryRole);
+                    $statementRole ->bindParam(':roleId', $user['role_id']);
+                    $statementRole ->execute();
+                    $role = $statementRole->fetch(PDO::FETCH_ASSOC);
+
+                    $user['role'] = $role;
                     $_SESSION['user'] = $user;
+
+                    if ($role['name']=='data-entry-operator' || $role['name']=='analyst') {
+                        $redirectUrl = 'templates.php';
+                    }else{
+                        $redirectUrl = 'index.php';
+                    }
                     return [
                         'status' => true,
                         'message' => 'Login successful.',
-                        'redirect_url' => 'index.php'
+                        'redirect_url' => $redirectUrl
                     ];
                 } else {
                     return [

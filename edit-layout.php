@@ -1,8 +1,4 @@
 <?php
-require_once('database.php');
-$database = new Database();
-$conn = $database->getConnection();
-require 'check-login.php';
 require 'header.php';
 ?>
 
@@ -296,20 +292,7 @@ require 'header.php';
                         $('#column_type_edit').val(heading.column_type);
                         $('#column_function_edit').val(heading.column_function);
                         if (heading.column_type === 'FUNCTION') {
-                            $('.inputFunction').closest('.row').show();
-
-                            var functionFieldsOptions = '';
-                            var columnFunctionOptions = $('#column_function_options');
-                            response['dataFields'].forEach(function(number, index) {
-                                functionFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
-                            });
-                            columnFunctionOptions.html(functionFieldsOptions);
-
-                            var functionFieldsArr = heading.function_fields ? heading.function_fields.split(",") : 0;
-                            $("#column_function_options").val(functionFieldsArr);
-                            
-                            initializeSelect2('editHeadingModal');
-                            
+                            $('.inputFunction').closest('.row').show();                            
                         } else {
                             $('.inputFunction').closest('.row').hide();
 
@@ -329,7 +312,18 @@ require 'header.php';
                                 $("#report_edit").prop("checked", true);
                             }
                         }
+                        var functionFieldsOptions = '';
+                        var columnFunctionOptions = $('#column_function_options');
+                        response['dataFields'].forEach(function(number, index) {
+                            functionFieldsOptions += '<option value="' + number['id'] + '">' + number['title'] + '</option>';
+                        });
+                        columnFunctionOptions.html(functionFieldsOptions);
 
+                        var functionFieldsArr = heading.function_fields ? heading.function_fields.split(",") : 0;
+                        $("#column_function_options").val(functionFieldsArr);
+                        
+                        initializeSelect2('editHeadingModal');
+                        
                         $('#editHeadingModal').modal('show');
                     }
                 });

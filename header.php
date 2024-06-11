@@ -45,3 +45,6 @@
         } */
     </style>
 </head>
+<?php
+require 'includes.php';
+?>

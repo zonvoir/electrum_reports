@@ -11,16 +11,35 @@
                 </li>
                 <?php
                 if ($loggedInUser) {
+                    $role = $loggedInUser['role']['name'];
                 ?>
                 <li class="nav-item dropdown" style="margin-top: 6px;color: #FCFEFC;">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FCFEFC;">
                         Actions
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item addTemplate" href="javascript:void(0);">Add new Template</a></li>
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addLayoutModal">Add new Layout</a></li>
-                        <li><a class="dropdown-item" href="templates.php">All Templates</a></li>
-                        <li><a class="dropdown-item" href="layouts.php">All Layouts</a></li>
+                        <?php
+                        if ($role=='admin') {
+                        ?>
+                            <li><a class="dropdown-item addTemplate" href="javascript:void(0);">Add new Template</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addLayoutModal">Add new Layout</a></li>
+                        <?php
+                        }
+                        ?>
+                        <?php
+                        if ($role=='admin' || $role=='data-entry-operator' || $role=='analyst') {
+                        ?>
+                            <li><a class="dropdown-item" href="templates.php">All Templates</a></li>
+                        <?php
+                        }
+                        ?>
+                        <?php
+                        if ($role=='admin') {
+                        ?>
+                            <li><a class="dropdown-item" href="layouts.php">All Layouts</a></li>
+                        <?php
+                        }
+                        ?>
                     </ul>
                 </li>
                 <?php
@@ -32,7 +51,6 @@
             <div class="col">
             </div>
             <div class="col-auto nav-right-btn">
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
                 <?php
                 if ($loggedInUser) {
                 ?>

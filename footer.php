@@ -1,3 +1,7 @@
+<?php
+require 'modals.php';
+?>
+
 </body>
 <script src="dist/js/bootstrap.bundle.min.js" integrity="" crossorigin="anonymous"></script>
 

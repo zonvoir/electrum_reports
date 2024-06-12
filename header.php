@@ -45,6 +45,8 @@
         } */
     </style>
 </head>
-<?php
-require 'includes.php';
-?>
+<body class="wrap-tbl-content">
+    <?php
+    require 'includes.php';
+    require 'navigation.php';
+    ?>

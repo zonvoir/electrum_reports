@@ -113,11 +113,11 @@
                         <select class="form-control form-control-sm inputFunction" id="column_function">
                             <option value="">Select Function</option>
                             <option value="CORRECTION">CORRECTION</option>
-                            <option value="TUC">TEST UNIT CONVERTION</option>
-                            <option value="TS">TEST STDEV</option>
-                            <option value="TC">TEST COUNT</option>
+                            <!-- <option value="TUC">TEST UNIT CONVERTION</option> -->
+                            <!-- <option value="TS">TEST STDEV</option> -->
+                            <!-- <option value="TC">TEST COUNT</option> -->
                             <option value="RS">REF STDEV</option>
-                            <option value="RC">REF COUNT</option>
+                            <!-- <option value="RC">REF COUNT</option> -->
                             <option value="UC">UUC CONVERT</option>
                             <option value="RM">REF MEAN</option>
                             <option value="UCM">UUC CONVERT MEAN</option>
@@ -210,11 +210,11 @@
                         <select class="form-control form-control-sm inputFunction" id="column_function_edit">
                             <option value="">Select Function</option>
                             <option value="CORRECTION">CORRECTION</option>
-                            <option value="TUC">TEST UNIT CONVERTION</option>
-                            <option value="TS">TEST STDEV</option>
-                            <option value="TC">TEST COUNT</option>
+                            <!-- <option value="TUC">TEST UNIT CONVERTION</option> -->
+                            <!-- <option value="TS">TEST STDEV</option> -->
+                            <!-- <option value="TC">TEST COUNT</option> -->
                             <option value="RS">REF STDEV</option>
-                            <option value="RC">REF COUNT</option>
+                            <!-- <option value="RC">REF COUNT</option> -->
                             <option value="UC">UUC CONVERT</option>
                             <option value="RM">REF MEAN</option>
                             <option value="UCM">UUC CONVERT MEAN</option>

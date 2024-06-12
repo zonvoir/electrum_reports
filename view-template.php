@@ -799,7 +799,23 @@ require 'header.php';
             if (isValid == false) {
                 toastrErrorMessage('Please fill data entry fields is required!');
             } else {
-                $(".heading_check").trigger("click");
+                // $(".heading_check").trigger("click");
+
+                $('.heading_check').each(function() {
+                    var heading = JSON.parse($(this).attr('data-data'));
+                    var column_type = heading.column_type;
+                    if (column_type === 'DATA') {
+                        $(this).click();
+                    }
+                });
+
+                $('.heading_check').each(function() {
+                    var heading = JSON.parse($(this).attr('data-data'));
+                    var column_type = heading.column_type;
+                    if (column_type !== 'DATA') {
+                        $(this).click();
+                    }
+                });
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const templateId = urlParams.get('id');

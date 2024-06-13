@@ -1,45 +1,29 @@
 <?php
-require_once('database.php');
-$database = new Database();
-$conn = $database->getConnection();
-require 'check-login.php';
 require 'header.php';
 ?>
 
-<body class="wrap-tbl-content">
-<?php
-require 'navigation.php';
-?>
-
-<div class="container" style="padding-top: 50px;">
+<div class="container wrap-tbl-content pt-5">
     <div class="card border-0 tbl-csmz mb-5">
-     <div class="card-header p-3 ">
-     <h4>Templates</h4>
-     </div>
-
-     <div class="card-body p-0">
-    <table id="templatesTable" class="display table table-sm  table-hover" style="width:100%">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Template Name</th>
-                <th style="width: 80px;">Actions</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    </div>
-
+        <div class="card-header p-3 ">
+            <h4>Templates</h4>
+        </div>
+        <div class="card-body p-0">
+            <table id="templatesTable" class="display table table-sm table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Template Name</th>
+                        <th style="width: 80px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-
-<?php
-require 'modals.php';
-?>
-</body>
-
 <script>
+<?php echo "var roleName = '" . $role['name'] . "';"; ?>
 $(document).ready(function() {
     $('#templatesTable').DataTable({
         "draw": 1,
@@ -58,43 +42,39 @@ $(document).ready(function() {
             {
                 "data": "id"
             },
-            // {
-            //     "data": "template_name",
-            //     "render": function(data, type, row) {
-            //         var templateName = data || "";
-            //         return '<button class="btn btn-link template-btn" data-template-id="' + row.id + '">' + templateName + '</button>';
-            //     }
-            // },
             {
                 "data": "template_name",
                 "render": function(data, type, row) {
                     var templateName = data || "";
-                    return '<a href="view-template.php?id='+row.id+'">' + templateName + '</a>';
+                    if (roleName == 'analyst') {
+                        return templateName;
+                    } else {
+                        return '<a href="view-template.php?id='+row.id+'">' + templateName + '</a>';
+                    }
                 }
             },
             {
-
                 "data": null,
-                "defaultContent": "<div class='d-flex'>\
-                                    <button class='btn  btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
-                                    <button class='btn  btn-sm delete-btn me-2'><i class='fa-solid fa-trash'></i></button>\
-                                    <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
-                                    </div>",
-                "orderable": false
+                "render": function(data, type, row) {
+                    if (roleName == 'analyst') {
+                        return "<div class='d-flex'>\
+                            <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
+                        </div>";
+                    } else {
+                        return "<div class='d-flex'>\
+                            <button class='btn  btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
+                            <button class='btn  btn-sm delete-btn me-2'><i class='fa-solid fa-trash'></i></button>\
+                            <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
+                        </div>";
+                    }
+                    
+                },
+                "orderable": false,
+                "visible": (roleName == 'admin' || roleName == 'analyst') ? true : false
             }
         ],
         "pagingType": "full_numbers",
     });
-
-    // $('#templatesTable').on('click', 'tbody tr', function() 
-    // {
-    //     if (!$(event.target).closest('.delete-btn, .edit-btn').length) {
-    //         var data = $('#templatesTable').DataTable().row(this).data();
-    //         if (data && data.id) {
-    //             window.location.href = 'view-template.php?id=' + data.id;
-    //         }
-    //     }
-    // });
 
     $(document).on('click', '.edit-btn', function() 
     {
@@ -116,6 +96,7 @@ $(document).ready(function() {
             deleteTemplate(template_id, row);
         }
     });
+
     function deleteTemplate(template_id, row) 
     {
         $.ajax({
@@ -127,7 +108,14 @@ $(document).ready(function() {
             },
             success: function(data) {
                 var response = JSON.parse(data)
-                toastr.success(response.message, 'Success!')
+                toastr.success(response.message, 'Success', {
+                    timeOut: 3000,
+                    extendedTimeOut: 2000,
+                    progressBar: true,
+                    closeButton: true,
+                    tapToDismiss: false,
+                    positionClass: "toast-top-right",
+                }); 
                 $('#templatesTable').DataTable().row(row).remove().draw();
             },
             error: function() {
@@ -146,6 +134,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 <?php
 require 'footer.php';
 ?>

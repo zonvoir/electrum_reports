@@ -9,45 +9,40 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="index.php" style="color: #FCFEFC;font-size: 25px;">Electruments</a>
                 </li>
-                <?php
-                if (isset($_SESSION['user'])) {
-                ?>
-                <li class="nav-item dropdown" style="margin-top: 6px;color: #FCFEFC;">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FCFEFC;">
-                        Actions
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item addTemplate" href="javascript:void(0);">Add new Template</a></li>
-                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addLayoutModal">Add new Layout</a></li>
-                        <li><a class="dropdown-item" href="templates.php">All Templates</a></li>
-                        <li><a class="dropdown-item" href="layouts.php">All Layouts</a></li>
-                    </ul>
-                </li>
-                <?php
-                }
-                ?>
+                <?php if ($loggedInUser) : ?>
+                    <li class="nav-item dropdown" style="margin-top: 6px;color: #FCFEFC;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #FCFEFC;">
+                            Actions
+                        </a>
+                        <ul class="dropdown-menu">
+                            <?php if (canAccess('admin')) : ?>
+                                <li><a class="dropdown-item addTemplate" href="javascript:void(0);">Add new Template</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addLayoutModal">Add new Layout</a></li>
+                            <?php endif; ?>
+
+                            <?php if (canAccess('admin') || canAccess('data-entry-operator') || canAccess('analyst')) : ?>
+                                <li><a class="dropdown-item" href="templates.php">All Templates</a></li>
+                            <?php endif; ?>
+                            
+                            <?php if (canAccess('admin')) : ?>
+                                <li><a class="dropdown-item" href="layouts.php">All Layouts</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
         <div class="mb-0 row">
             <div class="col">
             </div>
             <div class="col-auto nav-right-btn">
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
-                <?php
-                if (isset($_SESSION['user'])) {
-                ?>
+                <?php if ($loggedInUser) : ?>
                     <a href="logout.php" class="btn btn-primary btn-sm sign-out">
                         <i class="fa-solid fa-sign-out"></i> Sign Out
                     </a>
-                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
-                <?php
-                } else {
-                ?>
+                <?php else : ?>
                     <a href="login.php" class="btn btn-primary btn-sm"><i class="fa-solid fa-sign-in"></i> Sign In</a>
-                <?php
-                }
-                ?>
-              
+                <?php endif; ?>
             </div>
         </div>
     </div>

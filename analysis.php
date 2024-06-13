@@ -1,16 +1,9 @@
-<?php
-require_once('database.php');
-$database = new Database();
-$conn = $database->getConnection();
-require 'check-login.php';
-require 'header.php';
-?>
+<?php require 'header.php'; ?>
 
-<body>
-    <?php
-    require 'navigation.php';
-    ?>
-    <div class="container1 p-3">
+<div class="container">
+    <?php if ($role['name'] == 'data-entry-operator'): ?>
+        <?php require '401.php'; ?>
+    <?php else: ?>
         <div class="row mt-4">
             <?php
             $layoutTemplateID = $_GET['id'];
@@ -94,10 +87,7 @@ require 'header.php';
             echo '</div>';
             ?>
         </div>
-    </div>
-    <?php
-    require 'modals.php';
-    ?>
-<?php
-require 'footer.php';
-?>
+    <?php endif; ?>
+</div>
+
+<?php require 'footer.php'; ?>

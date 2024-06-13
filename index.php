@@ -1,216 +1,222 @@
-<?php
-require_once('database.php');
-$database = new Database();
-$conn = $database->getConnection();
-require 'check-login.php';
-require 'header.php';
-?>
-<body>
-<form action="report.php" method="post">
-    <style>
-        .alert-title {
-            font-size: 15px !important;
-        }
-        .alert-container {
-            width: 20em;
-            height: 10em;
-            margin: 0 auto;
-            /* Center horizontally */
-            position: relative;
-            /* Position relative to the viewport */
-            top: 50%;
-            /* Move down by 50% of the viewport height */
-            transform: translateY(-50%);
-            /* Center vertically */
-        }
-        .form-floating>.form-control,
-        .form-floating>.form-control-plaintext {
-            padding: 0;
-        }
-        .form-floating>label {
-            position: absolute;
-            top: -14px;
-            left: -5px;
-            font-size: 12px;
-        }
-        .form-floating>.form-control,
-        .form-floating>.form-control-plaintext,
-        .form-floating>.form-select {
-            height: calc(2rem rem + calc(var(--bs-border-width) * 2));
-            min-height: 2.2rem;
-        }
-        .form-floating>.form-control-plaintext:focus,
-        .form-floating>.form-control-plaintext:not(:placeholder-shown),
-        .form-floating>.form-control:focus,
-        .form-floating>.form-control-plaintext:focus,
-        .form-floating>.form-control-plaintext:not(:placeholder-shown),
-        .form-floating>.form-control:focus,
-        .form-floating>.form-control:not(:placeholder-shown) {
-            padding-top: 11px;
-            padding-left: 6px;
-            padding-bottom: 1px;
-        }
-        .fa-circle-plus {
-            color: green;
-            cursor: pointer;
-        }
-        .bg-body-tertiary {
-            --bs-bg-opacity: 1;
-            background-color: #013e6d !important;
-        }
-        #preview_title {
-            padding: 10px 0;
-        }
-        .table input {
-            padding: 0;
-            border: 0px;
-            cursor: pointer;
-        }
-        .table th, td {
-            cursor: pointer;
-        }
-        .table input:focus {
-            border-color: lightblue !important;
-            /* Change border color on focus */
-        }
-        :focus-visible {
-            outline: 2px solid red;
-            /* Example focus style */
-        }
-        .copy-color-1 {
-            background-color: #b3ffb3;
-        }
-        .hilight {
-            background-color: #ffe033;
-        }
-        .result-color {
-            background-color: #e6c300;
-        }
-    </style>
+<?php require 'header.php'; ?>
 
-    <?php
-    require 'navigation.php';
-    ?>
-
-    <div class="container">
+<div class="container">
+    <?php if ($role['name'] != 'admin'): ?>
+        <?php require '401.php'; ?>
+    <?php else: ?>
         <div class="row">
-            <div class="offset-md-2 col-md-8" style="padding-top: 30px;">
-                <div class="mb-3 row">
-                    <div class="col">
-                        <div class="row">
-                            <label for="certificate_type" class="col-sm-3 col-form-label">Certificate Type </label>
-                            <div class="col-sm-8" style="padding-right: 0;">
+            <form action="report.php" method="post">
+                <div class="offset-md-2 col-md-8 mt-4 mb-4">
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <div class="row">
+                                <label for="certificate_type" class="col-sm-3 col-form-label">Certificate Type </label>
+                                <div class="col-sm-8" style="padding-right: 0;">
+                                    <?php
+                                    $query = "SELECT id, certificate_name FROM certificate_types";
+                                    $stmt = $conn->query($query);
+                                    if ($stmt) {
+                                    ?>
+                                        <select class="form-select form-select-sm" aria-label="" id="certificate_id" name="certificate_id">
+                                            <option value="">Select the Certificate</option>
+                                            <?php
+                                            $certificateData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                            foreach ($certificateData as $certificate) {
+                                                $cerficateId = $certificate['id'];
+                                                $certificateName = $certificate['certificate_name'];
+                                                echo "<option value=\"$cerficateId\">$certificateName</option>";
+                                            }
+                                            ?>
+                                        </select>
+                                    <?php
+                                    } else {
+                                        echo "<option>Error Loading Certificates</option>";
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-center">
+                        <h2 id="preview_title"></h2>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="index_no" name="index_no" maxlength="3" required placeholder=" ">
+                                        <label for="index_no" class="form-label" id="">Index</label>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="certificate_no" name="certificate_no" placeholder=" ">
+                                        <label for="make_input" class="form-label">Certificate Ref</label>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="row">
+                                        <label for="date" class="col-sm-2 col-form-label">Date</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm dpicker" id="date" name="date" placeholder="">
+                                        </div>
+                                        <div class="col-sm-2" style="font-size: 20px;">
+                                            <i class="fa-solid fa-calendar-days"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row" style="margin-top: 10px;">
+                        <label for="customer" class="col-sm-3 col-form-label">Customer <i class="fa-solid fa-circle-plus"></i></label>
+                        <div class="col-sm-8" style="padding-right: 0;">
+                            <?php
+                            $query = "SELECT company, address_1, address_2 FROM customers";
+                            // Execute the query
+                            $stmt = $conn->query($query);
+                            if ($stmt) {
+                            ?>
+                                <select class="form-select form-select-sm" aria-label="" id="customer" name="customer">
+                                    <option></option>
+                                    <?php
+                                    $data = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all data into an associative array
+                                    foreach ($data as $row) {
+                                        $companyName = $row['company'];
+                                        $addressA = $row['address_1'];
+                                        $address2 = $row['address_2'];
+                                        echo "<option value=\"$companyName - Address: $addressA, $address2\">$companyName - Address: $addressA, $address2</option>";
+                                    }
+                                    ?>
+                                </select>
+                            <?php
+                            } else {
+                                echo "<option>Error Loading Layout</option>";
+                            }
+                            ?>
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding:10px;margin-bottom:15px;">
+                        <div class="mb-3 row">
+                            <h6 class="col-sm-3">Instrument</h6>
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="layout" class="col-sm-3 col-form-label">Layout <i class="fa-solid fa-circle-plus"></i></label>
+                            <div class="col-sm-9">
                                 <?php
-                                $query = "SELECT id, certificate_name FROM certificate_types";
+                                $query = "SELECT id, layout_name FROM layouts";
                                 // Execute the query
                                 $stmt = $conn->query($query);
                                 if ($stmt) {
                                 ?>
-                                    <select class="form-select form-select-sm" aria-label="" id="certificate_id" name="certificate_id">
-                                        <option value="">Select the Certificate</option>
+                                    <select class="form-select form-select-sm" aria-label="" id="layout" name="layout">
+                                        <option value="">Select the Layout</option>
                                         <?php
-                                        $certificateData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                        foreach ($certificateData as $certificate) {
-                                            $cerficateId = $certificate['id'];
-                                            $certificateName = $certificate['certificate_name'];
-                                            echo "<option value=\"$cerficateId\">$certificateName</option>";
+                                        $layoutData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($layoutData as $layout) {
+                                            $layoutId = $layout['id'];
+                                            $layoutName = $layout['layout_name'];
+                                            echo "<option value=\"$layoutId\">$layoutName</option>";
                                         }
                                         ?>
                                     </select>
                                 <?php
                                 } else {
-                                    echo "<option>Error Loading Certificates</option>";
+                                    echo "<option>Error Loading Layout</option>";
                                 }
                                 ?>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row text-center">
-                    <h2 id="preview_title"></h2>
-                </div>
-
-                <div class="mb-3 row">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control form-control-sm" id="index_no" name="index_no" maxlength="3" required placeholder=" ">
-                                    <label for="index_no" class="form-label" id="">Index</label>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control form-control-sm" id="certificate_no" name="certificate_no" placeholder=" ">
-                                    <label for="make_input" class="form-label">Certificate Ref</label>
-                                </div>
-                            </div>
-                            <div class="col-5">
+                        <div class="mb-3 row">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9">
                                 <div class="row">
-                                    <label for="date" class="col-sm-2 col-form-label">Date</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control form-control-sm dpicker" id="date" name="date" placeholder="">
+                                    <div class="col-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" id="layout_profile_id" name="layout_profile_id" placeholder=" ">
+                                            <label for="id_input" class="form-label">ID</label>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-2" style="font-size: 20px;">
-                                        <i class="fa-solid fa-calendar-days"></i>
+                                    <div class="col-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" id="layout_profile_make" name="layout_profile_make" placeholder=" ">
+                                            <label for="make_input" class="form-label">Make</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" id="layout_profile_model" name="layout_profile_model" placeholder=" ">
+                                            <label for="model_input" class="form-label">Model</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control form-control-sm" id="layout_profile_sn" name="layout_profile_sn" placeholder=" ">
+                                            <label for="sn_input" class="form-label">S/N</label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3 row" style="margin-top: 10px;">
-                    <label for="customer" class="col-sm-3 col-form-label">Customer <i class="fa-solid fa-circle-plus"></i></label>
-                    <div class="col-sm-8" style="padding-right: 0;">
-                        <?php
-                        $query = "SELECT company, address_1, address_2 FROM customers";
-                        // Execute the query
-                        $stmt = $conn->query($query);
-                        if ($stmt) {
-                        ?>
-                            <select class="form-select form-select-sm" aria-label="" id="customer" name="customer">
-                                <option></option>
-                                <?php
-                                $data = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all data into an associative array
-                                foreach ($data as $row) {
-                                    $companyName = $row['company'];
-                                    $addressA = $row['address_1'];
-                                    $address2 = $row['address_2'];
-                                    echo "<option value=\"$companyName - Address: $addressA, $address2\">$companyName - Address: $addressA, $address2</option>";
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        } else {
-                            echo "<option>Error Loading Layout</option>";
-                        }
-                        ?>
+                    <div class="mb-3 row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="resolution" name="resolution" placeholder=" ">
+                                        <label for="resolution" class="form-label" id="">Resolution</label>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="range" name="range" placeholder=" ">
+                                        <label for="range" class="form-label">Range</label>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control form-control-sm" id="unit" name="unit" placeholder=" ">
+                                        <label for="unit" class="form-label">Unit</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card" style="padding:10px;margin-bottom:15px;">
-                    <div class="mb-3 row">
-                        <h6 class="col-sm-3">Instrument</h6>
+                    <div class="row">
+                        <div class="col">
+                            <div class="table-responsive" style="overflow-x: auto;">
+                                <table class="table" style="font-size:10px; max-width: 100%;" id="show_template"></table>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="mb-3 row">
-                        <label for="layout" class="col-sm-3 col-form-label">Layout <i class="fa-solid fa-circle-plus"></i></label>
+                        <label for="equipment_used" class="col-sm-3 col-form-label">Equipment Used</label>
                         <div class="col-sm-9">
                             <?php
-                            $query = "SELECT id, layout_name FROM layouts";
+                            $query = "SELECT id, equipment_id, standard, cal_date,name,statement,certificate_no_new,chain,lab FROM traceability_table";
                             // Execute the query
                             $stmt = $conn->query($query);
                             if ($stmt) {
                             ?>
-                                <select class="form-select form-select-sm" aria-label="" id="layout" name="layout">
-                                    <option value="">Select the Layout</option>
+                                <select class="form-select form-select-sm" aria-label="" id="equipment_used" name="equipment_used" class="select2">
+                                    <option></option>
                                     <?php
-                                    $layoutData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                    foreach ($layoutData as $layout) {
-                                        $layoutId = $layout['id'];
-                                        $layoutName = $layout['layout_name'];
-                                        echo "<option value=\"$layoutId\">$layoutName</option>";
+                                    $traceabilityData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                    foreach ($traceabilityData as $traceability) {
+                                        $id = $traceability['id'];
+                                        $equipmentId = $traceability['equipment_id'];
+                                        $calDate = $traceability['cal_date'];
+                                        echo "<option value=\"$equipmentId\">$equipmentId</option>";
                                     }
                                     ?>
                                 </select>
@@ -223,284 +229,269 @@ require 'header.php';
                     </div>
 
                     <div class="mb-3 row">
-                        <div class="col-sm-3"></div>
+                        <label for="date_place_calibration" class="col-sm-3 col-form-label">Date and place of Calibration</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control form-control-sm dpicker" id="date_place_calibration" name="date_place_calibration" placeholder="">
+                        </div>
+                        <div class="col-sm-1" style="font-size: 20px;">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="method_of_test" class="col-sm-3 col-form-label">Reference Method </label>
                         <div class="col-sm-9">
+                            <textarea class="form-control" id="method_of_tests" name="method_of_tests" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="traceability" class="col-sm-3 col-form-label">Standard
+                            And Traceability </label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" id="traceability" name="traceability" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <div class="col">
                             <div class="row">
-                                <div class="col-3">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-sm" id="layout_profile_id" name="layout_profile_id" placeholder=" ">
-                                        <label for="id_input" class="form-label">ID</label>
+                                <label for="ambient_conditions" class="col-sm-3 col-form-label">Ambient Conditions</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="ambient" name="ambient" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <div class="row">
+                                <label for="ambient_conditions" class="col-sm-3 col-form-label">Layouts</label>
+                                <div class="col-sm-9">
+                                    <i id="editLayout" class="fa-solid fa-pen-to-square" style="margin-left: 10px;margin-right: 10px;"></i><i class="fa-solid fa-circle-plus" id="addLayout" data-bs-toggle="modal" data-bs-target="#addLayoutModal"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="mb-3 row">
+                                    <label for="instrument_received_date" class="col-sm-3 col-form-label">Instrument Received Date</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm dpicker" id="instrument_received_date" name="instrument_received_date" placeholder="">
+                                    </div>
+                                    <div class="col-sm-1" style="font-size: 20px;">
+                                        <i class="fa-solid fa-calendar-days"></i>
                                     </div>
                                 </div>
-                                <div class="col-3">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-sm" id="layout_profile_make" name="layout_profile_make" placeholder=" ">
-                                        <label for="make_input" class="form-label">Make</label>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-sm" id="layout_profile_model" name="layout_profile_model" placeholder=" ">
-                                        <label for="model_input" class="form-label">Model</label>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control form-control-sm" id="layout_profile_sn" name="layout_profile_sn" placeholder=" ">
-                                        <label for="sn_input" class="form-label">S/N</label>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3 row">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control form-control-sm" id="resolution" name="resolution" placeholder=" ">
-                                    <label for="resolution" class="form-label" id="">Resolution</label>
-                                </div>
-                            </div>
-                            <div class="col-5">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control form-control-sm" id="range" name="range" placeholder=" ">
-                                    <label for="range" class="form-label">Range</label>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control form-control-sm" id="unit" name="unit" placeholder=" ">
-                                    <label for="unit" class="form-label">Unit</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col">
-                        <div class="table-responsive" style="overflow-x: auto;">
-                            <table class="table" style="font-size:10px; max-width: 100%;" id="show_template"></table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="equipment_used" class="col-sm-3 col-form-label">Equipment Used</label>
-                    <div class="col-sm-9">
-                        <?php
-                        $query = "SELECT id, equipment_id, standard, cal_date,name,statement,certificate_no_new,chain,lab FROM traceability_table";
-                        // Execute the query
-                        $stmt = $conn->query($query);
-                        if ($stmt) {
-                        ?>
-                            <select class="form-select form-select-sm" aria-label="" id="equipment_used" name="equipment_used" class="select2">
-                                <option></option>
-                                <?php
-                                $traceabilityData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                foreach ($traceabilityData as $traceability) {
-                                    $id = $traceability['id'];
-                                    $equipmentId = $traceability['equipment_id'];
-                                    $calDate = $traceability['cal_date'];
-                                    echo "<option value=\"$equipmentId\">$equipmentId</option>";
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        } else {
-                            echo "<option>Error Loading Layout</option>";
-                        }
-                        ?>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="date_place_calibration" class="col-sm-3 col-form-label">Date and place of Calibration</label>
-                    <div class="col-sm-8">
-                        <input type="text" class="form-control form-control-sm dpicker" id="date_place_calibration" name="date_place_calibration" placeholder="">
-                    </div>
-                    <div class="col-sm-1" style="font-size: 20px;">
-                        <i class="fa-solid fa-calendar-days"></i>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="method_of_test" class="col-sm-3 col-form-label">Reference Method </label>
-                    <div class="col-sm-9">
-                        <textarea class="form-control" id="method_of_tests" name="method_of_tests" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label for="traceability" class="col-sm-3 col-form-label">Standard
-                        And Traceability </label>
-                    <div class="col-sm-9">
-                        <textarea class="form-control" id="traceability" name="traceability" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <div class="col">
-                        <div class="row">
-                            <label for="ambient_conditions" class="col-sm-3 col-form-label">Ambient Conditions</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control form-control-sm" id="ambient" name="ambient" placeholder="">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <div class="col">
-                        <div class="row">
-                            <label for="ambient_conditions" class="col-sm-3 col-form-label">Layouts</label>
-                            <div class="col-sm-9">
-                                <i id="editLayout" class="fa-solid fa-pen-to-square" style="margin-left: 10px;margin-right: 10px;"></i><i class="fa-solid fa-circle-plus" id="addLayout" data-bs-toggle="modal" data-bs-target="#addLayoutModal"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <div class="col">
-                        <div class="row">
-                            <div class="mb-3 row">
-                                <label for="instrument_received_date" class="col-sm-3 col-form-label">Instrument Received Date</label>
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control form-control-sm dpicker" id="instrument_received_date" name="instrument_received_date" placeholder="">
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <div class="row">
+                                <label for="date_place_calibration" class="col-sm-6 col-form-label">Date and place of Calibration</label>
+                                <div class="col-sm-5">
+                                    <input type="text" class="form-control form-control-sm dpicker" id="date_place_calibration" name="date_place_calibration" placeholder="">
                                 </div>
                                 <div class="col-sm-1" style="font-size: 20px;">
                                     <i class="fa-solid fa-calendar-days"></i>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="col">
+                            <div class="mb-3 row input-group">
+                                <label for="due_date" class="col-sm-5 col-form-label" style="text-align: right;">Due Date</label>
+                                <div class="col-sm-6 ">
+                                    <input type="text" class="form-control form-control-sm dpicker" id="due_date" name="due_date" placeholder="">
 
-                <div class="mb-3 row">
-                    <div class="col">
-                        <div class="row">
-                            <label for="date_place_calibration" class="col-sm-6 col-form-label">Date and place of Calibration</label>
-                            <div class="col-sm-5">
-                                <input type="text" class="form-control form-control-sm dpicker" id="date_place_calibration" name="date_place_calibration" placeholder="">
-                            </div>
-                            <div class="col-sm-1" style="font-size: 20px;">
-                                <i class="fa-solid fa-calendar-days"></i>
+                                </div>
+                                <div class="col-sm-1" style="font-size: 20px;">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                </div>
                             </div>
                         </div>
+                        <!-- <div class="col">
+                            <div class="row">
+                                <div class="col-sm-3"><button class=" btn btn-primary btn-sm" type="button" id="loadTraceabilityStatement"><i class="fa-solid fa-retweet"></i> Reload</button></div>
+                            </div>
+                        </div> -->
                     </div>
-                    <div class="col">
-                        <div class="mb-3 row input-group">
-                            <label for="due_date" class="col-sm-5 col-form-label" style="text-align: right;">Due Date</label>
-                            <div class="col-sm-6 ">
-                                <input type="text" class="form-control form-control-sm dpicker" id="due_date" name="due_date" placeholder="">
 
-                            </div>
-                            <div class="col-sm-1" style="font-size: 20px;">
-                                <i class="fa-solid fa-calendar-days"></i>
-                            </div>
+                    <div class="mb-3 row">
+                        <label for="pi" class="col-sm-3 col-form-label">Preliminary Investigations</label>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control form-control-sm" id="pi" name="pi" placeholder="">
                         </div>
                     </div>
-                    <!-- <div class="col">
-                        <div class="row">
-                            <div class="col-sm-3"><button class=" btn btn-primary btn-sm" type="button" id="loadTraceabilityStatement"><i class="fa-solid fa-retweet"></i> Reload</button></div>
-                        </div>
-                    </div> -->
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-gear"></i> Generate</button>
                 </div>
 
-                <div class="mb-3 row">
-                    <label for="pi" class="col-sm-3 col-form-label">Preliminary Investigations</label>
-                    <div class="col-sm-5">
-                        <input type="text" class="form-control form-control-sm" id="pi" name="pi" placeholder="">
+                <!-- <div class="col-md-6 text-center" style="background-color: #FCFEFC;">
+                    <img src="./assets/loading.gif" id="loading_preview" width="200px" style="margin-top: 200px;" />
+                    <p style="color: dimgrey;">Preview</p>
+                    <div id="preview" style="display: none;">
+                        <h2 id="preview_title"></h2>
+                        <table class="table" style="text-align: left;">
+                            <tr>
+                                <td class="text-start">Index No: <span id="show_index"></span></td>
+                                <td class="text-start">Certificate Ref: <span id="show_certificate_no"></span></td>
+                                <td class="text-start">Date: <span id="show_date"></span></td>
+                                <td class="text-start">Pg 1 of 2</td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Customer </td>
+                                <td colspan="3" style="text-align: left;"><span id="show_customer"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Unit under Test</td>
+                                <td colspan="3">
+                                    <span id="show_layout_profile"></span>
+                                    <table style="width: 100%;text-align: left;display: none;" id="profile_data_table">
+                                        <tr>
+                                            <td>ID <span id="show_layout_profile_id"></span></td>
+                                            <td>Make <span id="show_layout_profile_make"></span></td>
+                                            <td>Model <span id="show_layout_profile_model"></span></td>
+                                            <td>S/N <span id="show_layout_profile_sn"></span></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Method of Test</td>
+                                <td colspan="3" class="text-start">
+                                    <p id="show_method_of_tests"></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Standard And Traceability</td>
+                                <td colspan="3">
+                                    <p class="text-start" id="show_traceability"></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Ambient Conditions</td>
+                                <td colspan="3" class="text-start"> <span id="show_ambient"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Preliminary Investigations</td>
+                                <td colspan="3" class="text-start"> <span id="show_pi"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Instrument Received Date</td>
+                                <td colspan="3" class="text-start"> <span id="show_instrument_received_date"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Date Place Calibration</td>
+                                <td colspan="3" class="text-start"> <span id="show_date_place_calibration"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Due Date</td>
+                                <td colspan="3" class="text-start"> <span id="show_due_date"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Result</td>
+                                <td colspan="3" class="text-start"> </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <table style="width: 100%;" id="result-preview">
+
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                </div>
-            </div>
-
-            <!-- <div class="col-md-6 text-center" style="background-color: #FCFEFC;">
-                <img src="./assets/loading.gif" id="loading_preview" width="200px" style="margin-top: 200px;" />
-                <p style="color: dimgrey;">Preview</p>
-                <div id="preview" style="display: none;">
-                    <h2 id="preview_title"></h2>
-                    <table class="table" style="text-align: left;">
-                        <tr>
-                            <td class="text-start">Index No: <span id="show_index"></span></td>
-                            <td class="text-start">Certificate Ref: <span id="show_certificate_no"></span></td>
-                            <td class="text-start">Date: <span id="show_date"></span></td>
-                            <td class="text-start">Pg 1 of 2</td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Customer </td>
-                            <td colspan="3" style="text-align: left;"><span id="show_customer"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Unit under Test</td>
-                            <td colspan="3">
-                                <span id="show_layout_profile"></span>
-                                <table style="width: 100%;text-align: left;display: none;" id="profile_data_table">
-                                    <tr>
-                                        <td>ID <span id="show_layout_profile_id"></span></td>
-                                        <td>Make <span id="show_layout_profile_make"></span></td>
-                                        <td>Model <span id="show_layout_profile_model"></span></td>
-                                        <td>S/N <span id="show_layout_profile_sn"></span></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Method of Test</td>
-                            <td colspan="3" class="text-start">
-                                <p id="show_method_of_tests"></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Standard And Traceability</td>
-                            <td colspan="3">
-                                <p class="text-start" id="show_traceability"></p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Ambient Conditions</td>
-                            <td colspan="3" class="text-start"> <span id="show_ambient"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Preliminary Investigations</td>
-                            <td colspan="3" class="text-start"> <span id="show_pi"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Instrument Received Date</td>
-                            <td colspan="3" class="text-start"> <span id="show_instrument_received_date"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Date Place Calibration</td>
-                            <td colspan="3" class="text-start"> <span id="show_date_place_calibration"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Due Date</td>
-                            <td colspan="3" class="text-start"> <span id="show_due_date"></span></td>
-                        </tr>
-                        <tr>
-                            <td class="text-start">Result</td>
-                            <td colspan="3" class="text-start"> </td>
-                        </tr>
-                        <tr>
-                            <td colspan="6">
-                                <table style="width: 100%;" id="result-preview">
-
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div> -->
+                </div> -->
+            </form>
         </div>
-    </div>
-</form>
-<?php
-require 'modals.php';
-?>
+    <?php endif; ?>
+</div>
+
+<style>
+    .alert-title {
+        font-size: 15px !important;
+    }
+    .alert-container {
+        width: 20em;
+        height: 10em;
+        margin: 0 auto;
+        /* Center horizontally */
+        position: relative;
+        /* Position relative to the viewport */
+        top: 50%;
+        /* Move down by 50% of the viewport height */
+        transform: translateY(-50%);
+        /* Center vertically */
+    }
+    .form-floating>.form-control,
+    .form-floating>.form-control-plaintext {
+        padding: 0;
+    }
+    .form-floating>label {
+        position: absolute;
+        top: -14px;
+        left: -5px;
+        font-size: 12px;
+    }
+    .form-floating>.form-control,
+    .form-floating>.form-control-plaintext,
+    .form-floating>.form-select {
+        height: calc(2rem rem + calc(var(--bs-border-width) * 2));
+        min-height: 2.2rem;
+    }
+    .form-floating>.form-control-plaintext:focus,
+    .form-floating>.form-control-plaintext:not(:placeholder-shown),
+    .form-floating>.form-control:focus,
+    .form-floating>.form-control-plaintext:focus,
+    .form-floating>.form-control-plaintext:not(:placeholder-shown),
+    .form-floating>.form-control:focus,
+    .form-floating>.form-control:not(:placeholder-shown) {
+        padding-top: 11px;
+        padding-left: 6px;
+        padding-bottom: 1px;
+    }
+    .fa-circle-plus {
+        color: green;
+        cursor: pointer;
+    }
+    .bg-body-tertiary {
+        --bs-bg-opacity: 1;
+        background-color: #013e6d !important;
+    }
+    #preview_title {
+        padding: 10px 0;
+    }
+    .table input {
+        padding: 0;
+        border: 0px;
+        cursor: pointer;
+    }
+    .table th, td {
+        cursor: pointer;
+    }
+    .table input:focus {
+        border-color: lightblue !important;
+        /* Change border color on focus */
+    }
+    :focus-visible {
+        outline: 2px solid red;
+        /* Example focus style */
+    }
+    .copy-color-1 {
+        background-color: #b3ffb3;
+    }
+    .hilight {
+        background-color: #ffe033;
+    }
+    .result-color {
+        background-color: #e6c300;
+    }
+</style>
 
 <script>
 $(document).ready(function() {
@@ -1313,7 +1304,6 @@ $(document).ready(function() {
         alert();
     }
 </script>
-
 <?php
 require 'footer.php';
 ?>

@@ -1736,6 +1736,46 @@ class Layout
     public function storeCalculationData($data)
     {
         $templateId = $data['template_id'];
+        $createdAt = date('Y-m-d H:i:s');
+
+        $checkTemplateIdQuery  = "SELECT COUNT(*) FROM calculation_template_header WHERE template_id = :templateId";
+        $checkStatement  = $this->conn->prepare($checkTemplateIdQuery );
+        $checkStatement ->bindParam(':templateId', $templateId);
+        $checkStatement ->execute();
+        $count = $checkStatement ->fetchColumn();
+
+        if ($count > 0) {
+            // Update existing template
+            $queryCTH = "UPDATE calculation_template_header SET equipment_id = :equipmentId, sensor_id = :sensorId, cal_date = :calDate, res = :res, x = :x, equipment_name = :equipmentName, brand = :brand, serial_no = :serialNo, unit_ref = :unitRef, resolution_ref = :resolutionRef, cal_date_2 = :calDate_2, C1 = :C1, C2 = :C2, C3 = :C3, C4 = :C4, C5 = :C5, unit_uuc = :unitUuc, resolution_uuc = :resolutionUuc, created_at = :createdAt WHERE template_id = :templateId";
+        } else {
+            // Insert new template
+            $queryCTH = "INSERT INTO calculation_template_header (template_id, equipment_id, sensor_id, cal_date, res, x, equipment_name, brand, serial_no, unit_ref, resolution_ref, cal_date_2, C1, C2, C3, C4, C5, unit_uuc, resolution_uuc, created_at) VALUES (:templateId, :equipmentId, :sensorId, :calDate, :res, :x, :equipmentName, :brand, :serialNo, :unitRef, :resolutionRef, :calDate_2, :C1, :C2, :C3, :C4, :C5, :unitUuc, :resolutionUuc, :createdAt)";
+        }
+        
+        $statementCTH = $this->conn->prepare($queryCTH);
+
+        $statementCTH->bindParam(':templateId', $templateId);
+        $statementCTH->bindParam(':equipmentId', $data['equipment_id']);
+        $statementCTH->bindParam(':sensorId', $data['sensor_id']);
+        $statementCTH->bindParam(':calDate', $data['cal_date']);
+        $statementCTH->bindParam(':res', $data['res']);
+        $statementCTH->bindParam(':x', $data['x']);
+        $statementCTH->bindParam(':equipmentName', $data['equipment_name']);
+        $statementCTH->bindParam(':brand', $data['brand']);
+        $statementCTH->bindParam(':serialNo', $data['serial_no']);
+        $statementCTH->bindParam(':unitRef', $data['unit_ref']);
+        $statementCTH->bindParam(':resolutionRef', $data['resolution_ref']);
+        $statementCTH->bindParam(':calDate_2', $data['cal_date_2']);
+        $statementCTH->bindParam(':C1', $data['C1']);
+        $statementCTH->bindParam(':C2', $data['C2']);
+        $statementCTH->bindParam(':C3', $data['C3']);
+        $statementCTH->bindParam(':C4', $data['C4']);
+        $statementCTH->bindParam(':C5', $data['C5']);
+        $statementCTH->bindParam(':unitUuc', $data['unit_uuc']);
+        $statementCTH->bindParam(':resolutionUuc', $data['resolution_uuc']);
+        $statementCTH->bindParam(':createdAt', $createdAt);
+
+        $statementCTH->execute();
 
         $query = "INSERT INTO calculation_template (template_id, title, title_value) VALUES (:templateId, :title, :titleValue)";
         $statement = $this->conn->prepare($query);

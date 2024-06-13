@@ -1,230 +1,232 @@
-<?php
-require 'header.php';
-?>
+<?php require 'header.php'; ?>
 
 <div class="container">
-    <div class="row mt-4">
-        <div class="col-md-2">
-            <label for="equipment_id">Equipment ID</label>
-            <input type="text" id="equipment_id" value="ECAL/WS/E02" class="form-control getSplitData" />
+    <?php if ($role['name'] == 'analyst'): ?>
+        <?php require '401.php'; ?>
+    <?php else: ?>
+        <div class="row mt-4">
+            <div class="col-md-2">
+                <label for="equipment_id">Equipment ID</label>
+                <input type="text" id="equipment_id" value="ECAL/WS/E02" class="form-control getSplitData" />
+            </div>
+            <div class="col-md-2">
+                <label for="sensor_id">Sensor ID</label>
+                <input type="text" id="sensor_id" value="ECAL/WS/E02-DCV" class="form-control getSplitData" />
+            </div>
+            <div class="col-md-2">
+                <label for="cal_date">Cal date</label>
+                <input type="date" id="cal_date" class="form-control getSplitData" value="2024-06-05" />
+            </div>
+            <div class="col-md-2">
+                <label for="res">Res</label>
+                <input type="text" id="res" class="form-control getCertificateData" />
+            </div>
+            <div class="col-md-2">
+                <label for="x">X</label>
+                <input type="text" id="x" class="form-control getSplitData" />
+            </div>
+            <div class="col-md-2 hide">
+                <label for="range_min">Range</label>
+                <input type="number" id="range_min" class="form-control getSplitData" placeholder="Min" value="0" />
+            </div>
+            <div class="col-md-2 hide">
+                <label for="range_min"></label>
+                <input type="number" id="range_max" class="form-control getSplitData" placeholder="Max" value="0" />
+            </div>
+            <div class="col-md-2 hide">
+                <label for="x_split_no">X (split no)</label>
+                <input type="text" id="x_split_no" class="form-control getSplitData" />
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="sensor_id">Sensor ID</label>
-            <input type="text" id="sensor_id" value="ECAL/WS/E02-DCV" class="form-control getSplitData" />
+        <div class="row mt-2 mb-4">
+            <div class="col-md-8">&nbsp;</div>
+            <div class="col-md-4">
+                <table class="table table-borderd">
+                    <thead>
+                        <tr>
+                            <th>Ref Uncert</th>
+                            <th>Split Data</th>
+                        </tr>
+                    </thead>
+                    <tbody id="split_table"></tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="cal_date">Cal date</label>
-            <input type="date" id="cal_date" class="form-control getSplitData" value="2024-06-05" />
+        <hr />
+        <div class="row mt-2">
+            <div class="col-md-4">
+                <label for="equipment_name">Equipment Name</label>
+                <input type="text" id="equipment_name" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="brand">Brand</label>
+                <input type="text" id="brand" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="serial_no">Serial #</label>
+                <input type="text" id="serial_no" class="form-control" readonly />
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="res">Res</label>
-            <input type="text" id="res" class="form-control getCertificateData" />
+        <div class="row mt-2">
+            <div class="col-md-4">
+                <label for="unit_ref">Unit ref</label>
+                <input type="text" id="unit_ref" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="resolution_ref">Resolution ref</label>
+                <input type="text" id="resolution_ref" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="cal_date_2">Cal Date</label>
+                <input type="date" id="cal_date_2" class="form-control" readonly />
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="x">X</label>
-            <input type="text" id="x" class="form-control getSplitData" />
+        <div class="row mt-2 mb-4">
+            <div class="col-md-4">
+                <label for="C1">C1</label>
+                <input type="text" id="C1" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C2">C2</label>
+                <input type="text" id="C2" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C3">C3</label>
+                <input type="text" id="C3" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C4">C4</label>
+                <input type="text" id="C4" class="form-control" readonly />
+            </div>
+            <div class="col-md-4">
+                <label for="C5">C5</label>
+                <input type="text" id="C5" class="form-control" readonly />
+            </div>
         </div>
-        <div class="col-md-2 hide">
-            <label for="range_min">Range</label>
-            <input type="number" id="range_min" class="form-control getSplitData" placeholder="Min" value="0" />
+        <hr />
+        <div class="row mt-2">
+            <?php
+            $querySiRefEqInfo = "SELECT * FROM si_ref_eq_info GROUP BY unit";
+            $statementSiRefEqInfo = $conn->prepare($querySiRefEqInfo);
+            $statementSiRefEqInfo->execute();
+            $siRefEqInfos = $statementSiRefEqInfo->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+            <div class="col-md-4">
+                <label for="unit_uuc">Unit UUC</label>
+                <select class="form-control" id="unit_uuc">
+                    <option value="ft">Feet</option>
+                    <?php
+                    // foreach($siRefEqInfos as $siRefEqInfo)
+                    // {
+                    ?>
+                    <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
+                    <?php
+                    // }
+                    ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="resolution_uuc">Resolution UUC</label>
+                <select class="form-control" id="resolution_uuc">
+                    <option value="m">Meter</option>
+                    <?php
+                    // foreach($siRefEqInfos as $siRefEqInfo)
+                    // {
+                    ?>
+                    <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
+                    <?php
+                    // }
+                    ?>
+                </select>
+            </div>
         </div>
-        <div class="col-md-2 hide">
-            <label for="range_min"></label>
-            <input type="number" id="range_max" class="form-control getSplitData" placeholder="Max" value="0" />
-        </div>
-        <div class="col-md-2 hide">
-            <label for="x_split_no">X (split no)</label>
-            <input type="text" id="x_split_no" class="form-control getSplitData" />
-        </div>
-    </div>
-    <div class="row mt-2 mb-4">
-        <div class="col-md-8">&nbsp;</div>
-        <div class="col-md-4">
-            <table class="table table-borderd">
-                <thead>
-                    <tr>
-                        <th>Ref Uncert</th>
-                        <th>Split Data</th>
-                    </tr>
-                </thead>
-                <tbody id="split_table"></tbody>
-            </table>
-        </div>
-    </div>
-    <hr />
-    <div class="row mt-2">
-        <div class="col-md-4">
-            <label for="equipment_name">Equipment Name</label>
-            <input type="text" id="equipment_name" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="brand">Brand</label>
-            <input type="text" id="brand" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="serial_no">Serial #</label>
-            <input type="text" id="serial_no" class="form-control" readonly />
-        </div>
-    </div>
-    <div class="row mt-2">
-        <div class="col-md-4">
-            <label for="unit_ref">Unit ref</label>
-            <input type="text" id="unit_ref" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="resolution_ref">Resolution ref</label>
-            <input type="text" id="resolution_ref" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="cal_date_2">Cal Date</label>
-            <input type="date" id="cal_date_2" class="form-control" readonly />
-        </div>
-    </div>
-    <div class="row mt-2 mb-4">
-        <div class="col-md-4">
-            <label for="C1">C1</label>
-            <input type="text" id="C1" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="C2">C2</label>
-            <input type="text" id="C2" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="C3">C3</label>
-            <input type="text" id="C3" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="C4">C4</label>
-            <input type="text" id="C4" class="form-control" readonly />
-        </div>
-        <div class="col-md-4">
-            <label for="C5">C5</label>
-            <input type="text" id="C5" class="form-control" readonly />
-        </div>
-    </div>
-    <hr />
-    <div class="row mt-2">
-        <?php
-        $querySiRefEqInfo = "SELECT * FROM si_ref_eq_info GROUP BY unit";
-        $statementSiRefEqInfo = $conn->prepare($querySiRefEqInfo);
-        $statementSiRefEqInfo->execute();
-        $siRefEqInfos = $statementSiRefEqInfo->fetchAll(PDO::FETCH_ASSOC);
-        ?>
-        <div class="col-md-4">
-            <label for="unit_uuc">Unit UUC</label>
-            <select class="form-control" id="unit_uuc">
-                <option value="ft">Feet</option>
-                <?php
-                // foreach($siRefEqInfos as $siRefEqInfo)
-                // {
-                ?>
-                <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
-                <?php
-                // }
-                ?>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="resolution_uuc">Resolution UUC</label>
-            <select class="form-control" id="resolution_uuc">
-                <option value="m">Meter</option>
-                <?php
-                // foreach($siRefEqInfos as $siRefEqInfo)
-                // {
-                ?>
-                <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
-                <?php
-                // }
-                ?>
-            </select>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <?php
-        $layoutTemplateID = $_GET['id'];
+        <div class="row mt-4">
+            <?php
+            $layoutTemplateID = $_GET['id'];
 
-        $queryTemplate = "SELECT levels FROM layout_template WHERE id = :templateID";
-        $statementTemplate = $conn->prepare($queryTemplate);
-        $statementTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
-        $statementTemplate->execute();
-        $template = $statementTemplate->fetch(PDO::FETCH_ASSOC);
+            $queryTemplate = "SELECT levels FROM layout_template WHERE id = :templateID";
+            $statementTemplate = $conn->prepare($queryTemplate);
+            $statementTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
+            $statementTemplate->execute();
+            $template = $statementTemplate->fetch(PDO::FETCH_ASSOC);
 
-        $totalLevels = $template ? $template['levels'] : 1;
-        $hLevel = range(1, $totalLevels);
-        $in  = str_repeat('?,', count($hLevel) - 1) . '?';
+            $totalLevels = $template ? $template['levels'] : 1;
+            $hLevel = range(1, $totalLevels);
+            $in  = str_repeat('?,', count($hLevel) - 1) . '?';
 
-        $query1 = "SELECT h.*, c.column_function FROM headings h 
-                LEFT JOIN column_functions c ON h.id = c.headings_id 
-                WHERE  h.level IN ($in) AND h.layout_template_id = ? 
-                ORDER BY h.id, h.parent_id";
+            $query1 = "SELECT h.*, c.column_function FROM headings h 
+                    LEFT JOIN column_functions c ON h.id = c.headings_id 
+                    WHERE  h.level IN ($in) AND h.layout_template_id = ? 
+                    ORDER BY h.id, h.parent_id";
 
-        $statement1 = $conn->prepare($query1);
-        $statement1->execute([...$hLevel, $layoutTemplateID]);
-        $headings = $statement1->fetchAll(PDO::FETCH_ASSOC);
+            $statement1 = $conn->prepare($query1);
+            $statement1->execute([...$hLevel, $layoutTemplateID]);
+            $headings = $statement1->fetchAll(PDO::FETCH_ASSOC);
 
-        // Initialize the result array
-        $rows = [];
+            // Initialize the result array
+            $rows = [];
 
-        //Group elements by their level
-        foreach ($headings as $key => $heading) {
-            $level = $heading['level'];
-            if (!array_key_exists($level, $rows)) {
-                $rows[$level] = [];
-            }
-            $rows[$level][] = $heading;
-        }
-
-        echo '<form id="calculation_template_form">';
-        echo '<div class="table-responive">';
-        echo '<table id="template-table" class="table table-bordered">';
-        $count = 0;
-        $lastRow = [];
-        foreach ($rows as $key => $row) {
-            $count = 0;
-            echo '<tr>';
-            foreach ($row as $heading) {
-                $hide = "";
-                $hideChkBox = "hide1";
-                if ($heading['column_function'] != "") {
-                    $hide = "hide1";
-                    $hideChkBox = "";
+            //Group elements by their level
+            foreach ($headings as $key => $heading) {
+                $level = $heading['level'];
+                if (!array_key_exists($level, $rows)) {
+                    $rows[$level] = [];
                 }
-                echo '<th class="' . $hide . ' p-1 text-nowrap text-center" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '">';
-                echo $heading['title'];
-                echo '<input class="hide heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
-                echo '</th>';
-                $count++;
+                $rows[$level][] = $heading;
             }
-            echo '<th>&nbsp;</th>';
-            echo '</tr>';
-            if ($key == count($rows)) {
-                $lastRow = $row;
-            }
-        }
 
-        echo '<tr>';
-        for ($i = 0; $i <= $count - 1; $i++) {
-            if ($lastRow[$i]['column_function'] != "") {
-                echo '<td class="hide1 p-1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
-                echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly rows="3"></textarea>';
-                echo '</td>';
-            } else {
-                echo '<td class="p-1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
-                echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" rows="3"></textarea>';
-                echo '</td>';
+            echo '<form id="calculation_template_form">';
+            echo '<div class="table-responive">';
+            echo '<table id="template-table" class="table table-bordered">';
+            $count = 0;
+            $lastRow = [];
+            foreach ($rows as $key => $row) {
+                $count = 0;
+                echo '<tr>';
+                foreach ($row as $heading) {
+                    $hide = "";
+                    $hideChkBox = "hide1";
+                    if ($heading['column_function'] != "") {
+                        $hide = "hide1";
+                        $hideChkBox = "";
+                    }
+                    echo '<th class="' . $hide . ' p-1 text-nowrap text-center" colspan="' . $heading['colspan'] . '" type="' . $heading['column_type'] . '" column_function="' . $heading['column_function'] . '">';
+                    echo $heading['title'];
+                    echo '<input class="hide heading_check ' . $hideChkBox . '" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
+                    echo '</th>';
+                    $count++;
+                }
+                echo '<th>&nbsp;</th>';
+                echo '</tr>';
+                if ($key == count($rows)) {
+                    $lastRow = $row;
+                }
             }
-        }
-        echo '<td class="align-middle"><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
-        echo '</tr>';
-        echo '</table>';
-        echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
-                    <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
-                    <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
-                </div>';
-        echo '</div>';
-        echo '</form>';
-        ?>
-    </div>
+
+            echo '<tr>';
+            for ($i = 0; $i <= $count - 1; $i++) {
+                if ($lastRow[$i]['column_function'] != "") {
+                    echo '<td class="hide1 p-1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
+                    echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly rows="3"></textarea>';
+                    echo '</td>';
+                } else {
+                    echo '<td class="p-1" colspan="' . $row[$i]['colspan'] . '" type="' . $row[$i]['column_type'] . '" column_function="' . $row[$i]['column_function'] . '">';
+                    echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="input-field form-control valueChange input_val_' . $row[$i]['id'] . '" style="resize:none;" rows="3"></textarea>';
+                    echo '</td>';
+                }
+            }
+            echo '<td class="align-middle"><button class="btnDeleteRow border-1" type="button" disabled>&times;</button></td>';
+            echo '</tr>';
+            echo '</table>';
+            echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
+                        <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
+                        <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
+                    </div>';
+            echo '</div>';
+            echo '</form>';
+            ?>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
@@ -856,6 +858,5 @@ require 'header.php';
     //     $(".heading_check").prop('checked', false);
     // });
 </script>
-<?php
-require 'footer.php';
-?>
+
+<?php require 'footer.php'; ?>

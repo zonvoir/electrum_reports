@@ -3,24 +3,28 @@ require 'header.php';
 ?>
 
 <div class="container" style="padding-top: 50px; padding-bottom: 20px;">
-    <div class="card border-0 tbl-csmz mb-5">
-        <div class="card-header p-3 ">
-            <h4>Layouts</h4>
+    <?php if ($role['name'] != 'admin'): ?>
+        <?php require '401.php'; ?>
+    <?php else: ?>
+        <div class="card border-0 tbl-csmz mb-5">
+            <div class="card-header p-3 ">
+                <h4>Layouts</h4>
+            </div>
+            <div class="card-body p-0">
+                <table id="layoutsTable" class="display table table-sm  table-hover" style="width:100%">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Template Name</th>
+                            <th>Layout Name</th>
+                            <th style="width: 80px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
-        <div class="card-body p-0">
-            <table id="layoutsTable" class="display table table-sm  table-hover" style="width:100%">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Template Name</th>
-                        <th>Layout Name</th>
-                        <th style="width: 80px;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
+    <?php endif; ?>
 </div>
 
 <script>
@@ -89,7 +93,14 @@ $(document).ready(function() {
             },
             success: function(data) {
                 var response = JSON.parse(data)
-                toastr.success(response.message, 'Success!')
+                toastr.success(response.message, 'Success', {
+                    timeOut: 3000,
+                    extendedTimeOut: 2000,
+                    progressBar: true,
+                    closeButton: true,
+                    tapToDismiss: false,
+                    positionClass: "toast-top-right",
+                }); 
                 $('#layoutsTable').DataTable().row(row).remove().draw();
             },
             error: function() {

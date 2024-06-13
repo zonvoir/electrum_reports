@@ -1,6 +1,4 @@
-<?php
-require 'header.php';
-?>
+<?php require 'header.php'; ?>
 
 <?php
 $layoutID = $_GET['id'];
@@ -23,54 +21,53 @@ if ($result && $result[0]['layout_template_id'] != null) {
 ?>
 
 <div class="container">
-    <div class="row mt-4">
-        <div class="col-sm-1" style="font-size: 25px;">
-            <!-- <i class="fa-solid fa-file-circle-plus" ></i> -->
-            <a href="index.php"><i class="fa-solid fa-house" style="color: dodgerblue;cursor: pointer;"></i></a>
-            <!-- <i id="load-titles" class="fa-solid fa-arrows-rotate" style="margin-right: 5px;color:blue;cursor: pointer;"></i> -->
-        </div>
-    </div>
-    <div class="row mt-2">
-        <h4>Layout Edit</h4>
-    </div>
-    <div class="row mt-2">
-        <div class="col-sm-4">
-            <select class="form-select" aria-label="" id="templateSelect">
-                <option selected value="0">Select Template</option>
-            </select>
-        </div>
-        <div class="col-sm-4">
-            <!-- <a class="btn btn-primary" href="javascript:void(0);" id="link-template">
-            <i class="fa-solid fa-link"></i> Link with Layout
-        </a> -->
-        </div>
-        <div class="col-sm-4 text-end">
-            <a class="btn btn-primary addHeading" href="javascript:void(0);">
-                <i class="fa-solid fa-plus"></i> Add Column
-            </a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="alert alert-primary" role="alert" style="display: none;"></div>
-            <h5 style="margin-top: 20px;">
-                Layout: <span style="color: dimgray;"> <?= $result ? $result[0]['layout_name'] : 'N/A'; ?></span>
-                Template: <span style="color: dimgray;" id="template-name"><?= $temlpate; ?></span>
-            </h5>
-            <?php
-            if ($result && $result[0]['layout_template_id'] == null) {
-            ?>
-                <div class="alert alert-warning" role="alert">
-                    Please assign a Template to the Layout. and make sure to save the assigned template before leave.
-                </div>
-            <?php
-            }
-            ?>
-            <div class="mt-4" id="tableContainer">
-
+    <?php if ($role['name'] != 'admin'): ?>
+        <?php require '401.php'; ?>
+    <?php else: ?>
+        <div class="row mt-4">
+            <div class="col-sm-1" style="font-size: 25px;">
+                <!-- <i class="fa-solid fa-file-circle-plus" ></i> -->
+                <a href="index.php"><i class="fa-solid fa-house" style="color: dodgerblue;cursor: pointer;"></i></a>
+                <!-- <i id="load-titles" class="fa-solid fa-arrows-rotate" style="margin-right: 5px;color:blue;cursor: pointer;"></i> -->
             </div>
         </div>
-    </div>
+        <div class="row mt-2">
+            <h4>Layout Edit</h4>
+        </div>
+        <div class="row mt-2">
+            <div class="col-sm-4">
+                <select class="form-select" aria-label="" id="templateSelect">
+                    <option selected value="0">Select Template</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <!-- <a class="btn btn-primary" href="javascript:void(0);" id="link-template">
+                <i class="fa-solid fa-link"></i> Link with Layout
+            </a> -->
+            </div>
+            <div class="col-sm-4 text-end">
+                <a class="btn btn-primary addHeading" href="javascript:void(0);">
+                    <i class="fa-solid fa-plus"></i> Add Column
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="alert alert-primary" role="alert" style="display: none;"></div>
+                <h5 style="margin-top: 20px;">
+                    Layout: <span style="color: dimgray;"> <?= $result ? $result[0]['layout_name'] : 'N/A'; ?></span>
+                    Template: <span style="color: dimgray;" id="template-name"><?= $temlpate; ?></span>
+                </h5>
+                <?php if ($result && $result[0]['layout_template_id'] == null): ?>
+                    <div class="alert alert-warning" role="alert">
+                        Please assign a Template to the Layout. and make sure to save the assigned template before leave.
+                    </div>
+                <?php endif; ?>
+                <div class="mt-4" id="tableContainer">
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>

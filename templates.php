@@ -23,7 +23,7 @@ require 'header.php';
 </div>
 
 <script>
-    
+<?php echo "var roleName = '" . $role['name'] . "';"; ?>
 $(document).ready(function() {
     $('#templatesTable').DataTable({
         "draw": 1,
@@ -46,17 +46,31 @@ $(document).ready(function() {
                 "data": "template_name",
                 "render": function(data, type, row) {
                     var templateName = data || "";
-                    return '<a href="view-template.php?id='+row.id+'">' + templateName + '</a>';
+                    if (roleName == 'analyst') {
+                        return templateName;
+                    } else {
+                        return '<a href="view-template.php?id='+row.id+'">' + templateName + '</a>';
+                    }
                 }
             },
             {
                 "data": null,
-                "defaultContent": "<div class='d-flex'>\
-                                    <button class='btn  btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
-                                    <button class='btn  btn-sm delete-btn me-2'><i class='fa-solid fa-trash'></i></button>\
-                                    <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
-                                    </div>",
-                "orderable": false
+                "render": function(data, type, row) {
+                    if (roleName == 'analyst') {
+                        return "<div class='d-flex'>\
+                            <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
+                        </div>";
+                    } else {
+                        return "<div class='d-flex'>\
+                            <button class='btn  btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
+                            <button class='btn  btn-sm delete-btn me-2'><i class='fa-solid fa-trash'></i></button>\
+                            <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
+                        </div>";
+                    }
+                    
+                },
+                "orderable": false,
+                "visible": (roleName == 'admin' || roleName == 'analyst') ? true : false
             }
         ],
         "pagingType": "full_numbers",
@@ -94,7 +108,14 @@ $(document).ready(function() {
             },
             success: function(data) {
                 var response = JSON.parse(data)
-                toastr.success(response.message, 'Success!')
+                toastr.success(response.message, 'Success', {
+                    timeOut: 3000,
+                    extendedTimeOut: 2000,
+                    progressBar: true,
+                    closeButton: true,
+                    tapToDismiss: false,
+                    positionClass: "toast-top-right",
+                }); 
                 $('#templatesTable').DataTable().row(row).remove().draw();
             },
             error: function() {

@@ -34,19 +34,7 @@
             background-color: #013e6d !important;
         }
 
-        /* table.dataTable thead th,
-        table.dataTable thead td {
-            padding: 4px 18px !important;
-            border-bottom: 1px solid #111;
-        }
-
-        table.dataTable tbody td {
-            padding: 3px 10px !important;
-        } */
     </style>
 </head>
 <body class="wrap-tbl-content">
-    <?php
-    require 'includes.php';
-    require 'navigation.php';
-    ?>
+    <?php require 'includes.php'; ?>

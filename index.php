@@ -1,16 +1,9 @@
-<?php
-require 'header.php';
-$role = $loggedInUser['role']['name'];
-?>
+<?php require 'header.php'; ?>
 
 <div class="container">
-    <?php
-    if ($role!='admin') {
-    ?>
-        <h2 class="text-center text-danger mt-5">Not authorized</h2>
-    <?php
-    } else {
-    ?>
+    <?php if ($role['name'] != 'admin'): ?>
+        <?php require '401.php'; ?>
+    <?php else: ?>
         <div class="row">
             <form action="report.php" method="post">
                 <div class="offset-md-2 col-md-8 mt-4 mb-4">
@@ -416,9 +409,7 @@ $role = $loggedInUser['role']['name'];
                 </div> -->
             </form>
         </div>
-    <?php
-    }
-    ?>
+    <?php endif; ?>
 </div>
 
 <style>

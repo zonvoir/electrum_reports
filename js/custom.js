@@ -99,7 +99,7 @@ jQuery( function( $ ){
         var templateName = $('#templateName').val();
         var template_id = $('#template_id').val();
         if(templateName==''){
-            toastr.error('Template name field is required!', 'Error!')
+            toastrErrorMessage('Template name field is required!')
             return false
         }
         $.ajax({
@@ -136,11 +136,11 @@ jQuery( function( $ ){
         var layoutName = $('#inputLayoutName').val();
         var layout_template_id = $("#layout_template_id").val();
         if(layoutName==''){
-            toastr.error('Layout name field is required!', 'Error!')
+            toastrErrorMessage('Layout name field is required!')
             return false
         }
         if(layout_template_id==''){
-            toastr.error('Template name field is required!', 'Error!')
+            toastrErrorMessage('Template name field is required!')
             return false
         }
         $.ajax({
@@ -170,4 +170,15 @@ jQuery( function( $ ){
         $(".dpicker").datepicker("option", "dateFormat", "yy-mm-dd");
 
     });
+
+    function toastrErrorMessage(message) {
+        toastr.error(message, 'Opps!', {
+            timeOut: 3000,
+            extendedTimeOut: 2000,
+            progressBar: true,
+            closeButton: true,
+            tapToDismiss: false,
+            positionClass: "toast-top-right",
+        });
+    }
 });

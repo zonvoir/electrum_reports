@@ -1745,15 +1745,14 @@ class Layout
         $count = $checkStatement ->fetchColumn();
 
         if ($count > 0) {
-            // Update existing template
+            // Update existing calculation template header
             $queryCTH = "UPDATE calculation_template_header SET equipment_id = :equipmentId, sensor_id = :sensorId, cal_date = :calDate, res = :res, x = :x, equipment_name = :equipmentName, brand = :brand, serial_no = :serialNo, unit_ref = :unitRef, resolution_ref = :resolutionRef, cal_date_2 = :calDate_2, C1 = :C1, C2 = :C2, C3 = :C3, C4 = :C4, C5 = :C5, unit_uuc = :unitUuc, resolution_uuc = :resolutionUuc, created_at = :createdAt WHERE template_id = :templateId";
         } else {
-            // Insert new template
+            // Insert new calculation template header
             $queryCTH = "INSERT INTO calculation_template_header (template_id, equipment_id, sensor_id, cal_date, res, x, equipment_name, brand, serial_no, unit_ref, resolution_ref, cal_date_2, C1, C2, C3, C4, C5, unit_uuc, resolution_uuc, created_at) VALUES (:templateId, :equipmentId, :sensorId, :calDate, :res, :x, :equipmentName, :brand, :serialNo, :unitRef, :resolutionRef, :calDate_2, :C1, :C2, :C3, :C4, :C5, :unitUuc, :resolutionUuc, :createdAt)";
         }
         
         $statementCTH = $this->conn->prepare($queryCTH);
-
         $statementCTH->bindParam(':templateId', $templateId);
         $statementCTH->bindParam(':equipmentId', $data['equipment_id']);
         $statementCTH->bindParam(':sensorId', $data['sensor_id']);
@@ -1774,12 +1773,15 @@ class Layout
         $statementCTH->bindParam(':unitUuc', $data['unit_uuc']);
         $statementCTH->bindParam(':resolutionUuc', $data['resolution_uuc']);
         $statementCTH->bindParam(':createdAt', $createdAt);
-
         $statementCTH->execute();
+
+        $queryDelete = "DELETE FROM calculation_template WHERE template_id = :templateId";
+        $StatementDelete = $this->conn->prepare($queryDelete);
+        $StatementDelete->bindParam(':templateId', $templateId, PDO::PARAM_INT);
+        $StatementDelete->execute();
 
         $query = "INSERT INTO calculation_template (template_id, title, title_value) VALUES (:templateId, :title, :titleValue)";
         $statement = $this->conn->prepare($query);
-
         foreach ($data['title'] as $title=>$titleValueArr) {
             foreach ($titleValueArr as $titleValue) {
                 $statement->bindParam(':templateId', $templateId);

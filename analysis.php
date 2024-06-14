@@ -71,7 +71,7 @@
                 for ($i = 0; $i < $rows; $i++) {
                     echo '<tr>';
                         for ($j = 0; $j < $columns; $j++) {
-                            echo '<td class="" colspan="' . $row[$i]['colspan'] . '">';
+                            echo '<td class="" colspan="' . $row[$j]['colspan'] . '">';
                                 $currentIndex = $j * $rows + $i;
                                 if ($currentIndex < $totalEntries) {
                                     echo nl2br($analyses[$currentIndex]['title_value']);

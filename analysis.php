@@ -4,7 +4,7 @@
     <?php if ($role['name'] == 'data-entry-operator'): ?>
         <?php require '401.php'; ?>
     <?php else: ?>
-        <div class="row mt-4">
+        <div class="mt-4">
             <?php
             $layoutTemplateID = $_GET['id'];
 
@@ -37,7 +37,7 @@
             }
 
             echo '<h3 class="mb-4 text-center">Analysis</h3>';
-            echo '<div class="table-responive">';
+            echo '<div class="table-responsive">';
             echo '<table id="template-table" class="table table-bordered">';
             foreach ($rows as $key => $row) {
                 echo '<tr>';

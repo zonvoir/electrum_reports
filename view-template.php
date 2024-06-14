@@ -1,6 +1,6 @@
 <?php require 'header.php'; ?>
 
-<div class="container1 p-4">
+<div class="container">
     <?php if ($role['name'] == 'analyst'): ?>
         <?php require '401.php'; ?>
     <?php else: ?>
@@ -150,7 +150,7 @@
                     </select>
                 </div>
             </div>
-            <div class="row mt-4">
+            <div class="mt-4">
                 <?php
 
                 $queryTemplate = "SELECT levels FROM layout_template WHERE id = :templateID";
@@ -184,7 +184,7 @@
                     $rows[$level][] = $heading;
                 }
 
-                echo '<div class="table-responive">';
+                echo '<div class="table-responsive">';
                 echo '<table id="template-table" class="table table-bordered">';
                 $count = 0;
                 $lastRow = [];
@@ -261,11 +261,11 @@
                 }
 
                 echo '</table>';
-                echo '<div class="mb-5" style="border-left:0 !important; border-right:0 !important">
+                echo '</div>';
+                echo '<div class="mb-5 mt-5" style="border-left:0 !important; border-right:0 !important">
                             <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
                             <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                         </div>';
-                echo '</div>';
                 ?>
             </div>
         </form>

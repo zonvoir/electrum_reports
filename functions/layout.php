@@ -558,27 +558,24 @@ class Layout
         }
     }
 
-
-
-    public function handleaddComponent($postData)
+    public function addComponent($data)
     {
-        $component_text = $postData['component_text'];
-        $reference_column = $postData['heading_id'];
-        $template_id = $postData['template_id'];
-        $layout_id = $postData['layout_id'];
+        $layout_id = $data['layout_id'];
+        $template_id = $data['template_id'];
+        $component_name = $data['component_name'];
+        $heading_id = $data['heading_id'];
 
-        $query = "INSERT INTO uncertainty_budget_tempplate (layout_id,template_id,component,reference_column) VALUES (:layout_id,:template_id,:component,:reference_column)";
-
+        $query = "INSERT INTO uncertainty_budget_tempplate (layout_id,template_id,component,reference_column) VALUES (:layoutId,:templateId,:componentName,:headingId)";
         $statement = $this->conn->prepare($query);
-        $statement->bindParam(':component', $component_text);
-        $statement->bindParam(':layout_id', $layout_id);
-        $statement->bindParam(':template_id', $template_id);
-        $statement->bindParam(':reference_column', $reference_column);
+        $statement->bindParam(':layoutId', $layout_id);
+        $statement->bindParam(':templateId', $template_id);
+        $statement->bindParam(':componentName', $component_name);
+        $statement->bindParam(':headingId', $heading_id);
 
         if ($statement->execute()) {
-            return ['status' => 'success'];
+            return ['status' => 'success', 'message' => 'Component has been created successfully.'];
         } else {
-            return ['status' => 'error', 'message' => 'Error inserting Layout Name.'];
+            return ['status' => 'error', 'message' => 'Error inserting component.'];
         }
     }
 

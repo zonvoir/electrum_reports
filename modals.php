@@ -159,7 +159,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary btn-sm add-hedding">Save</button>
+                    <button type="button" class="btn btn-primary btn-sm store-hedding">Save</button>
                 </div>
             </div>
         </div>
@@ -389,3 +389,63 @@
         });
     });
 </script>
+
+
+<div class="modal fade" id="uncertaintyBudgetModal" tabindex="-1" aria-labelledby="uncertaintyBudgetModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="templateModalLabel">Uncertainty Budget</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 row">
+                    <label for="component_name" class="col-sm-4 col-form-label text-end">Component</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control form-control-sm" id="component_name" />
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="heading_id" class="col-sm-4 col-form-label text-end">Magnitude</label>
+                    <div class="col-sm-6 multi-select">
+                        <select class="form-control" id="heading_id">
+                            <?php
+                            try {
+                                $layout_id = $_GET['id'];
+
+                                $query = "SELECT id,layout_template_id  FROM `layouts` WHERE id = :id";
+                                $statement = $conn->prepare($query);
+                                $statement->bindValue(':id', $layout_id, PDO::PARAM_INT);
+                                $statement->execute();
+                                $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+                                if ($result) {
+                                    $queryh = "SELECT * FROM headings WHERE layout_template_id = :layout_template_id";
+                                    $statementh = $conn->prepare($queryh);
+                                    $statementh->bindValue(':layout_template_id', $result['layout_template_id'], PDO::PARAM_INT);
+                                    $statementh->execute();
+                                    $resulth = $statementh->fetchAll(PDO::FETCH_ASSOC);
+
+                                    foreach ($resulth as $option) {
+                            ?>
+                                        <option value="<?= $option['id']; ?>"><?= $option['title']; ?></option>
+                            <?php
+                                    }
+                                } else {
+                                    echo "Layout not found.";
+                                }
+                            } catch (\Throwable $th) {
+                                echo $th;
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger delete-component" data-bs-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-primary add-component" data-bs-dismiss="modal">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

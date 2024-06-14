@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'userSignIn':
                 handleUserSignIn($layouts);
                 break;
-            case 'userSignOut':
-                handleUserSignOut($layouts);
+            case 'addComponent':
+                handleAddComponent($layouts);
                 break;
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
@@ -488,15 +488,16 @@ function handleUserSignIn($layouts)
     }
 }
 
-function handleUserSignOut($layouts)
+function handleAddComponent($layouts)
 {
-    echo $_POST['action'];
-    
-    if (isset($_POST['action']) && $_POST['action'] == 'userSignOut') {
+    if (isset($_POST['action']) && $_POST['action'] == 'addComponent') {
 
-        session_destroy();
-        header("Location: login.php");
-        exit();
+        $response = $layouts->addComponent($_POST);
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
     }
 }
 

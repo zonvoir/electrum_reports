@@ -80,9 +80,9 @@ class Layout
         $analysis    = $data['analysis'];
         $report = $data['report'];
 
-        $queryHeadings = "INSERT INTO headings (layout_template_id,title,level,colspan,column_type,function_fields,multi_line,data_entry,analysis,report) 
-                        VALUES (:layout_template_id,:title,:level,:colspan,:column_type,:function_fields,:multi_line,:data_entry,:analysis,:report)";
+        $queryHeadings = "INSERT INTO headings (layout_id,layout_template_id,title,level,colspan,column_type,function_fields,multi_line,data_entry,analysis,report) VALUES (:layout_id,:layout_template_id,:title,:level,:colspan,:column_type,:function_fields,:multi_line,:data_entry,:analysis,:report)";
         $statementHeadings = $this->conn->prepare($queryHeadings);
+        $statementHeadings->bindParam(':layout_id', $layout_id);
         $statementHeadings->bindParam(':layout_template_id', $template_id);
         $statementHeadings->bindParam(':title', $title);
         $statementHeadings->bindParam(':level', $level);
@@ -286,11 +286,12 @@ class Layout
         for ($i; $i <= $funtionCol; $i++) {
             $query1 = "SELECT h.*, c.column_function FROM headings h 
             LEFT JOIN column_functions c ON h.id = c.headings_id 
-            WHERE h.level = $i AND h.layout_template_id = :layoutTemplateId 
+            WHERE h.level = $i AND h.layout_id = :layoutID AND h.layout_template_id = :layoutTemplateId  
             ORDER BY h.id, h.parent_id";
 
             $statement1 = $this->conn->prepare($query1);
             $statement1->bindParam(':layoutTemplateId', $layoutTemplateID, PDO::PARAM_INT);
+            $statement1->bindParam(':layoutID', $layoutID, PDO::PARAM_INT);
             $statement1->execute();
             $rows[] = $statement1->fetchAll(PDO::FETCH_ASSOC);
         }
@@ -1942,6 +1943,8 @@ class Layout
     public function updateHeading($postData)
     {
         $headingId = $postData['heading_id'];
+        $layoutId = $postData['layout_id'];
+        $templated = $postData['template_id'];
         $title = $postData['title'];
         $level = $postData['level'];
         $colspan = $postData['colspan'];
@@ -1958,27 +1961,32 @@ class Layout
             // Begin transaction
             $this->conn->beginTransaction();
 
-            $updateQuery = "UPDATE headings SET title = :title, level=:level, colspan=:colspan, column_type = :headingType";
+            $updateQuery = "UPDATE headings SET layout_id=:layout_id, layout_template_id=:layout_template_id, title = :title, level=:level, colspan=:colspan, column_type = :headingType";
+
             if ($function_fields != '')
                 $updateQuery .= ", function_fields = :function_fields";
-            $updateQuery .= ", multi_line = :multi_line
-            , data_entry = :data_entry
-            , analysis = :analysis
-            , report = :report
-            WHERE id = :heading_id";
+                $updateQuery .= ", multi_line = :multi_line
+                , data_entry = :data_entry
+                , analysis = :analysis
+                , report = :report
+                WHERE id = :heading_id";
+
             $updateStatement = $this->conn->prepare($updateQuery);
+            $updateStatement->bindParam(':layout_id', $layoutId, PDO::PARAM_INT);
+            $updateStatement->bindParam(':layout_template_id', $templated, PDO::PARAM_INT);
             $updateStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
             $updateStatement->bindParam(':title', $title, PDO::PARAM_STR);
             $updateStatement->bindParam(':level', $level, PDO::PARAM_STR);
             $updateStatement->bindParam(':colspan', $colspan, PDO::PARAM_STR);
             $updateStatement->bindParam(':headingType', $headingType, PDO::PARAM_STR);
+
             if ($function_fields != '')
                 $updateStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
-            $updateStatement->bindParam(':multi_line', $multi_line, PDO::PARAM_INT);
-            $updateStatement->bindParam(':data_entry', $data_entry, PDO::PARAM_INT);
-            $updateStatement->bindParam(':analysis', $analysis, PDO::PARAM_INT);
-            $updateStatement->bindParam(':report', $report, PDO::PARAM_INT);
-            $updateStatement->execute();
+                $updateStatement->bindParam(':multi_line', $multi_line, PDO::PARAM_INT);
+                $updateStatement->bindParam(':data_entry', $data_entry, PDO::PARAM_INT);
+                $updateStatement->bindParam(':analysis', $analysis, PDO::PARAM_INT);
+                $updateStatement->bindParam(':report', $report, PDO::PARAM_INT);
+                $updateStatement->execute();
 
             if ($headingType !== "DATA") {
                 $funcQuery = "SELECT * FROM column_functions WHERE headings_id = :heading_id";

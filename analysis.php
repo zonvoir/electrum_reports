@@ -1,6 +1,6 @@
 <?php require 'header.php'; ?>
 
-<div class="container">
+<div class="container1">
     <?php if ($role['name'] == 'data-entry-operator'): ?>
         <?php require '401.php'; ?>
     <?php else: ?>
@@ -47,6 +47,7 @@
                     echo '<input class="hide heading_check" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
                     echo '</th>';
                 }
+                echo '<th>Action</th>';
                 echo '</tr>';
             }
 
@@ -80,6 +81,7 @@
                                 }
                             echo '</td>';
                         }
+                        echo '<td><a href="#" data-data="'.htmlspecialchars(json_encode($analyses[$i])).'" data-bs-toggle="modal" data-bs-target="#table2Modal"><i class="fa fa-eye"></i></a></td>';
                     echo '</tr>';
                 }
             }

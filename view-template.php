@@ -264,6 +264,7 @@
                 echo '</div>';
                 echo '<div class="mb-5 mt-5" style="border-left:0 !important; border-right:0 !important">
                             <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
+                            <a href="analysis.php?id='.$layoutTemplateID.'" class="btn btn-primary" type="button" target="_blank">Analysis</a>
                             <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                         </div>';
                 ?>

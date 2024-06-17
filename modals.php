@@ -449,3 +449,88 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="table2Modal" tabindex="-1" aria-labelledby="table2Modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="scrollbar-overlay mx-n1 px-1" style="padding: 10px !important;">
+                <div class="row g-3" style="padding-bottom: 10px;">
+                    <div class="col">
+                        <h4>Uncertainty Budget Table</h4>
+                    </div>
+                    <div class="col-auto text-end">
+                        <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uncertaintyBudgetModal">
+                            <span class="fas fa-plus me-2"></span>Add Component
+                        </button> -->
+                    </div>
+                </div>
+                 
+                <div id="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th colspan="7" class="text-center">Uncertainty Budget</th>
+                            </tr>
+                            <tr>
+                                <th>Component</th>
+                                <th>Magnitude</th>
+                                <th>Distribution</th>
+                                <th>Divisor</th>
+                                <th>Sensitivity</th>
+                                <th>Std uncert</th>
+                                <th>DOF</th>
+                            </tr>
+                        </thead>
+                        <tbody id="componentsTablebody">
+                            <tr>
+                                <td>Type A - UUC</td>
+                                <td></td>
+                                <td>Normal</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Type A - ref</td>
+                                <td></td>
+                                <td>Normal</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Calibration - ref</td>
+                                <td></td>
+                                <td>Normal (k)</td>
+                                <td>2</td>
+                                <td>1</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Ref - Resolution</td>
+                                <td></td>
+                                <td>Rectangular</td>
+                                <td>1.732050808</td>
+                                <td>1</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>UUC - Resolution</td>
+                                <td></td>
+                                <td>Rectangular</td>
+                                <td>1.732050808</td>
+                                <td>1</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

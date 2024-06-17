@@ -6,17 +6,16 @@ $query = "SELECT * FROM layouts WHERE id = :layoutID";
 $statement = $conn->prepare($query);
 $statement->bindParam(':layoutID', $layoutID, PDO::PARAM_INT);
 $statement->execute();
-$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+$layout = $statement->fetch(PDO::FETCH_ASSOC);
 
-$temlpate = 'Not Assigned <i class="fa-solid fa-triangle-exclamation" style="color:coral"></i>';
-
-if ($result && $result[0]['layout_template_id'] != null) {
+if ($layout) {
     $query = "SELECT * FROM layout_template WHERE id = :layoutTemplateID";
     $statement = $conn->prepare($query);
-    $statement->bindParam(':layoutTemplateID', $result[0]['layout_template_id'], PDO::PARAM_INT);
+    $statement->bindParam(':layoutTemplateID', $layout['layout_template_id'], PDO::PARAM_INT);
     $statement->execute();
-    $templateResult = $statement->fetchAll(PDO::FETCH_ASSOC);
-    $temlpate = $templateResult[0]['template_name'];
+    $temlpate = $statement->fetch(PDO::FETCH_ASSOC);
+    // print_r($layout); 
+    // print_r($temlpate); die;
 }
 ?>
 
@@ -55,10 +54,10 @@ if ($result && $result[0]['layout_template_id'] != null) {
             <div class="col-sm-12">
                 <div class="alert alert-primary" role="alert" style="display: none;"></div>
                 <h5 style="margin-top: 20px;">
-                    Layout: <span style="color: dimgray;"> <?= $result ? $result[0]['layout_name'] : 'N/A'; ?></span>
-                    Template: <span style="color: dimgray;" id="template-name"><?= $temlpate; ?></span>
+                    Layout: <span style="color: dimgray;"> <?= $layout ? $layout['layout_name'] : 'N/A'; ?></span>
+                    Template: <span style="color: dimgray;" id="template-name"><?= $temlpate ? $temlpate['template_name'] : 'N/A'; ?></span>
                 </h5>
-                <?php if ($result && $result[0]['layout_template_id'] == null): ?>
+                <?php if ($layout && $layout['layout_template_id'] == null): ?>
                     <div class="alert alert-warning" role="alert">
                         Please assign a Template to the Layout. and make sure to save the assigned template before leave.
                     </div>
@@ -69,7 +68,7 @@ if ($result && $result[0]['layout_template_id'] != null) {
         </div>
         
         <div class="mt-5">
-            <div class="table-responsive scrollbar-overlay mx-n1 px-1" style="padding: 10px !important;">
+            <div class="scrollbar-overlay mx-n1 px-1" style="padding: 10px !important;">
                 <div class="row g-3" style="padding-bottom: 10px;">
                     <div class="col">
                         <h4>Uncertainty Budget Table</h4>
@@ -106,7 +105,7 @@ if ($result && $result[0]['layout_template_id'] != null) {
                 <div class="col">
                 </div>
                 <div class="col-auto text-end">
-                    <a href="view-template.php?id=<?= $result[0]['layout_template_id']; ?>" class="btn btn-success">
+                    <a href="view-template.php?id=<?= $layout['layout_template_id']; ?>" class="btn btn-success">
                         Proceed
                     </a>
                 </div>
@@ -117,9 +116,11 @@ if ($result && $result[0]['layout_template_id'] != null) {
 
 <script>
 $(document).ready(function() {
-    var template_id = <?= $result[0]['layout_template_id']; ?>;
+    var layout_id = <?= $_GET['id']; ?>;
+    var template_id = <?= $layout['layout_template_id']; ?>;
+    
     loadTemplates(template_id);
-    loadHeadings(template_id);
+    loadHeadings(layout_id, template_id);
     loadComponents(template_id);
 
     function loadTemplates(template_id) {
@@ -148,15 +149,15 @@ $(document).ready(function() {
         });
     }
 
-    function loadHeadings(template_id) {
-        var layoutID = <?= $_GET['id']; ?>;
+    function loadHeadings(layout_id, template_id) {
+        
         $.ajax({
             type: 'POST',
             url: './functions/add-title.php', // Adjust the URL accordingly
             data: {
                 action: 'getHeadings',
                 layout_template_id: template_id,
-                layout_id: layoutID,
+                layout_id: layout_id,
             },
             dataType: 'json',
             success: function(response) {
@@ -179,7 +180,7 @@ $(document).ready(function() {
         var selectedTemplateName = $(this).find(':selected').attr('data-name');
         if (selectedTemplateId != 0) {
             $("#template-name").text(selectedTemplateName);
-            loadHeadings(selectedTemplateId);
+            loadHeadings(layout_id, selectedTemplateId);
             loadComponents(selectedTemplateId);
         }
     });
@@ -227,7 +228,6 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.store-hedding', function() {
-        var layoutID = <?= $_GET['id']; ?>;
         var templateID = $("#templateSelect").find(':selected').val();
         var title = $('#inputTitle').val();
         var level = $('#inputLevel').val();
@@ -268,8 +268,8 @@ $(document).ready(function() {
             url: './functions/add-title.php',
             data: {
                 action: 'addHeading',
+                layout_id: layout_id,
                 layout_template_id: templateID,
-                layout_id: layoutID,
                 title: title,
                 level: level,
                 colspan: colspan,
@@ -292,7 +292,7 @@ $(document).ready(function() {
                         tapToDismiss: false,
                         positionClass: "toast-top-right",
                     });
-                    loadHeadings(templateID);
+                    loadHeadings(layout_id, templateID);
                     $('#addHeadingModal').modal('hide');
                 }
             },
@@ -401,6 +401,8 @@ $(document).ready(function() {
             // dataType: 'json',
             data: {
                 action: 'updateHeading',
+                layout_id: layout_id,
+                template_id: selectedTemplateId,
                 heading_id: headingId,
                 title: title,
                 level: level,
@@ -425,7 +427,7 @@ $(document).ready(function() {
                         tapToDismiss: false,
                         positionClass: "toast-top-right",
                     });
-                    loadHeadings(selectedTemplateId);
+                    loadHeadings(layout_id, selectedTemplateId);
                     $('#editHeadingModal').modal('hide');
                 }
             },
@@ -451,7 +453,7 @@ $(document).ready(function() {
                     if (response.status === 'success') {
                         // Handle success case
                         toastr.success(response.message, 'Success!')
-                        loadHeadings(template_id);
+                        loadHeadings(layout_id, template_id);
                         $('#editHeadingModal').modal('hide');
                     } else {
                         // Handle the error case
@@ -475,7 +477,7 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.storeSubTitle', function() {
-        var templateID = $("#templateSelect").find(':selected').val();
+        // var templateID = $("#templateSelect").find(':selected').val();
         var headingsId = $('#inputHeddigsId').val();
         var title = $('#inputSubTitle').val();
         var column_type = $('#column_type_add_sub_title').val();
@@ -487,7 +489,7 @@ $(document).ready(function() {
             url: './functions/add-title.php', // Adjust the URL accordingly
             data: {
                 action: 'addSubTitle',
-                template_id: templateID,
+                template_id: template_id,
                 headings_id: headingsId,
                 column_type: column_type,
                 title: title,
@@ -498,7 +500,7 @@ $(document).ready(function() {
                 var response = JSON.parse(responseJson)
                 if (response.status === 'success') {
                     toastr.success(response.message, 'Success!')
-                    loadHeadings(templateID);
+                    loadHeadings(layout_id, templateID);
                     $('#subTitleModal').modal('hide');
                 } else {
                     console.error('Error: ' + response.message);
@@ -511,7 +513,7 @@ $(document).ready(function() {
     });
 
     // $(document).on('click', '.add-second-sub-title', function() {
-    //     var templateID = <?= $result[0]['layout_template_id']; ?>;
+    //     var templateID = <?= $layout['layout_template_id']; ?>;
     //     var heddingsId = $('#inputSubHeddigsId').val();
     //     var title = $('#inputSecondSubTitle').val();
 
@@ -535,7 +537,7 @@ $(document).ready(function() {
     //         success: function(response) {
 
     //             if (response.status === 'success') {
-    //                 loadHeadings(template_id);
+    //                 loadHeadings(template_id, template_id);
     //                 $('#titleModal').close();
     //             } else {
     //                 // Handle the error case
@@ -576,7 +578,7 @@ $(document).ready(function() {
     //             success: function(response) {
     //                 console.log(response.status);
     //                 if (response.status === 'success') {
-    //                     loadHeadings(template_id);
+    //                     loadHeadings(template_id, template_id);
     //                 } else {
     //                     // Handle the error case
     //                     // console.error('Error: ' + response.message);

@@ -15,8 +15,8 @@ require 'header.php';
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
-                            <th>Template Name</th>
                             <th>Layout Name</th>
+                            <th>Template Name</th>
                             <th style="width: 80px;">Actions</th>
                         </tr>
                     </thead>
@@ -47,10 +47,10 @@ $(document).ready(function() {
                 "data": "id"
             },
             {
-                "data": "template_name"
+                "data": "layout_name"
             },
             {
-                "data": "layout_name"
+                "data": "template_name"
             },
             {
                 "data": null,

@@ -49,7 +49,8 @@ $(document).ready(function() {
                     if (roleName == 'analyst') {
                         return templateName;
                     } else {
-                        return '<a href="view-template.php?id='+row.id+'">' + templateName + '</a>';
+                        return templateName;
+                        // return '<a href="view-template.php?id='+row.id+'">' + templateName + '</a>';
                     }
                 }
             },

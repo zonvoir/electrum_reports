@@ -10,6 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'loadComponents':
                 handleLoadComponents($component);
                 break;
+            case 'loadTable2Data':
+                handleTable2Data($component);
+                break;
             default:
                 echo json_encode(['status' => 'error', 'message' => 'Invalid action.']);
         }
@@ -26,6 +29,16 @@ function handleLoadComponents($component)
         $result = $component->loadComponents($layput_id, $template_id);
         echo json_encode($result);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Layout Name not provided.']);
+        echo json_encode(['status' => 'error', 'message' => 'Something want wrong.']);
+    }
+}
+
+function handleTable2Data($component)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'loadTable2Data') {
+        $result = $component->loadTable2($_POST);
+        echo json_encode($result);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Something want wrong.']);
     }
 }

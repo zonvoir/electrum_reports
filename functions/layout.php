@@ -1642,7 +1642,9 @@ class Layout
 
         // Fetch all rows as an associative array
         $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-
+        // echo '<pre>';
+        // print_r($data);
+        // echo '</pre>';
         // Assuming you have a method to get the total count of records
         $totalRecords = $this->getTemplatesTotalRecords();
 
@@ -1733,8 +1735,9 @@ class Layout
 
     public function storeCalculationData($data)
     {
+        $layoutId   = $data['layout_id'];
         $templateId = $data['template_id'];
-        $createdAt = date('Y-m-d H:i:s');
+        $createdAt  = date('Y-m-d H:i:s');
 
         $checkTemplateIdQuery  = "SELECT COUNT(*) FROM calculation_template_header WHERE template_id = :templateId";
         $checkStatement  = $this->conn->prepare($checkTemplateIdQuery );
@@ -1744,19 +1747,21 @@ class Layout
 
         if ($count > 0) {
             // Update existing calculation template header
-            $queryCTH = "UPDATE calculation_template_header SET equipment_id = :equipmentId, sensor_id = :sensorId, cal_date = :calDate, res = :res, x = :x, equipment_name = :equipmentName, brand = :brand, serial_no = :serialNo, unit_ref = :unitRef, resolution_ref = :resolutionRef, cal_date_2 = :calDate_2, C1 = :C1, C2 = :C2, C3 = :C3, C4 = :C4, C5 = :C5, unit_uuc = :unitUuc, resolution_uuc = :resolutionUuc, created_at = :createdAt WHERE template_id = :templateId";
+            $queryCTH = "UPDATE calculation_template_header SET layout_id = :layoutId, equipment_id = :equipmentId, sensor_id = :sensorId, cal_date = :calDate, res = :res, x = :x, ref_uncert = :refUncert, equipment_name = :equipmentName, brand = :brand, serial_no = :serialNo, unit_ref = :unitRef, resolution_ref = :resolutionRef, cal_date_2 = :calDate_2, C1 = :C1, C2 = :C2, C3 = :C3, C4 = :C4, C5 = :C5, unit_uuc = :unitUuc, resolution_uuc = :resolutionUuc, created_at = :createdAt WHERE template_id = :templateId";
         } else {
             // Insert new calculation template header
-            $queryCTH = "INSERT INTO calculation_template_header (template_id, equipment_id, sensor_id, cal_date, res, x, equipment_name, brand, serial_no, unit_ref, resolution_ref, cal_date_2, C1, C2, C3, C4, C5, unit_uuc, resolution_uuc, created_at) VALUES (:templateId, :equipmentId, :sensorId, :calDate, :res, :x, :equipmentName, :brand, :serialNo, :unitRef, :resolutionRef, :calDate_2, :C1, :C2, :C3, :C4, :C5, :unitUuc, :resolutionUuc, :createdAt)";
+            $queryCTH = "INSERT INTO calculation_template_header (layout_id, template_id, equipment_id, sensor_id, cal_date, res, x, ref_uncert, equipment_name, brand, serial_no, unit_ref, resolution_ref, cal_date_2, C1, C2, C3, C4, C5, unit_uuc, resolution_uuc, created_at) VALUES (:templateId, :equipmentId, :sensorId, :calDate, :res, :x, :refUncert, :equipmentName, :brand, :serialNo, :unitRef, :resolutionRef, :calDate_2, :C1, :C2, :C3, :C4, :C5, :unitUuc, :resolutionUuc, :createdAt)";
         }
         
         $statementCTH = $this->conn->prepare($queryCTH);
+        $statementCTH->bindParam(':layoutId', $layoutId);
         $statementCTH->bindParam(':templateId', $templateId);
         $statementCTH->bindParam(':equipmentId', $data['equipment_id']);
         $statementCTH->bindParam(':sensorId', $data['sensor_id']);
         $statementCTH->bindParam(':calDate', $data['cal_date']);
         $statementCTH->bindParam(':res', $data['res']);
         $statementCTH->bindParam(':x', $data['x']);
+        $statementCTH->bindParam(':refUncert', $data['ref_uncert']);
         $statementCTH->bindParam(':equipmentName', $data['equipment_name']);
         $statementCTH->bindParam(':brand', $data['brand']);
         $statementCTH->bindParam(':serialNo', $data['serial_no']);
@@ -1773,19 +1778,32 @@ class Layout
         $statementCTH->bindParam(':createdAt', $createdAt);
         $statementCTH->execute();
 
-        $queryDelete = "DELETE FROM calculation_template WHERE template_id = :templateId";
+        $queryDelete = "DELETE FROM calculation_template WHERE layout_id = :layoutId AND template_id = :templateId";
         $StatementDelete = $this->conn->prepare($queryDelete);
+        $StatementDelete->bindParam(':layoutId', $layoutId, PDO::PARAM_INT);
         $StatementDelete->bindParam(':templateId', $templateId, PDO::PARAM_INT);
         $StatementDelete->execute();
 
-        $query = "INSERT INTO calculation_template (template_id, title, title_value) VALUES (:templateId, :title, :titleValue)";
+        $query = "INSERT INTO calculation_template (layout_id, template_id, heading_id, row_id, title, title_value) VALUES (:layoutId, :templateId, :headingId, :rowId, :title, :titleValue)";
         $statement = $this->conn->prepare($query);
-        foreach ($data['title'] as $title=>$titleValueArr) {
+        foreach ($data['title'] as $heading_id=>$titleValueArr) {
+
+            $queryHeading  = "SELECT id, title FROM headings WHERE id = :headingId";
+            $statementHeading  = $this->conn->prepare($queryHeading );
+            $statementHeading ->bindParam(':headingId', $heading_id);
+            $statementHeading ->execute();
+            $heading = $statementHeading ->fetch();
+            
+            $rowId = 1;
             foreach ($titleValueArr as $titleValue) {
+                $statement->bindParam(':layoutId', $layoutId);
                 $statement->bindParam(':templateId', $templateId);
-                $statement->bindParam(':title', $title);
+                $statement->bindParam(':headingId', $heading_id);
+                $statement->bindParam(':rowId', $rowId);
+                $statement->bindParam(':title', $heading['title']);
                 $statement->bindParam(':titleValue', $titleValue);
                 $statement->execute();
+                $rowId++;
             }
         }
     

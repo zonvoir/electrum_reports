@@ -1,22 +1,19 @@
 <?php require 'header.php'; ?>
 
 <?php
-$layoutID = $_GET['id'];
+$layout_id = $_GET['id'];
+
 $query = "SELECT * FROM layouts WHERE id = :layoutID";
 $statement = $conn->prepare($query);
-$statement->bindParam(':layoutID', $layoutID, PDO::PARAM_INT);
+$statement->bindParam(':layoutID', $layout_id, PDO::PARAM_INT);
 $statement->execute();
 $layout = $statement->fetch(PDO::FETCH_ASSOC);
 
-if ($layout) {
-    $query = "SELECT * FROM layout_template WHERE id = :layoutTemplateID";
-    $statement = $conn->prepare($query);
-    $statement->bindParam(':layoutTemplateID', $layout['layout_template_id'], PDO::PARAM_INT);
-    $statement->execute();
-    $temlpate = $statement->fetch(PDO::FETCH_ASSOC);
-    // print_r($layout); 
-    // print_r($temlpate); die;
-}
+$query = "SELECT * FROM layout_template WHERE id = :layoutTemplateID";
+$statement = $conn->prepare($query);
+$statement->bindParam(':layoutTemplateID', $layout['layout_template_id'], PDO::PARAM_INT);
+$statement->execute();
+$temlpate = $statement->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <div class="container">
@@ -101,11 +98,11 @@ if ($layout) {
                     </table>
                 </div>
             </div>
-            <div class="row g-3" style="padding-bottom: 10px;padding-top: 10px;">
+            <div class="row g-3" style="padding-bottom: 10px; padding-top: 10px;">
                 <div class="col">
                 </div>
                 <div class="col-auto text-end">
-                    <a href="view-template.php?id=<?= $layout['layout_template_id']; ?>" class="btn btn-success">
+                    <a href="view-template.php?layout_id=<?= $layout['id']; ?>" class="btn btn-success">
                         Proceed
                     </a>
                 </div>
@@ -662,10 +659,10 @@ $(document).ready(function() {
             toastrErrorMessage('Component field is required!');
             return false;
         }
-        if (heading_id == '') {
-            toastrErrorMessage('Magnitude field is required!');
-            return false;
-        }
+        // if (heading_id == '') {
+        //     toastrErrorMessage('Magnitude field is required!');
+        //     return false;
+        // }
         
         $.ajax({
             type: 'POST',

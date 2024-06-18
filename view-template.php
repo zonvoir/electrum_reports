@@ -6,7 +6,16 @@
     <?php else: ?>
         <form id="calculation_template_form">
             <?php
-            $layoutTemplateID = $_GET['id'];
+
+            $layout_id = $_GET['layout_id'];
+
+            $query = "SELECT * FROM layouts WHERE id = :layoutID";
+            $statement = $conn->prepare($query);
+            $statement->bindParam(':layoutID', $layout_id, PDO::PARAM_INT);
+            $statement->execute();
+            $layout = $statement->fetch(PDO::FETCH_ASSOC);
+
+            $layoutTemplateID = $layout['layout_template_id'];
 
             $checkTemplateIdQuery  = "SELECT * FROM calculation_template_header WHERE template_id = :templateId";
             $checkStatement  = $conn->prepare($checkTemplateIdQuery );
@@ -34,6 +43,7 @@
                 <div class="col-md-2">
                     <label for="x">X</label>
                     <input type="text" name="x" value="<?php echo $result ? $result['x'] : ''; ?>" id="x" class="form-control" />
+                    <input type="hidden" name="ref_uncert" id="ref_uncert" class="form-control" />
                 </div>
                 <div class="col-md-2 hide">
                     <label for="range_min">Range</label>
@@ -165,11 +175,13 @@
 
                 $query1 = "SELECT h.*, c.column_function FROM headings h 
                         LEFT JOIN column_functions c ON h.id = c.headings_id 
-                        WHERE  h.level IN ($in) AND h.layout_template_id = ? 
+                        WHERE  h.level IN ($in) AND h.layout_id = ? AND h.layout_template_id = ? 
                         ORDER BY h.id, h.parent_id";
 
                 $statement1 = $conn->prepare($query1);
-                $statement1->execute([...$hLevel, $layoutTemplateID]);
+                // $params = array_merge($hLevel, [$layoutID, $layoutTemplateID]);
+                $params = [...$hLevel, $layout_id, $layoutTemplateID];
+                $statement1->execute($params);
                 $headings = $statement1->fetchAll(PDO::FETCH_ASSOC);
 
                 // Initialize the result array
@@ -232,9 +244,9 @@
                                     $currentIndex = $j * $rows1 + $i;
                                     if ($currentIndex < $totalEntries) {
                                         if ($row[$j]['column_type'] == "FUNCTION") {
-                                            echo '<textarea name="title[' . $row[$j]['title'] . '][]" class="form-control input_val_' . $row[$j]['id'] . '" style="resize:none;" readonly rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
+                                            echo '<textarea name="title[' . $row[$j]['id'] . '][]" class="form-control input_val_' . $row[$j]['id'] . '" style="resize:none;" readonly rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
                                         } else {
-                                            echo '<textarea name="title[' . $row[$j]['title'] . '][]" class="form-control input_val_' . $row[$j]['id'] . ' input-field" style="resize:none;" rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
+                                            echo '<textarea name="title[' . $row[$j]['id'] . '][]" class="form-control input_val_' . $row[$j]['id'] . ' input-field" style="resize:none;" rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
                                         }
                                     } else {
                                         echo '&nbsp;';
@@ -250,9 +262,9 @@
                         $hideClass = $row[$i]['column_type']=='FUNCTION' ? 'hide1' : '';
                         echo '<td class="p-1 '.$hideClass.'" colspan="' . $row[$i]['colspan'] . '">';
                             if ($row[$i]['column_type'] == "FUNCTION") {
-                                echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="form-control input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly rows="3"></textarea>';
+                                echo '<textarea name="title[' . $row[$i]['id'] . '][]" class="form-control input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly rows="3"></textarea>';
                             } else {
-                                echo '<textarea name="title[' . $row[$i]['title'] . '][]" class="form-control input_val_' . $row[$i]['id'] . ' input-field" style="resize:none;" rows="3"></textarea>';
+                                echo '<textarea name="title[' . $row[$i]['id'] . '][]" class="form-control input_val_' . $row[$i]['id'] . ' input-field" style="resize:none;" rows="3"></textarea>';
                             }
                         echo '</td>';
                     }
@@ -264,7 +276,7 @@
                 echo '</div>';
                 echo '<div class="mb-5 mt-5" style="border-left:0 !important; border-right:0 !important">
                             <button onclick="calculate();" class="btn btn-primary btnCalulate" type="button">Calculate & Save <i class="fa fa-spinner fa-spin" style="display:none;"></i></button>
-                            <a href="analysis.php?id='.$layoutTemplateID.'" class="btn btn-primary" type="button" target="_blank">Analysis</a>
+                            <a href="analysis.php?layout_id='.$layout_id.'" class="btn btn-primary" type="button" target="_blank">Analysis</a>
                             <button class="btn btn-primary float-end btnAddRow" type="button"><i class="fa-solid fa-plus"></i> Add Row</button>                    
                         </div>';
                 ?>
@@ -274,13 +286,14 @@
 </div>
 
 <script>
+    var layout_id = <?php echo $layout_id; ?>;
+    var layout_template_id = <?php echo $layoutTemplateID; ?>;
+
     $('.input-field').on('input', function() {
         var sanitizedValue = $(this).val().replace(/[^0-9.\n]/g, '');
         $(this).val(sanitizedValue);
     });
 
-    const url = new URL(window.location.href);
-    const layout_template_id = url.searchParams.get('id');
     var function_fields = [];
     $.ajax({
         type: 'POST',
@@ -361,6 +374,10 @@
                                     var response = JSON.parse(dataJSON)
                                     if (response.status === 'success') {
                                         $.each(response.data, function(index, row) {
+                                            if (index==0) {
+                                                $("#ref_uncert").val(row.uncert);
+                                            }
+                                            console.log(row.uncert);
                                             splitTableHTML += '<tr><td>' + row.uncert + '</td><td>' + row.split_no + '</td></tr>';
                                         });
                                         splitTable.html(splitTableHTML);
@@ -855,13 +872,11 @@
                     $(this).click();
                 }
             });
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const templateId = urlParams.get('id');
 
             var formData = new FormData($("#calculation_template_form")[0]);
             formData.append('action', 'storeCalculationFormData');
-            formData.append('template_id', templateId);
+            formData.append('layout_id', layout_id);
+            formData.append('template_id', layout_template_id);
             $.ajax({
                 beforeSend: function() {
                     $(".btnCalulate").attr('disabled', true);

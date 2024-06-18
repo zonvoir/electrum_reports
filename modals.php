@@ -41,26 +41,19 @@
                     <div class="col-sm-6">
                         <?php
                         $query = "SELECT id, template_name FROM layout_template";
-                        // Execute the query
-                        $stmt = $conn->query($query);
-                        if ($stmt) {
+                        $statement = $conn->query($query);
+                        $templates = $statement->fetchAll(PDO::FETCH_ASSOC);
                         ?>
-                            <select class="form-select form-select-sm" aria-label="" id="layout_template_id" required>
-                                <option value="">Select the template</option>
-                                <?php
-                                $templates = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                foreach ($templates as $template) {
-                                    $templateId = $template['id'];
-                                    $templateName = $template['template_name'];
-                                    echo "<option value=\"$templateId\">$templateName</option>";
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        } else {
-                            echo "<option>Error Loading Layout</option>";
-                        }
-                        ?>
+                        <select class="form-select form-select-sm" aria-label="" id="layout_template_id" required>
+                            <option value="">Select the template</option>
+                            <?php
+                            foreach ($templates as $template) {
+                                $templateId = $template['id'];
+                                $templateName = $template['template_name'];
+                                echo "<option value=\"$templateId\">$templateName</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -412,31 +405,28 @@
                         <label for="heading_id" class="col-sm-4 col-form-label text-end">Magnitude</label>
                         <div class="col-sm-6 multi-select">
                             <select id="heading_id" class="form-control">
-                                <option value="">Select</option>
-                                <?php
-                                $layout_id = $_GET['id'];
-
-                                $query = "SELECT id,layout_template_id  FROM `layouts` WHERE id = :layoutId";
-                                $statement = $conn->prepare($query);
-                                $statement->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
-                                $statement->execute();
-                                $layout = $statement->fetch(PDO::FETCH_ASSOC);
-
-                                if ($layout) {
-                                    $queryh = "SELECT * FROM headings WHERE layout_template_id = :templateId";
+                                <optgroup label="Table Columns">
+                                    <option value="">Select</option>
+                                    <?php
+                                    $queryh = "SELECT * FROM headings WHERE layout_id = :layoutId AND layout_template_id = :templateId";
                                     $statementh = $conn->prepare($queryh);
+                                    $statementh->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
                                     $statementh->bindValue(':templateId', $layout['layout_template_id'], PDO::PARAM_INT);
                                     $statementh->execute();
                                     $headings = $statementh->fetchAll(PDO::FETCH_ASSOC);
                                     foreach ($headings as $heading) {
-                                ?>
+                                    ?>
                                         <option value="<?= $heading['id']; ?>"><?= $heading['title']; ?></option>
-                                <?php
+                                    <?php
                                     }
-                                } else {
-                                    echo "Layout not found.";
-                                }
-                                ?>
+                                    ?>
+                                </optgroup>
+                                <optgroup label="Fixed Inputs">
+                                    <option value="-1">Resolution Ref</option>
+                                    <option value="-2">Resolution UUC</option>
+                                    <option value="-3">Ref Uncert</option>
+                                </optgroup>
+                                </optgroup>
                             </select>
                         </div>
                     </div>
@@ -481,52 +471,8 @@
                                 <th>DOF</th>
                             </tr>
                         </thead>
-                        <tbody id="componentsTablebody">
-                            <tr>
-                                <td>Type A - UUC</td>
-                                <td></td>
-                                <td>Normal</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Type A - ref</td>
-                                <td></td>
-                                <td>Normal</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Calibration - ref</td>
-                                <td></td>
-                                <td>Normal (k)</td>
-                                <td>2</td>
-                                <td>1</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Ref - Resolution</td>
-                                <td></td>
-                                <td>Rectangular</td>
-                                <td>1.732050808</td>
-                                <td>1</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>UUC - Resolution</td>
-                                <td></td>
-                                <td>Rectangular</td>
-                                <td>1.732050808</td>
-                                <td>1</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                        <tbody id="table2tbody">
+                            
                         </tbody>
                     </table>
                 </div>

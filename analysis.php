@@ -1,12 +1,20 @@
 <?php require 'header.php'; ?>
 
-<div class="container1">
+<div class="container1 p-1">
     <?php if ($role['name'] == 'data-entry-operator'): ?>
         <?php require '401.php'; ?>
     <?php else: ?>
         <div class="mt-4">
             <?php
-            $layoutTemplateID = $_GET['id'];
+            $layout_id = $_GET['layout_id'];
+
+            $query = "SELECT * FROM layouts WHERE id = :layoutID";
+            $statement = $conn->prepare($query);
+            $statement->bindParam(':layoutID', $layout_id, PDO::PARAM_INT);
+            $statement->execute();
+            $layout = $statement->fetch(PDO::FETCH_ASSOC);
+
+            $layoutTemplateID = $layout['layout_template_id'];
 
             $queryTemplate = "SELECT levels FROM layout_template WHERE id = :templateID";
             $statementTemplate = $conn->prepare($queryTemplate);
@@ -20,11 +28,13 @@
 
             $query1 = "SELECT h.*, c.column_function FROM headings h 
                     LEFT JOIN column_functions c ON h.id = c.headings_id 
-                    WHERE  h.level IN ($in) AND h.layout_template_id = ? 
+                    WHERE  h.level IN ($in) AND h.layout_id = ? AND h.layout_template_id = ? 
                     ORDER BY h.id, h.parent_id";
 
             $statement1 = $conn->prepare($query1);
-            $statement1->execute([...$hLevel, $layoutTemplateID]);
+            // $params = array_merge($hLevel, [$layoutID, $layoutTemplateID]);
+            $params = [...$hLevel, $layout_id, $layoutTemplateID];
+            $statement1->execute($params);
             $headings = $statement1->fetchAll(PDO::FETCH_ASSOC);
 
             $rows = [];
@@ -47,16 +57,19 @@
                     echo '<input class="hide heading_check" data-data="' . htmlspecialchars(json_encode($heading)) . '" id="' . $heading['id'] . '" type="checkbox" />';
                     echo '</th>';
                 }
-                echo '<th>Action</th>';
+                echo '<th class="p-1">Action</th>';
                 echo '</tr>';
             }
 
-            $queryCalculationTemplate = "SELECT * FROM calculation_template WHERE template_id = :templateID";
+            $queryCalculationTemplate = "SELECT * FROM calculation_template WHERE layout_id = :layoutID AND template_id = :templateID";
             $statementCalculationTemplate = $conn->prepare($queryCalculationTemplate);
+            $statementCalculationTemplate->bindParam(':layoutID', $layout_id, PDO::PARAM_INT);
             $statementCalculationTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
             $statementCalculationTemplate->execute();
             $analyses = $statementCalculationTemplate->fetchAll(PDO::FETCH_ASSOC);
-            
+            // echo '<pre>';
+            // print_r($analyses);
+            // echo '</pre>';
             $totalEntries = count($analyses);
             if ($totalEntries > 0) {
                 $columns = count($row);
@@ -71,17 +84,19 @@
 
                 for ($i = 0; $i < $rows; $i++) {
                     echo '<tr>';
+                        $arr = [];
                         for ($j = 0; $j < $columns; $j++) {
                             echo '<td class="" colspan="' . $row[$j]['colspan'] . '">';
                                 $currentIndex = $j * $rows + $i;
                                 if ($currentIndex < $totalEntries) {
+                                    $arr[$analyses[$currentIndex]['title']]=$analyses[$currentIndex]['title_value'];
                                     echo nl2br($analyses[$currentIndex]['title_value']);
                                 } else {
                                     echo '&nbsp;';
                                 }
                             echo '</td>';
                         }
-                        echo '<td><a href="#" data-data="'.htmlspecialchars(json_encode($analyses[$i])).'" data-bs-toggle="modal" data-bs-target="#table2Modal"><i class="fa fa-eye"></i></a></td>';
+                        echo '<td><a href="#" class="table2" data-row_id="'.($i+1).'" data-data="'.htmlspecialchars(json_encode($arr)).'"><i class="fa fa-eye"></i></a></td>';
                     echo '</tr>';
                 }
             }
@@ -91,5 +106,30 @@
         </div>
     <?php endif; ?>
 </div>
-
+<script>
+$(document).ready(function() {
+    var layout_id = <?php echo $layout_id; ?>;
+    var template_id = <?php echo $layoutTemplateID; ?>;
+    $(".table2").on('click', function(){
+        var row_id = $(this).attr('data-row_id');
+        $.ajax({
+            type: 'POST',
+            url: './functions/ComponentAction.php',
+            data: {
+                action: 'loadTable2Data',
+                layout_id: layout_id,
+                template_id: template_id,
+                row_id: row_id,
+            },
+            success: function(dataJSON) {
+                var response = JSON.parse(dataJSON)
+                if (response.status === 'success') {
+                    $('#table2tbody').html(response.tableHTML);
+                    $("#table2Modal").modal('show');
+                }
+            }
+        });
+    });
+});
+</script>
 <?php require 'footer.php'; ?>

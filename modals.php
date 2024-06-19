@@ -441,20 +441,13 @@
 </div>
 
 <div class="modal fade" id="table2Modal" tabindex="-1" aria-labelledby="table2Modal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style="max-width: 900px;">
         <div class="modal-content">
-            <div class="scrollbar-overlay mx-n1 px-1" style="padding: 10px !important;">
-                <div class="row g-3" style="padding-bottom: 10px;">
-                    <div class="col">
-                        <h4>Uncertainty Budget Table</h4>
-                    </div>
-                    <div class="col-auto text-end">
-                        <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uncertaintyBudgetModal">
-                            <span class="fas fa-plus me-2"></span>Add Component
-                        </button> -->
-                    </div>
-                </div>
-                 
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="templateModalLabel">Uncertainty Budget</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
                 <div id="table-responsive">
                     <table class="table table-bordered">
                         <thead>
@@ -467,7 +460,7 @@
                                 <th>Distribution</th>
                                 <th>Divisor</th>
                                 <th>Sensitivity</th>
-                                <th>Std uncert</th>
+                                <th class="text-nowrap">Std uncert</th>
                                 <th>DOF</th>
                             </tr>
                         </thead>
@@ -475,7 +468,47 @@
                             
                         </tbody>
                     </table>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Expanded uncertainty reporting</th>
+                                <th class="text-center"><button type="button" class="btn btn-primary btn-sm addValues">Add Values</button></th>
+                            </tr>
+                        </thead>
+                        <tbody id="table3tbody" style="display: none;">
+                            <tr>
+                                <td>Combined Standard Uncertainty</td>
+                                <td><input type="text" name="csu" class="form-control csu" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td>Effective Degree of Freedom</td>
+                                <td>Info</td>
+                            </tr>
+                            <tr>
+                                <td>Coverage factor (K) at 95% C.L.</td>
+                                <td>2</td>
+                            </tr>
+                            <tr><td colspan="2"></td></tr>
+                            <tr>
+                                <td>Expanded Uncertainty</td>
+                                <td><input type="text" name="expanded_uncertainty" class="form-control expanded_uncertainty" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td>CMC Claimed</td>
+                                <td><input type="text" name="cmc_claimed" class="form-control cmc_claimed" value="0.5" readonly /></td>
+                            </tr>
+                            <tr>
+                                <td>Expanded Uncertainty - to report</td>
+                                <td><input type="text" name="report" class="form-control report" value="" readonly /></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                <!-- <div class="row">
+                    <div class="col-md-12 text-end">
+                        <button type="button" class="btn btn-primary btn-sm">Add Values</button>
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>

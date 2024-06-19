@@ -147,17 +147,7 @@
                 </div>
                 <div class="col-md-4">
                     <label for="resolution_uuc">Resolution UUC</label>
-                    <select class="form-control" name="resolution_uuc" id="resolution_uuc">
-                        <option value="m">Meter</option>
-                        <?php
-                        // foreach($siRefEqInfos as $siRefEqInfo)
-                        // {
-                        ?>
-                        <!-- <option value="<?php echo $siRefEqInfo['unit']; ?>"><?php echo $siRefEqInfo['unit']; ?></option> -->
-                        <?php
-                        // }
-                        ?>
-                    </select>
+                    <input type="number" name="resolution_uuc" id="resolution_uuc" class="form-control" value="<?php echo $result ? $result['resolution_uuc'] : ''; ?>" />
                 </div>
             </div>
             <div class="mt-4">
@@ -246,7 +236,7 @@
                                         if ($row[$j]['column_type'] == "FUNCTION") {
                                             echo '<textarea name="title[' . $row[$j]['id'] . '][]" class="form-control input_val_' . $row[$j]['id'] . '" style="resize:none;" readonly rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
                                         } else {
-                                            echo '<textarea name="title[' . $row[$j]['id'] . '][]" class="form-control input_val_' . $row[$j]['id'] . ' input-field" style="resize:none;" rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
+                                            echo '<textarea name="title[' . $row[$j]['id'] . '][]" class="form-control input_val_' . $row[$j]['id'] . ' input-validation" style="resize:none;" rows="3">'.$analyses[$currentIndex]['title_value'].'</textarea>';
                                         }
                                     } else {
                                         echo '&nbsp;';
@@ -264,7 +254,7 @@
                             if ($row[$i]['column_type'] == "FUNCTION") {
                                 echo '<textarea name="title[' . $row[$i]['id'] . '][]" class="form-control input_val_' . $row[$i]['id'] . '" style="resize:none;" readonly rows="3"></textarea>';
                             } else {
-                                echo '<textarea name="title[' . $row[$i]['id'] . '][]" class="form-control input_val_' . $row[$i]['id'] . ' input-field" style="resize:none;" rows="3"></textarea>';
+                                echo '<textarea name="title[' . $row[$i]['id'] . '][]" class="form-control input_val_' . $row[$i]['id'] . ' input-validation" style="resize:none;" rows="3"></textarea>';
                             }
                         echo '</td>';
                     }
@@ -289,7 +279,7 @@
     var layout_id = <?php echo $layout_id; ?>;
     var layout_template_id = <?php echo $layoutTemplateID; ?>;
 
-    $('.input-field').on('input', function() {
+    $('.input-validation').on('input', function() {
         var sanitizedValue = $(this).val().replace(/[^0-9.\n]/g, '');
         $(this).val(sanitizedValue);
     });
@@ -344,7 +334,7 @@
                         $("#brand").val(response.data.brand);
                         $("#serial_no").val(response.data.serial_no);
                         $("#unit_ref").val('Meter'); //response.data.unit
-                        $("#resolution_ref").val('Feet'); //response.data.unit
+                        $("#resolution_ref").val(response.data.split_no);
                         $("#cal_date_2").val(changeDateFormat(response.data.cal_date));
                         $("#C1").val(response.data.c1);
                         $("#C2").val(response.data.c2);
@@ -377,7 +367,6 @@
                                             if (index==0) {
                                                 $("#ref_uncert").val(row.uncert);
                                             }
-                                            console.log(row.uncert);
                                             splitTableHTML += '<tr><td>' + row.uncert + '</td><td>' + row.split_no + '</td></tr>';
                                         });
                                         splitTable.html(splitTableHTML);
@@ -465,8 +454,8 @@
 
                 // Apply here UUC convrt formula
                 if (column_function == "UC") {
-                    var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
                     var unit_uuc = $("#unit_uuc").val();
+                    var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
                     var UUCReading = false;
                     var UUCReadingVal = [];
                     if (unit_uuc != "" && unit_ref != "") {
@@ -647,11 +636,13 @@
 
                 // Apply here REF UNIT CON formula
                 if (column_function == "RUC") {
-                    var resolution_ref = $("#resolution_ref").val() == 'Feet' ? 'ft' : 'ft';
-                    var resolution_uuc = $("#resolution_uuc").val();
+                    var unit_ref = $("#unit_ref").val() == 'Meter' ? 'm' : 'm';
+                    var unit_uuc = $("#unit_uuc").val();
+                    // var resolution_ref = $("#resolution_ref").val() == 'Feet' ? 'ft' : 'ft';
+                    // var resolution_uuc = $("#resolution_uuc").val();
                     var refUnitCon = false;
                     var refUnitConVal = [];
-                    if (resolution_uuc != "" && resolution_ref != "") {
+                    if (unit_ref != "" && unit_uuc != "") {
                         multipleArr.forEach(function(column) {
                             column.forEach(function(val) {
                                 if (val == function_fields[heading_id] + '@@@') {
@@ -660,9 +651,9 @@
                                     refUnitCon = false;
                                 }
                                 if (refUnitCon && val != function_fields[heading_id] + '@@@') {
-                                    if (resolution_uuc == "m" && resolution_ref == "ft") {
+                                    if (unit_ref == "m" && unit_uuc == "ft") {
                                         refUnitConVal.push(convertMetersToFeet(val));
-                                    } else if (resolution_uuc == "ft" && resolution_ref == "m") {
+                                    } else if (unit_ref == "ft" && unit_uuc == "m") {
                                         refUnitConVal.push(convertFeetToMeters(val));
                                     }
                                 }
@@ -827,6 +818,7 @@
         var cal_date = $("#cal_date").val();
         var res = $("#res").val();
         var x = $("#x").val();
+        var resolution_uuc = $("#resolution_uuc").val();
         if (equipment_id == '') {
             toastrErrorMessage('Equipment field is required!');
             return false;
@@ -847,8 +839,12 @@
             toastrErrorMessage('X field is required!');
             return false;
         }
+        if (resolution_uuc == '') {
+            toastrErrorMessage('Resolution UUC field is required!');
+            return false;
+        }
 
-        $('.input-field').each(function() {
+        $('.input-validation').each(function() {
             isValid = validateInput($(this));
         });
 

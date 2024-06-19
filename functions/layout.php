@@ -1718,7 +1718,9 @@ class Layout
         $statement->bindParam(':res', $res, PDO::PARAM_STR);
         $statement->execute();
         $data = $statement->fetch(PDO::FETCH_ASSOC);
-         
+        // echo '<pre>';
+        // print_r($data);
+        // echo '</pre>';
         if (!empty($data)) {
             $response = [
                 'status' => 'success',

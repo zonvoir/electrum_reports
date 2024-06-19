@@ -65,7 +65,7 @@ $(document).ready(function() {
                         return "<div class='d-flex'>\
                             <button class='btn  btn-sm edit-btn me-2'>\<i class='fa-solid fa-pen-to-square '></i></button>\
                             <button class='btn  btn-sm delete-btn me-2'><i class='fa-solid fa-trash'></i></button>\
-                            <button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button>\
+                            <!--button class='btn  btn-sm analysis-btn'><i class='fa-solid fa-chart-line'></i></button-->\
                         </div>";
                     }
                     

@@ -126,10 +126,94 @@ $(document).ready(function() {
                 if (response.status === 'success') {
                     $('#table2tbody').html(response.tableHTML);
                     $("#table2Modal").modal('show');
+                    $("#table3tbody").hide();
                 }
             }
         });
     });
+
+    $("body").on('change', '.distribution', function(){
+        var value = $(this).val();
+        $(this).closest('tr').find('.divisor').val(value); 
+        
+        stdUncertCalculation($(this));
+    });
+
+    $("body").on('input', '.sensitivity', function(){
+        stdUncertCalculation($(this));
+    });
+
+    function stdUncertCalculation(that)
+    {
+        var col2 = that.closest('tr').find('.magnitude').val(); 
+        var col4 = that.closest('tr').find('.divisor').val(); 
+        var col5 = that.closest('tr').find('.sensitivity').val();
+        var col6 = col2 * col5 / col4;
+        that.closest('tr').find('.std_uncert').val(col6.toFixed(4)); 
+    }
+
+    var distributionFieldIsValid = false;
+    var sensitivityFieldIsValid = false;
+    $("body").on('click', '.addValues', function(){
+
+        $('.distribution-field-validation').each(function() {
+            distributionFieldIsValid = validateInput($(this));
+        });
+
+        $('.sensitivity-field-validation').each(function() {
+            sensitivityFieldIsValid = validateInput($(this));
+        });
+
+        if (distributionFieldIsValid == false || sensitivityFieldIsValid==false) {
+            $("#table3tbody").hide();
+            toastrErrorMessage('Distribution and Sensitivity all fields is required!');
+        } else {
+            var csuValue = 0;
+            $('.std_uncert').each(function(){
+                var value = parseFloat($(this).val()) || 0;
+                csuValue += value * value;
+            });
+            $(".csu").val(csuValue.toFixed(4));
+
+            var expanded_uncertainty = csuValue*2;
+            $(".expanded_uncertainty").val(expanded_uncertainty.toFixed(4));
+
+            var cmc_claimed = $(".cmc_claimed").val();
+            var report = expanded_uncertainty >= cmc_claimed ? expanded_uncertainty : cmc_claimed;
+            $(".report").val(report.toFixed(4));
+
+            $("#table3tbody").show();
+        }
+    });
+
+    function validateInput(input) {
+        const value = input.val().trim();
+        if (value === '') {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function toastrErrorMessage(message) {
+        toastr.error(message, 'Opps!', {
+            timeOut: 3000,
+            extendedTimeOut: 2000,
+            progressBar: true,
+            closeButton: true,
+            tapToDismiss: false,
+            positionClass: "toast-top-right",
+        });
+    }
 });
 </script>
+<style>
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0; 
+}
+</style>
 <?php require 'footer.php'; ?>

@@ -37,11 +37,28 @@ class Component
         $components = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         foreach ($components as $component) {
-            $heading_id = $component['reference_column'];
-            $heading = $this->getHeadingById($heading_id);
+            
+            if ($component['reference_column'] == '-1') {
+
+                $magnitude = 'Resolution Ref';
+
+            } elseif ($component['reference_column'] == '-2') {
+
+                $magnitude = 'Resolution UUC';
+
+            } elseif ($component['reference_column'] == '-3') {
+
+                $magnitude = 'Ref Uncert';
+
+            } else {
+                $heading_id = $component['reference_column'];
+                $heading = $this->getHeadingById($heading_id);
+                $magnitude = $heading['title'];
+            }
+            
             echo '<tr>
                 <td>'. $component['component'] .'</td>
-                <td>'. $heading['title'] .'</td>
+                <td>'. $magnitude .'</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -73,7 +90,7 @@ class Component
         $statement->bindValue(':templateId', $template_id, PDO::PARAM_INT);
         $statement->execute();
         $components = $statement->fetchAll(PDO::FETCH_ASSOC);
-
+         
         ob_start(); 
         foreach($components as $component): 
             
@@ -84,7 +101,19 @@ class Component
             $checkStatement ->execute();
             $cth = $checkStatement ->fetch();
             
-            if ($component['reference_column']) {
+            if ($component['reference_column'] == '-1') {
+
+                $magnitude = $cth['resolution_ref'];
+
+            } elseif ($component['reference_column'] == '-2') {
+
+                $magnitude = $cth['resolution_uuc'];
+
+            } elseif ($component['reference_column'] == '-3') {
+
+                $magnitude = $cth['ref_uncert'];
+
+            } else {
                 $queryCalculationTemplate = "SELECT * FROM calculation_template WHERE layout_id = :layoutId AND template_id = :templateId AND heading_id = :headingId AND row_id = :rowId";
                 $statementCalculationTemplate = $this->conn->prepare($queryCalculationTemplate);
                 $statementCalculationTemplate->bindParam(':layoutId', $layout_id, PDO::PARAM_INT);
@@ -93,20 +122,35 @@ class Component
                 $statementCalculationTemplate->bindParam(':rowId', $row_id, PDO::PARAM_INT);
                 $statementCalculationTemplate->execute();
                 $ct = $statementCalculationTemplate->fetch(PDO::FETCH_ASSOC);
-            } else {
-                $ct = [];
+                $magnitude = nl2br($ct['title_value']);
             }
-            
-            $titleValue = !empty($ct) ? nl2br($ct['title_value']) : '';
-            // $refResulation = $component
+
             echo '<tr>
-                <td>'.$component['component'].'</td>
-                <td>'.$titleValue.'</td>
-                <td>Normal</td>
-                <td>1</td>
-                <td>1</td>
-                <td></td>
-                <td></td>
+                <td class="text-nowrap">'.$component['component'].'</td>
+                <td>
+                    <!--textare name="magnitude" class="form-control magnitude">'.$magnitude.'</textare-->
+                    <input type="text" name="magnitude" class="form-control magnitude" value="'.$magnitude.'" readonly />
+                </td>
+                <td>
+                    <select name="distribution" class="form-control distribution-field-validation distribution">
+                        <option value="">Select</option>
+                        <option value="1">Normal</option>
+                        <option value="2">Normal (k)</option>
+                        <option value="1.732050808">Rectangular</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="divisor" class="form-control divisor" readonly />
+                </td>
+                <td>
+                    <input type="number" name="sensitivity" class="form-control sensitivity-field-validation sensitivity" />
+                </td>
+                <td>
+                    <input type="text" name="std_uncert" class="form-control std_uncert" readonly />
+                </td>
+                <td>
+                    <input type="text" name="dof" class="form-control dof" />
+                </td>
             </tr>';
         endforeach;
 

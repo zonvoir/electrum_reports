@@ -649,7 +649,7 @@ $(document).ready(function() {
         });
     }
 
-    $('body').on('click', '.store-component', function() {
+    $('body').on('click', '.component-submit-btn', function() {
         var layout_id = <?= $_GET['id']; ?>;
         var template_id = $("#templateSelect").find(':selected').val();
         var component_name = $('#component_name').val();
@@ -659,17 +659,17 @@ $(document).ready(function() {
             toastrErrorMessage('Component field is required!');
             return false;
         }
-        // if (heading_id == '') {
-        //     toastrErrorMessage('Magnitude field is required!');
-        //     return false;
-        // }
+        if (heading_id == '') {
+            toastrErrorMessage('Magnitude field is required!');
+            return false;
+        }
         
         $.ajax({
             type: 'POST',
-            url: './functions/add-title.php',
+            url: './functions/ComponentAction.php', 
             dataType: 'json',
             data: {
-                action: 'addComponent',
+                action: 'manageComponent',
                 layout_id: layout_id,
                 template_id: template_id,
                 component_name: component_name,
@@ -686,7 +686,8 @@ $(document).ready(function() {
                         positionClass: "toast-top-right",
                     });
                     loadComponents(template_id);
-                    $('#store_component_form')[0].reset();
+                    $('#component_name').val('');
+                    $('#heading_id').val('');
                     $('#uncertaintyBudgetModal').modal('hide');
                 } else {
                     toastr.error('Error: ' + response.message);
@@ -696,6 +697,49 @@ $(document).ready(function() {
                 // Handle AJAX error
             }
         });
+    });
+
+    $('body').on('click', '.component-delete-btn', function() {
+        var layout_id = <?= $_GET['id']; ?>;
+        var template_id = $("#templateSelect").find(':selected').val();
+        var component_name = $('#component_name').val();
+        var heading_id = $('#heading_id').val();
+
+        if (heading_id == '') {
+            toastrErrorMessage('Magnitude field is required!');
+            return false;
+        }
+        if (confirm("Are you sure you want to delete this record?")) {
+            $.ajax({
+                type: 'POST',
+                url: './functions/ComponentAction.php', 
+                dataType: 'json',
+                data: {
+                    action: 'deleteComponent',
+                    layout_id: layout_id,
+                    template_id: template_id,
+                    heading_id: heading_id,
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        toastr.success(response.message, 'Success!', {
+                            timeOut: 3000,
+                            extendedTimeOut: 2000,
+                            progressBar: true,
+                            closeButton: true,
+                            tapToDismiss: false,
+                            positionClass: "toast-top-right",
+                        });
+                        loadComponents(template_id);
+                        $('#heading_id').val('');
+                        $('#uncertaintyBudgetModal').modal('hide');
+                    }  else {
+                        toastrErrorMessage(response.message);
+                    }
+                }
+            });
+            return false;
+        }
     });
     
     function toastrErrorMessage(message) {

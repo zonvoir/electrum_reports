@@ -559,27 +559,6 @@ class Layout
         }
     }
 
-    public function addComponent($data)
-    {
-        $layout_id = $data['layout_id'];
-        $template_id = $data['template_id'];
-        $component_name = $data['component_name'];
-        $heading_id = $data['heading_id'];
-
-        $query = "INSERT INTO uncertainty_budget_tempplate (layout_id,template_id,component,reference_column) VALUES (:layoutId,:templateId,:componentName,:headingId)";
-        $statement = $this->conn->prepare($query);
-        $statement->bindParam(':layoutId', $layout_id);
-        $statement->bindParam(':templateId', $template_id);
-        $statement->bindParam(':componentName', $component_name);
-        $statement->bindParam(':headingId', $heading_id);
-
-        if ($statement->execute()) {
-            return ['status' => 'success', 'message' => 'Component has been created successfully.'];
-        } else {
-            return ['status' => 'error', 'message' => 'Error inserting component.'];
-        }
-    }
-
     public function removeHeddingValues($templateID)
     {
         $query = "DELETE FROM `value` WHERE layout_template_id = :layout_template_id";

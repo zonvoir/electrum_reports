@@ -389,53 +389,51 @@
 <div class="modal fade" id="uncertaintyBudgetModal" tabindex="-1" aria-labelledby="uncertaintyBudgetModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="store_component_form">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="templateModalLabel">Uncertainty Budget</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3 row">
-                        <label for="component_name" class="col-sm-4 col-form-label text-end">Component</label>
-                        <div class="col-sm-6">
-                            <input type="text" id="component_name" class="form-control form-control-sm" />
-                        </div>
-                    </div>
-                    <div class="mb-3 row">
-                        <label for="heading_id" class="col-sm-4 col-form-label text-end">Magnitude</label>
-                        <div class="col-sm-6 multi-select">
-                            <select id="heading_id" class="form-control">
-                                <optgroup label="Table Columns">
-                                    <option value="">Select</option>
-                                    <?php
-                                    $queryh = "SELECT * FROM headings WHERE layout_id = :layoutId AND layout_template_id = :templateId";
-                                    $statementh = $conn->prepare($queryh);
-                                    $statementh->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
-                                    $statementh->bindValue(':templateId', $layout['layout_template_id'], PDO::PARAM_INT);
-                                    $statementh->execute();
-                                    $headings = $statementh->fetchAll(PDO::FETCH_ASSOC);
-                                    foreach ($headings as $heading) {
-                                    ?>
-                                        <option value="<?= $heading['id']; ?>"><?= $heading['title']; ?></option>
-                                    <?php
-                                    }
-                                    ?>
-                                </optgroup>
-                                <optgroup label="Fixed Inputs">
-                                    <option value="-1">Resolution Ref</option>
-                                    <option value="-2">Resolution UUC</option>
-                                    <option value="-3">Ref Uncert</option>
-                                </optgroup>
-                                </optgroup>
-                            </select>
-                        </div>
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="templateModalLabel">Uncertainty Budget</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 row">
+                    <label for="component_name" class="col-sm-4 col-form-label text-end">Component</label>
+                    <div class="col-sm-6">
+                        <input type="text" id="component_name" class="form-control form-control-sm" />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary store-component">Submit</button>
+                <div class="mb-3 row">
+                    <label for="heading_id" class="col-sm-4 col-form-label text-end">Magnitude</label>
+                    <div class="col-sm-6 multi-select">
+                        <select id="heading_id" class="form-control">
+                            <optgroup label="Table Columns">
+                                <option value="">Select</option>
+                                <?php
+                                $queryh = "SELECT * FROM headings WHERE layout_id = :layoutId AND layout_template_id = :templateId";
+                                $statementh = $conn->prepare($queryh);
+                                $statementh->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
+                                $statementh->bindValue(':templateId', $layout['layout_template_id'], PDO::PARAM_INT);
+                                $statementh->execute();
+                                $headings = $statementh->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($headings as $heading) {
+                                ?>
+                                    <option value="<?= $heading['id']; ?>"><?= $heading['title']; ?></option>
+                                <?php
+                                }
+                                ?>
+                            </optgroup>
+                            <optgroup label="Fixed Inputs">
+                                <option value="-1">Resolution Ref</option>
+                                <option value="-2">Resolution UUC</option>
+                                <option value="-3">Ref Uncert</option>
+                            </optgroup>
+                            </optgroup>
+                        </select>
+                    </div>
                 </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger component-delete-btn">Delete</button>
+                <button type="button" class="btn btn-primary component-submit-btn">Submit</button>
+            </div>
         </div>
     </div>
 </div>

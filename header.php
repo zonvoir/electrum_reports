@@ -1,3 +1,4 @@
+<?php require 'includes.php'; ?>
 <!doctype html>
 <html lang="en">
 
@@ -37,4 +38,4 @@
     </style>
 </head>
 <body class="wrap-tbl-content">
-    <?php require 'includes.php'; ?>
+    <?php require 'navigation.php'; ?>

@@ -10,6 +10,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'loadComponents':
                 handleLoadComponents($component);
                 break;
+            case 'manageComponent':
+                handleManageComponent($component);
+                break;
+            case 'deleteComponent':
+                handleDeleteComponent($component);
+                break;
             case 'loadTable2Data':
                 handleTable2Data($component);
                 break;
@@ -30,6 +36,32 @@ function handleLoadComponents($component)
         echo json_encode($result);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Something want wrong.']);
+    }
+}
+
+function handleManageComponent($component)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'manageComponent') {
+
+        $response = $component->storeAndUpdateComponent($_POST);
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
+    }
+}
+
+function handleDeleteComponent($component)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'deleteComponent') {
+
+        $response = $component->deleteComponent($_POST);
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
     }
 }
 

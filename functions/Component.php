@@ -78,6 +78,71 @@ class Component
         return $heading;
     }
 
+    public function storeAndUpdateComponent($data)
+    {
+        $layout_id = $data['layout_id'];
+        $template_id = $data['template_id'];
+        $component_name = $data['component_name'];
+        $heading_id = $data['heading_id'];
+        
+        $query = "SELECT * FROM uncertainty_budget_tempplate WHERE layout_id = :layoutId AND template_id = :templateId AND reference_column = :headingId";
+        $statement = $this->conn->prepare($query);
+        $statement->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
+        $statement->bindValue(':templateId', $template_id, PDO::PARAM_INT);
+        $statement->bindValue(':headingId', $heading_id, PDO::PARAM_INT);
+        $statement->execute();
+        $existsUBT = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($existsUBT) {
+            $query = "UPDATE uncertainty_budget_tempplate SET layout_id = :layoutId, template_id = :templateId, component = :componentName, reference_column = :headingId WHERE layout_id = :layoutId AND template_id = :templateId AND reference_column = :headingId";
+        } else {
+            $query = "INSERT INTO uncertainty_budget_tempplate (layout_id,template_id,component,reference_column) VALUES (:layoutId,:templateId,:componentName,:headingId)";
+        }
+
+        $statement = $this->conn->prepare($query);
+        $statement->bindParam(':layoutId', $layout_id);
+        $statement->bindParam(':templateId', $template_id);
+        $statement->bindParam(':componentName', $component_name);
+        $statement->bindParam(':headingId', $heading_id);
+
+        if ($statement->execute()) {
+            return ['status' => 'success', 'message' => 'Component has been created successfully.'];
+        } else {
+            return ['status' => 'error', 'message' => 'Error inserting component.'];
+        }
+    }
+
+    public function deleteComponent($data)
+    {
+        $layout_id = $data['layout_id'];
+        $template_id = $data['template_id'];
+        $heading_id = $data['heading_id'];
+
+        $query = "SELECT * FROM uncertainty_budget_tempplate WHERE layout_id = :layoutId AND template_id = :templateId AND reference_column = :headingId";
+        $statement = $this->conn->prepare($query);
+        $statement->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
+        $statement->bindValue(':templateId', $template_id, PDO::PARAM_INT);
+        $statement->bindValue(':headingId', $heading_id, PDO::PARAM_INT);
+        $statement->execute();
+        $existsUBT = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if ($existsUBT) {
+            $query = "DELETE FROM uncertainty_budget_tempplate WHERE layout_id = :layoutId AND template_id = :templateId AND reference_column = :headingId";
+            $statement = $this->conn->prepare($query);
+            $statement->bindParam(':layoutId', $layout_id);
+            $statement->bindParam(':templateId', $template_id);
+            $statement->bindParam(':headingId', $heading_id);
+
+            if ($statement->execute()) {
+                return ['status' => 'success', 'message' => 'Component has been deleted successfully.'];
+            } else {
+                return ['status' => 'error', 'message' => 'Error deleting component.'];
+            }
+        } else {
+            return ['status' => 'error', 'message' => 'Component is not created for selected Magnitude.'];
+        }
+    }
+
     function loadTable2($data)
     {
         $layout_id = $data['layout_id'];

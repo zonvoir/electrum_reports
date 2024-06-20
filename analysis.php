@@ -1,6 +1,6 @@
 <?php require 'header.php'; ?>
 
-<div class="container1 p-1">
+<div class="container">
     <?php if ($role['name'] == 'data-entry-operator'): ?>
         <?php require '401.php'; ?>
     <?php else: ?>
@@ -67,9 +67,7 @@
             $statementCalculationTemplate->bindParam(':templateID', $layoutTemplateID, PDO::PARAM_INT);
             $statementCalculationTemplate->execute();
             $analyses = $statementCalculationTemplate->fetchAll(PDO::FETCH_ASSOC);
-            // echo '<pre>';
-            // print_r($analyses);
-            // echo '</pre>';
+
             $totalEntries = count($analyses);
             if ($totalEntries > 0) {
                 $columns = count($row);
@@ -135,7 +133,6 @@ $(document).ready(function() {
     $("body").on('change', '.distribution', function(){
         var value = $(this).val();
         $(this).closest('tr').find('.divisor').val(value); 
-        
         stdUncertCalculation($(this));
     });
 
@@ -149,7 +146,12 @@ $(document).ready(function() {
         var col4 = that.closest('tr').find('.divisor').val(); 
         var col5 = that.closest('tr').find('.sensitivity').val();
         var col6 = col2 * col5 / col4;
-        that.closest('tr').find('.std_uncert').val(col6.toFixed(4)); 
+        var std_unsert = isNumeric(col6) ? col6 : '0.00';
+        that.closest('tr').find('.std_uncert').val(std_unsert); 
+    }
+
+    function isNumeric(value) {
+        return !isNaN(value) && isFinite(value);
     }
 
     var distributionFieldIsValid = false;

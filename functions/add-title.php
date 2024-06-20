@@ -79,9 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'userSignIn':
                 handleUserSignIn($layouts);
                 break;
-            case 'addComponent':
-                handleAddComponent($layouts);
-                break;
             case 'multipleValues':
                 handleInsertMultipleValues($layouts);
                 break;
@@ -480,19 +477,6 @@ function handleUserSignIn($layouts)
     if (isset($_POST['action']) && $_POST['action'] == 'userSignIn') {
 
         $response = $layouts->userLogin($_POST);
-        if ($response) {
-            echo json_encode($response);
-        } else {
-            echo 'Error retreaving data';
-        }
-    }
-}
-
-function handleAddComponent($layouts)
-{
-    if (isset($_POST['action']) && $_POST['action'] == 'addComponent') {
-
-        $response = $layouts->addComponent($_POST);
         if ($response) {
             echo json_encode($response);
         } else {

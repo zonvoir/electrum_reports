@@ -154,7 +154,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary btn-sm store-hedding">Save</button>
+                    <button type="button" class="btn btn-primary store-hedding">Save</button>
                 </div>
             </div>
         </div>
@@ -403,29 +403,15 @@
                 <div class="mb-3 row">
                     <label for="heading_id" class="col-sm-4 col-form-label text-end">Magnitude</label>
                     <div class="col-sm-6 multi-select">
-                        <select id="heading_id" class="form-control">
-                            <optgroup label="Table Columns">
+                        <select id="heading_id" class="form-control magnitudeHeadingsGroup">
+                            <!-- <optgroup label="Table Columns" id="magnitudeHeadingsGroup">
                                 <option value="">Select</option>
-                                <?php
-                                $queryh = "SELECT * FROM headings WHERE layout_id = :layoutId AND layout_template_id = :templateId";
-                                $statementh = $conn->prepare($queryh);
-                                $statementh->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
-                                $statementh->bindValue(':templateId', $layout['layout_template_id'], PDO::PARAM_INT);
-                                $statementh->execute();
-                                $headings = $statementh->fetchAll(PDO::FETCH_ASSOC);
-                                foreach ($headings as $heading) {
-                                ?>
-                                    <option value="<?= $heading['id']; ?>"><?= $heading['title']; ?></option>
-                                <?php
-                                }
-                                ?>
                             </optgroup>
                             <optgroup label="Fixed Inputs">
                                 <option value="-1">Resolution Ref</option>
                                 <option value="-2">Resolution UUC</option>
                                 <option value="-3">Ref Uncert</option>
-                            </optgroup>
-                            </optgroup>
+                            </optgroup> -->
                         </select>
                     </div>
                 </div>

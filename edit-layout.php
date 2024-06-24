@@ -71,7 +71,7 @@ $temlpate = $statement->fetch(PDO::FETCH_ASSOC);
                         <h4>Uncertainty Budget Table</h4>
                     </div>
                     <div class="col-auto text-end">
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uncertaintyBudgetModal">
+                        <button class="btn btn-primary addComponent">
                             <span class="fas fa-plus me-2"></span>Add Component
                         </button>
                     </div>
@@ -117,7 +117,7 @@ $(document).ready(function() {
     var template_id = <?= $layout['layout_template_id']; ?>;
     
     loadTemplates(template_id);
-    loadHeadings(layout_id, template_id);
+    loadHeadings(template_id);
     loadComponents(template_id);
 
     function loadTemplates(template_id) {
@@ -146,15 +146,15 @@ $(document).ready(function() {
         });
     }
 
-    function loadHeadings(layout_id, template_id) {
+    function loadHeadings(template_id) {
         
         $.ajax({
             type: 'POST',
             url: './functions/add-title.php', // Adjust the URL accordingly
             data: {
                 action: 'getHeadings',
-                layout_template_id: template_id,
                 layout_id: layout_id,
+                layout_template_id: template_id,
             },
             dataType: 'json',
             success: function(response) {
@@ -172,32 +172,49 @@ $(document).ready(function() {
         });
     }
 
-    $("body").on('change', '#templateSelect', function() {
+    function loadComponents(template_id) {
+        var layput_id = <?= $_GET['id']; ?>;
+        $.ajax({
+            type: 'POST',
+            url: './functions/ComponentAction.php', 
+            data: {
+                action: 'loadComponents',
+                layout_id: layput_id,
+                template_id: template_id,
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#componentsTablebody').html(response.tableHTML);
+                } else {
+                    // console.error('Error: ' + response.message);
+                }
+            },
+            error: function(error) {
+                alert('Error adding title!');
+                console.log(error);
+            }
+        });
+    }
+
+    $(document).on('change', '#templateSelect', function() {
         var selectedTemplateId = $(this).val();
         var selectedTemplateName = $(this).find(':selected').attr('data-name');
         if (selectedTemplateId != 0) {
             $("#template-name").text(selectedTemplateName);
-            loadHeadings(layout_id, selectedTemplateId);
+            loadHeadings(selectedTemplateId);
             loadComponents(selectedTemplateId);
         }
     });
 
-    function initializeSelect2(modalId) {
-        $('.select2').select2({
-            dropdownParent: $('#'+modalId),
-            placeholder: 'Select an option',
-            allowClear: true,
-            width: '100%'
-        });
-    }
-
-    $("body").on('click', '.addHeading', function() {
+    $(document).on('click', '.addHeading', function() {
         var selectedTemplateId = $("#templateSelect").find(':selected').val();
         $.ajax({
             type: 'POST',
             url: './functions/add-title.php',
             data: {
                 action: 'getMaxLevel',
+                layout_id: layout_id,
                 template_id: selectedTemplateId,
             },
             success: function(response) {
@@ -289,7 +306,7 @@ $(document).ready(function() {
                         tapToDismiss: false,
                         positionClass: "toast-top-right",
                     });
-                    loadHeadings(layout_id, templateID);
+                    loadHeadings(templateID);
                     $('#addHeadingModal').modal('hide');
                 }
             },
@@ -307,6 +324,7 @@ $(document).ready(function() {
             url: './functions/add-title.php',
             data: {
                 action: 'getMaxLevel',
+                layout_id: layout_id,
                 template_id: selectedTemplateId,
             },
             success: function(response) {
@@ -424,7 +442,7 @@ $(document).ready(function() {
                         tapToDismiss: false,
                         positionClass: "toast-top-right",
                     });
-                    loadHeadings(layout_id, selectedTemplateId);
+                    loadHeadings(selectedTemplateId);
                     $('#editHeadingModal').modal('hide');
                 }
             },
@@ -434,7 +452,6 @@ $(document).ready(function() {
         });
     });
 
-    // Delete heading from edit heading modal
     $(document).on('click', '.delete-heading', function() {
         if (confirm("Are you sure you want to delete this record?")) {
             var headingId = $('#headingId').val();
@@ -450,7 +467,7 @@ $(document).ready(function() {
                     if (response.status === 'success') {
                         // Handle success case
                         toastr.success(response.message, 'Success!')
-                        loadHeadings(layout_id, template_id);
+                        loadHeadings(template_id);
                         $('#editHeadingModal').modal('hide');
                     } else {
                         // Handle the error case
@@ -497,7 +514,7 @@ $(document).ready(function() {
                 var response = JSON.parse(responseJson)
                 if (response.status === 'success') {
                     toastr.success(response.message, 'Success!')
-                    loadHeadings(layout_id, templateID);
+                    loadHeadings(templateID);
                     $('#subTitleModal').modal('hide');
                 } else {
                     console.error('Error: ' + response.message);
@@ -509,147 +526,40 @@ $(document).ready(function() {
         });
     });
 
-    // $(document).on('click', '.add-second-sub-title', function() {
-    //     var templateID = <?= $layout['layout_template_id']; ?>;
-    //     var heddingsId = $('#inputSubHeddigsId').val();
-    //     var title = $('#inputSecondSubTitle').val();
-
-    //     var column_type = $('#column_type_second_sub_title').val();
-    //     var column_function = $('#column_function_second_sub_title').val();
-    //     var level = 3;
-
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: './functions/add-title.php', // Adjust the URL accordingly
-    //         data: {
-    //             title: title,
-    //             heddings_id: heddingsId,
-    //             level: level,
-    //             action: 'addsub',
-    //             template_id: templateID,
-    //             column_type: column_type,
-    //             column_function: column_function
-    //         },
-    //         dataType: 'json',
-    //         success: function(response) {
-
-    //             if (response.status === 'success') {
-    //                 loadHeadings(template_id, template_id);
-    //                 $('#titleModal').close();
-    //             } else {
-    //                 // Handle the error case
-    //                 // console.error('Error: ' + response.message);
-    //             }
-    //         },
-    //         error: function(error) {
-    //             alert('Error adding title!');
-    //         }
-    //     });
-    // });
-
-    // $(document).on('click', '.add-second-sub-title-modal', function() {
-    //     var titleId = $(this).attr('data-id');
-    //     var title = $(this).attr('data-text');
-    //     $('#subTitleModalLabel').html(title);
-    //     $('#inputSubHeddigsId').val(titleId);
-    // });
-
-    // $('#load-titles').on('click', function() {
-    //     loadHeadings();
-    // });
-
-    // $('#add-title').on('click', function() {
-    //     var title = $('#titleInput').val();
-    //     if (title.trim() !== '') {
-    //         // AJAX request to send the title to your PHP script
-    //         $.ajax({
-    //             type: 'POST',
-    //             url: './functions/add-title.php', // Adjust the URL accordingly
-    //             data: {
-    //                 title: title,
-    //                 action: 'add',
-    //                 column_type: column_type,
-    //                 coulumn_function: column_function
-    //             },
-    //             dataType: 'json',
-    //             success: function(response) {
-    //                 console.log(response.status);
-    //                 if (response.status === 'success') {
-    //                     loadHeadings(template_id, template_id);
-    //                 } else {
-    //                     // Handle the error case
-    //                     // console.error('Error: ' + response.message);
-    //                 }
-    //             },
-    //             error: function(error) {
-    //                 alert('Error adding title!');
-    //                 console.log(error);
-    //             }
-    //         });
-    //     } else {
-    //         alert('Please enter a title.');
-    //     }
-    // });
-
-    // $("#link-template").click(function() {
-    //     var layoutID = <?= $_GET['id']; ?>;
-    //     var templateID = $("#templateSelect").find(':selected').val();
-    //     $.ajax({
-    //         type: 'POST',
-    //         url: './functions/add-title.php',
-    //         data: {
-    //             action: 'linkTemplate',
-    //             layout_id: layoutID,
-    //             template_id: templateID
-    //         },
-    //         success: function(response) {
-    //             if (response.status === 'success') {
-    //                 var templateSelect = $('#templateSelect');
-    //                 $('.alert').html(response.message);
-    //                 $('.alert').fadeIn(400);
-    //                 setTimeout(function() {
-    //                     $('.alert').fadeOut();
-    //                 }, 2000);
-    //             } else {
-    //                 // Handle the error case
-    //                 // console.error('Error: ' + response.message);
-    //                 toastr.error('Something want wrong', 'Opps!');
-    //             }
-    //         },
-    //         error: function(error) {
-    //             alert('Error fetching templates!');
-    //             console.log(error);
-    //         }
-    //     });
-    //     return false;
-    // });
-
-    function loadComponents(template_id) {
-        var layput_id = <?= $_GET['id']; ?>;
+    $(document).on('click', '.addComponent', function(){
+        var template_id = $("#templateSelect").find(':selected').val();
         $.ajax({
             type: 'POST',
             url: './functions/ComponentAction.php', 
+            dataType: 'json',
             data: {
-                action: 'loadComponents',
-                layout_id: layput_id,
+                action: 'getComponents',
+                layout_id: layout_id,
                 template_id: template_id,
             },
-            dataType: 'json',
             success: function(response) {
-                if (response.status === 'success') {
-                    $('#componentsTablebody').html(response.tableHTML);
+                if (response.status == 'success') {
+                        var magnitudeOptions = '<optgroup label="Table Columns" id="magnitudeHeadingsGroup">\
+                                                    <option value="">Select</option>';
+                        $.each(response.headings, function(index, heading) {
+                            magnitudeOptions += '<option value="' + heading.id + '">' + heading.title + '</option>';
+                        });
+                        magnitudeOptions += '</optgroup>\
+                                            <optgroup label="Fixed Inputs">\
+                                                <option value="-1">Resolution Ref</option>\
+                                                <option value="-2">Resolution UUC</option>\
+                                                <option value="-3">Ref Uncert</option>\
+                                            </optgroup>';
+                        $('.magnitudeHeadingsGroup').html(magnitudeOptions);
+                        $('#uncertaintyBudgetModal').modal('show');
                 } else {
-                    // console.error('Error: ' + response.message);
+                    toastr.error('Error: ' + response.message);
                 }
             },
-            error: function(error) {
-                alert('Error adding title!');
-                console.log(error);
-            }
         });
-    }
+    });
 
-    $('body').on('click', '.component-submit-btn', function() {
+    $(document).on('click', '.component-submit-btn', function() {
         var layout_id = <?= $_GET['id']; ?>;
         var template_id = $("#templateSelect").find(':selected').val();
         var component_name = $('#component_name').val();
@@ -699,7 +609,7 @@ $(document).ready(function() {
         });
     });
 
-    $('body').on('click', '.component-delete-btn', function() {
+    $(document).on('click', '.component-delete-btn', function() {
         var layout_id = <?= $_GET['id']; ?>;
         var template_id = $("#templateSelect").find(':selected').val();
         var component_name = $('#component_name').val();
@@ -750,6 +660,15 @@ $(document).ready(function() {
             closeButton: true,
             tapToDismiss: false,
             positionClass: "toast-top-right",
+        });
+    }
+
+    function initializeSelect2(modalId) {
+        $('.select2').select2({
+            dropdownParent: $('#'+modalId),
+            placeholder: 'Select an option',
+            allowClear: true,
+            width: '100%'
         });
     }
 });

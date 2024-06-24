@@ -187,8 +187,9 @@ function handleLoadHeadings($layouts)
 function handleGetMaxLevel($layouts)
 {
     if (isset($_POST['template_id'])) {
+        $layout_id = $_POST['layout_id'];
         $template_id = $_POST['template_id'];
-        $result = $layouts->maxLevel($template_id);
+        $result = $layouts->maxLevel($layout_id, $template_id);
         echo json_encode($result);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid Value']);
@@ -199,7 +200,7 @@ function handleAddHeading($layouts)
 {
     if (isset($_POST['title'])) {
         $data = $_POST;
-        $result = $layouts->addTitle($data);
+        $result = $layouts->addHeading($data);
         echo json_encode($result);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Title not provided.']);

@@ -10,6 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'loadComponents':
                 handleLoadComponents($component);
                 break;
+            case 'getComponents':
+                handleGetComponents($component);
+                break;
             case 'manageComponent':
                 handleManageComponent($component);
                 break;
@@ -36,6 +39,19 @@ function handleLoadComponents($component)
         echo json_encode($result);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Something want wrong.']);
+    }
+}
+
+function handleGetComponents($component)
+{
+    if (isset($_POST['action']) && $_POST['action'] == 'getComponents') {
+
+        $response = $component->getAllComponentsByLayoutAndTemlateId($_POST);
+        if ($response) {
+            echo json_encode($response);
+        } else {
+            echo 'Error retreaving data';
+        }
     }
 }
 

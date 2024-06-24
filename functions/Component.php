@@ -78,6 +78,19 @@ class Component
         return $heading;
     }
 
+    public function getAllComponentsByLayoutAndTemlateId($data)
+    {
+        $layout_id = $data['layout_id'];
+        $template_id = $data['template_id'];
+        $queryh = "SELECT * FROM headings WHERE layout_id = :layoutId AND layout_template_id = :templateId";
+        $statementh = $this->conn->prepare($queryh);
+        $statementh->bindValue(':layoutId', $layout_id, PDO::PARAM_INT);
+        $statementh->bindValue(':templateId', $template_id, PDO::PARAM_INT);
+        $statementh->execute();
+        $headings = $statementh->fetchAll(PDO::FETCH_ASSOC);
+        return ['status' => 'success', 'headings' => $headings];
+    }
+
     public function storeAndUpdateComponent($data)
     {
         $layout_id = $data['layout_id'];

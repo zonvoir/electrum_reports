@@ -65,7 +65,7 @@ class Layout
         }
     }
 
-    public function addTitle($data)
+    public function addHeading($data)
     {
         $layout_id      = $data['layout_id'];
         $template_id    = $data['layout_template_id'];
@@ -107,18 +107,128 @@ class Layout
             }
 
             // get max lavels from headings and update in layout_template table
-            $maxLevel = $this->maxLevel($template_id);
+            $maxLevel = $this->maxLevel($layout_id, $template_id);
             $updatequery = "UPDATE layout_template SET levels = :levels WHERE id = :template_id";
             $update = $this->conn->prepare($updatequery);
             $update->bindParam(':levels', $maxLevel['levels'], PDO::PARAM_INT);
             $update->bindParam(':template_id', $template_id, PDO::PARAM_INT);
             $update->execute();
 
-            $tableHTML = $this->getTableHTML($layout_id, $template_id);
-
-            return ['status' => 'success', 'message' => 'Record has been created successfully.', 'tableHTML' => $tableHTML];
+            return ['status' => 'success', 'message' => 'Record has been created successfully.'];
         } else {
             return ['status' => 'error', 'message' => 'Record has been not created!'];
+        }
+    }
+
+    public function updateHeading($postData)
+    {
+        $headingId = $postData['heading_id'];
+        $layoutId = $postData['layout_id'];
+        $templated = $postData['template_id'];
+        $title = $postData['title'];
+        $level = $postData['level'];
+        $colspan = $postData['colspan'];
+        $headingType = $postData['column_type'];
+        $function_fields = $postData['function_fields'];
+        $headingFunction = $postData['column_function'];
+        $referenceColumns = isset($postData['re_columns']) ? $postData['re_columns'] : [];
+        $multi_line = isset($postData['multi_line']) ? $postData['multi_line'] : [];
+        $data_entry = isset($postData['data_entry']) ? $postData['data_entry'] : [];
+        $analysis = isset($postData['analysis']) ? $postData['analysis'] : [];
+        $report = isset($postData['report']) ? $postData['report'] : [];
+
+        try {
+            // Begin transaction
+            $this->conn->beginTransaction();
+
+            $updateQuery = "UPDATE headings SET layout_id=:layout_id, layout_template_id=:layout_template_id, title = :title, level=:level, colspan=:colspan, column_type = :headingType";
+
+            if ($function_fields != '')
+                $updateQuery .= ", function_fields = :function_fields";
+                $updateQuery .= ", multi_line = :multi_line
+                , data_entry = :data_entry
+                , analysis = :analysis
+                , report = :report
+                WHERE id = :heading_id";
+
+            $updateStatement = $this->conn->prepare($updateQuery);
+            $updateStatement->bindParam(':layout_id', $layoutId, PDO::PARAM_INT);
+            $updateStatement->bindParam(':layout_template_id', $templated, PDO::PARAM_INT);
+            $updateStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
+            $updateStatement->bindParam(':title', $title, PDO::PARAM_STR);
+            $updateStatement->bindParam(':level', $level, PDO::PARAM_STR);
+            $updateStatement->bindParam(':colspan', $colspan, PDO::PARAM_STR);
+            $updateStatement->bindParam(':headingType', $headingType, PDO::PARAM_STR);
+
+            if ($function_fields != '')
+                $updateStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
+                $updateStatement->bindParam(':multi_line', $multi_line, PDO::PARAM_INT);
+                $updateStatement->bindParam(':data_entry', $data_entry, PDO::PARAM_INT);
+                $updateStatement->bindParam(':analysis', $analysis, PDO::PARAM_INT);
+                $updateStatement->bindParam(':report', $report, PDO::PARAM_INT);
+                $updateStatement->execute();
+
+            if ($headingType !== "DATA") {
+                $funcQuery = "SELECT * FROM column_functions WHERE headings_id = :heading_id";
+                $funcStatement = $this->conn->prepare($funcQuery);
+                $funcStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
+                $funcStatement->execute();
+                $funcRecord = $funcStatement->fetch(PDO::FETCH_ASSOC);
+
+                if ($funcRecord) {
+                    $updateFuncQuery = "UPDATE column_functions SET column_function = :heading_function WHERE headings_id = :heading_id";
+                } else {
+                    $updateFuncQuery = "INSERT INTO column_functions (headings_id, column_function) VALUES (:heading_id, :heading_function)";
+                }
+
+                $updateFuncStatement = $this->conn->prepare($updateFuncQuery);
+                $updateFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
+                $updateFuncStatement->bindParam(':heading_function', $headingFunction, PDO::PARAM_STR);
+                $updateFuncStatement->execute();
+
+                // Clear existing reference columns
+                $clearRefColumnsQuery = "DELETE FROM column_function_reference_columns WHERE function_column_id = :function_column_id";
+                $clearRefColumnsStatement = $this->conn->prepare($clearRefColumnsQuery);
+                $clearRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
+                $clearRefColumnsStatement->execute();
+
+                // Insert new reference columns
+                $insertRefColumnsQuery = "INSERT INTO column_function_reference_columns (function_column_id, reference_column_id) VALUES (:function_column_id, :reference_column_id)";
+                $insertRefColumnsStatement = $this->conn->prepare($insertRefColumnsQuery);
+                foreach ($referenceColumns as $column) {
+                    $insertRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
+                    $insertRefColumnsStatement->bindParam(':reference_column_id', $column, PDO::PARAM_INT);
+                    $insertRefColumnsStatement->execute();
+                }
+            } else {
+                //return $headingType;
+                // Delete from column_functions and reference columns if heading type is "DATA"
+                $deleteFuncQuery = "DELETE FROM column_functions WHERE headings_id = :heading_id";
+                $deleteFuncStatement = $this->conn->prepare($deleteFuncQuery);
+                $deleteFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
+                $deleteFuncStatement->execute();
+
+                $clearRefColumnsQuery = "DELETE FROM column_function_reference_columns WHERE function_column_id = :function_column_id";
+                $clearRefColumnsStatement = $this->conn->prepare($clearRefColumnsQuery);
+                $clearRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
+                $clearRefColumnsStatement->execute();
+
+                $function_fields = null;
+                $updateFuncQuery = "UPDATE headings SET function_fields = :function_fields WHERE id = :heading_id";
+                $updateFuncStatement = $this->conn->prepare($updateFuncQuery);
+                $updateFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
+                $updateFuncStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
+                $updateFuncStatement->execute();
+            }
+
+            // Commit transaction
+            $this->conn->commit();
+
+            return ['status' => 'success', 'message' => 'Successfully updated.'];
+        } catch (\Throwable $th) {
+            // Rollback transaction on error
+            $this->conn->rollBack();
+            return ['status' => 'error', 'message' => 'Error updating title: ' . $th->getMessage()];
         }
     }
 
@@ -1728,10 +1838,10 @@ class Layout
 
         if ($count > 0) {
             // Update existing calculation template header
-            $queryCTH = "UPDATE calculation_template_header SET layout_id = :layoutId, equipment_id = :equipmentId, sensor_id = :sensorId, cal_date = :calDate, res = :res, x = :x, ref_uncert = :refUncert, equipment_name = :equipmentName, brand = :brand, serial_no = :serialNo, unit_ref = :unitRef, resolution_ref = :resolutionRef, cal_date_2 = :calDate_2, C1 = :C1, C2 = :C2, C3 = :C3, C4 = :C4, C5 = :C5, unit_uuc = :unitUuc, resolution_uuc = :resolutionUuc, created_at = :createdAt WHERE template_id = :templateId";
+            $queryCTH = "UPDATE calculation_template_header SET equipment_id = :equipmentId, sensor_id = :sensorId, cal_date = :calDate, res = :res, x = :x, ref_uncert = :refUncert, equipment_name = :equipmentName, brand = :brand, serial_no = :serialNo, unit_ref = :unitRef, resolution_ref = :resolutionRef, cal_date_2 = :calDate_2, C1 = :C1, C2 = :C2, C3 = :C3, C4 = :C4, C5 = :C5, unit_uuc = :unitUuc, resolution_uuc = :resolutionUuc, created_at = :createdAt WHERE layout_id = :layoutId AND template_id = :templateId";
         } else {
             // Insert new calculation template header
-            $queryCTH = "INSERT INTO calculation_template_header (layout_id, template_id, equipment_id, sensor_id, cal_date, res, x, ref_uncert, equipment_name, brand, serial_no, unit_ref, resolution_ref, cal_date_2, C1, C2, C3, C4, C5, unit_uuc, resolution_uuc, created_at) VALUES (:templateId, :equipmentId, :sensorId, :calDate, :res, :x, :refUncert, :equipmentName, :brand, :serialNo, :unitRef, :resolutionRef, :calDate_2, :C1, :C2, :C3, :C4, :C5, :unitUuc, :resolutionUuc, :createdAt)";
+            $queryCTH = "INSERT INTO calculation_template_header (layout_id, template_id, equipment_id, sensor_id, cal_date, res, x, ref_uncert, equipment_name, brand, serial_no, unit_ref, resolution_ref, cal_date_2, C1, C2, C3, C4, C5, unit_uuc, resolution_uuc, created_at) VALUES (:layoutId, :templateId, :equipmentId, :sensorId, :calDate, :res, :x, :refUncert, :equipmentName, :brand, :serialNo, :unitRef, :resolutionRef, :calDate_2, :C1, :C2, :C3, :C4, :C5, :unitUuc, :resolutionUuc, :createdAt)";
         }
         
         $statementCTH = $this->conn->prepare($queryCTH);
@@ -1939,119 +2049,6 @@ class Layout
         return $result['count'];
     }
 
-    public function updateHeading($postData)
-    {
-        $headingId = $postData['heading_id'];
-        $layoutId = $postData['layout_id'];
-        $templated = $postData['template_id'];
-        $title = $postData['title'];
-        $level = $postData['level'];
-        $colspan = $postData['colspan'];
-        $headingType = $postData['column_type'];
-        $function_fields = $postData['function_fields'];
-        $headingFunction = $postData['column_function'];
-        $referenceColumns = isset($postData['re_columns']) ? $postData['re_columns'] : [];
-        $multi_line = isset($postData['multi_line']) ? $postData['multi_line'] : [];
-        $data_entry = isset($postData['data_entry']) ? $postData['data_entry'] : [];
-        $analysis = isset($postData['analysis']) ? $postData['analysis'] : [];
-        $report = isset($postData['report']) ? $postData['report'] : [];
-
-        try {
-            // Begin transaction
-            $this->conn->beginTransaction();
-
-            $updateQuery = "UPDATE headings SET layout_id=:layout_id, layout_template_id=:layout_template_id, title = :title, level=:level, colspan=:colspan, column_type = :headingType";
-
-            if ($function_fields != '')
-                $updateQuery .= ", function_fields = :function_fields";
-                $updateQuery .= ", multi_line = :multi_line
-                , data_entry = :data_entry
-                , analysis = :analysis
-                , report = :report
-                WHERE id = :heading_id";
-
-            $updateStatement = $this->conn->prepare($updateQuery);
-            $updateStatement->bindParam(':layout_id', $layoutId, PDO::PARAM_INT);
-            $updateStatement->bindParam(':layout_template_id', $templated, PDO::PARAM_INT);
-            $updateStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
-            $updateStatement->bindParam(':title', $title, PDO::PARAM_STR);
-            $updateStatement->bindParam(':level', $level, PDO::PARAM_STR);
-            $updateStatement->bindParam(':colspan', $colspan, PDO::PARAM_STR);
-            $updateStatement->bindParam(':headingType', $headingType, PDO::PARAM_STR);
-
-            if ($function_fields != '')
-                $updateStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
-                $updateStatement->bindParam(':multi_line', $multi_line, PDO::PARAM_INT);
-                $updateStatement->bindParam(':data_entry', $data_entry, PDO::PARAM_INT);
-                $updateStatement->bindParam(':analysis', $analysis, PDO::PARAM_INT);
-                $updateStatement->bindParam(':report', $report, PDO::PARAM_INT);
-                $updateStatement->execute();
-
-            if ($headingType !== "DATA") {
-                $funcQuery = "SELECT * FROM column_functions WHERE headings_id = :heading_id";
-                $funcStatement = $this->conn->prepare($funcQuery);
-                $funcStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
-                $funcStatement->execute();
-                $funcRecord = $funcStatement->fetch(PDO::FETCH_ASSOC);
-
-                if ($funcRecord) {
-                    $updateFuncQuery = "UPDATE column_functions SET column_function = :heading_function WHERE headings_id = :heading_id";
-                } else {
-                    $updateFuncQuery = "INSERT INTO column_functions (headings_id, column_function) VALUES (:heading_id, :heading_function)";
-                }
-
-                $updateFuncStatement = $this->conn->prepare($updateFuncQuery);
-                $updateFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
-                $updateFuncStatement->bindParam(':heading_function', $headingFunction, PDO::PARAM_STR);
-                $updateFuncStatement->execute();
-
-                // Clear existing reference columns
-                $clearRefColumnsQuery = "DELETE FROM column_function_reference_columns WHERE function_column_id = :function_column_id";
-                $clearRefColumnsStatement = $this->conn->prepare($clearRefColumnsQuery);
-                $clearRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
-                $clearRefColumnsStatement->execute();
-
-                // Insert new reference columns
-                $insertRefColumnsQuery = "INSERT INTO column_function_reference_columns (function_column_id, reference_column_id) VALUES (:function_column_id, :reference_column_id)";
-                $insertRefColumnsStatement = $this->conn->prepare($insertRefColumnsQuery);
-                foreach ($referenceColumns as $column) {
-                    $insertRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
-                    $insertRefColumnsStatement->bindParam(':reference_column_id', $column, PDO::PARAM_INT);
-                    $insertRefColumnsStatement->execute();
-                }
-            } else {
-                //return $headingType;
-                // Delete from column_functions and reference columns if heading type is "DATA"
-                $deleteFuncQuery = "DELETE FROM column_functions WHERE headings_id = :heading_id";
-                $deleteFuncStatement = $this->conn->prepare($deleteFuncQuery);
-                $deleteFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
-                $deleteFuncStatement->execute();
-
-                $clearRefColumnsQuery = "DELETE FROM column_function_reference_columns WHERE function_column_id = :function_column_id";
-                $clearRefColumnsStatement = $this->conn->prepare($clearRefColumnsQuery);
-                $clearRefColumnsStatement->bindParam(':function_column_id', $headingId, PDO::PARAM_INT);
-                $clearRefColumnsStatement->execute();
-
-                $function_fields = null;
-                $updateFuncQuery = "UPDATE headings SET function_fields = :function_fields WHERE id = :heading_id";
-                $updateFuncStatement = $this->conn->prepare($updateFuncQuery);
-                $updateFuncStatement->bindParam(':heading_id', $headingId, PDO::PARAM_INT);
-                $updateFuncStatement->bindParam(':function_fields', $function_fields, PDO::PARAM_STR);
-                $updateFuncStatement->execute();
-            }
-
-            // Commit transaction
-            $this->conn->commit();
-
-            return ['status' => 'success', 'message' => 'Successfully updated.'];
-        } catch (\Throwable $th) {
-            // Rollback transaction on error
-            $this->conn->rollBack();
-            return ['status' => 'error', 'message' => 'Error updating title: ' . $th->getMessage()];
-        }
-    }
-
-
     public function getTemplateIdByLayoutId($layoutId)
     {
         $query = "SELECT layout_template_id FROM layouts WHERE id = :id";
@@ -2257,16 +2254,18 @@ class Layout
         return $resultArray;
     }
 
-    public function maxLevel($temlpateId)
+    public function maxLevel($layoutId, $temlpateId)
     {
-        $query = "SELECT MAX(level) AS levels FROM headings WHERE layout_template_id = :layoutTemplateID";
+        $query = "SELECT MAX(level) AS levels FROM headings WHERE layout_id = :layoutID AND layout_template_id = :layoutTemplateID";
         $statement = $this->conn->prepare($query);
+        $statement->bindParam(':layoutID', $layoutId, PDO::PARAM_INT);
         $statement->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_ASSOC);
 
-        $queryHeadings = "SELECT id, title FROM headings WHERE layout_template_id = :layoutTemplateID";
+        $queryHeadings = "SELECT id, title FROM headings WHERE layout_id = :layoutID AND layout_template_id = :layoutTemplateID";
         $statementHeadings = $this->conn->prepare($queryHeadings);
+        $statementHeadings->bindParam(':layoutID', $layoutId, PDO::PARAM_INT);
         $statementHeadings->bindParam(':layoutTemplateID', $temlpateId, PDO::PARAM_INT);
         $statementHeadings->execute();
         $resultHeadings = $statementHeadings->fetchAll(PDO::FETCH_ASSOC);
